@@ -54,7 +54,7 @@ public class Input {
 			keyboardBitSet.set(event.getCode().ordinal(), false);
 			event.consume();
 		}
-	};
+	}
 
 	private boolean is(KeyCode key) {
 		return keyboardBitSet.get(key.ordinal());

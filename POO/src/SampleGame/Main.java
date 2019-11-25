@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import SampleGame.alien.Input;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -21,10 +22,12 @@ import javafx.scene.text.Text;
 public class Main extends Application {
 	private Random rnd = new Random();
 
-	private Pane playfieldLayer;
+	private Pane playfieldLayer, layerFieldChateau;
+	
+	private List<Chateau> chateau = new ArrayList<>();
 
-	private Image playerImage;
-	//private Image enemyImage;
+	private Image chateauNeutreImage;
+	private Image chateauNormalImage;
 
 
 	private Scene scene;
@@ -50,61 +53,101 @@ public class Main extends Application {
 		
 		loadGame();
 		
-		/*gameLoop = new AnimationTimer() {
+		gameLoop = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 				processInput(input, now);
+				if (player.getPause())
+				{
+					
+				}
+				else
+				{
 
-				// player input
-				player.processInput();
+					// player input
+					//player.processInput();
 
-				// add random enemies
-				//spawnEnemies(true);
+					// add random enemies
+					//spawnEnemies(true);
 
-				// movement
-				player.move();
+					// movement
+					//player.move();
 
-				// check collisions
-				checkCollisions();
+					// check collisions
+					//checkCollisions();
 
-			// update sprites in scene
-			// check if sprite can be removed
-
+				// update sprites in scene
+				// check if sprite can be removed
+				}
 		}
 
 	};
-		gameLoop.start();*/
 	}
 
+	
+	
+	public Chateau[] generateChateau(int nbChateau)
+	{
+		Chateau[] tab = new Chateau[nbChateau];
+		int size = nbChateau;
+		Random aleatoire = new Random();
+		for (int i = 0; i < size; i++)
+		{
+			int dx = aleatoire.nextInt(Settings.SCENE_WIDTH - 50) + 50;
+			int dy = aleatoire.nextInt(Settings.SCENE_HEIGHT - 50) + 50;
+			tab[i] = new Chateau(imageViewChateau, layerFieldChateau, LIST[i], dx, dy);
+			
+		}
+		return tab;
+	}
+	
+	
+	
+	
 	private void loadGame() {
 		
-		playerImage = new Image(getClass().getResource("/images/royaume.jpg").toExternalForm(), 100, 100, true, true);
-		//enemyImage = new Image(getClass().getResource("/images/enemy.png").toExternalForm(), 50, 50, true, true);		
-		createPlayer();
+		chateauNormalImage = new Image(getClass().getResource("/images/chateau_image.gif").toExternalForm(), 100, 100, true, true);
+		chateauNeutreImage = new Image(getClass().getResource("/images/enemy.png").toExternalForm(), 50, 50, true, true);		
+		//createPlayer();
 		
 	}
 
 	private void createPlayer() {
-		double x = (Settings.SCENE_WIDTH - playerImage.getWidth()) / 2.0;
+		double x = (Settings.SCENE_WIDTH - chateauNormalImage.getWidth()) / 2.0;
 		double y = Settings.SCENE_HEIGHT * 0.7;
-		Player = new Player(playfieldLayer , playerImage, x,y);
+		Player = new Player(layerFieldChateau , chateauNormalImage, x,y);
 		
 		player.getView().setOnMousePressed(e -> {
 			System.out.println("Click on player");
 			e.consume();
 		});
 		
-		/*player.getView().setOnContextMenuRequested(e -> {
+		player.getView().setOnContextMenuRequested(e -> {
 			ContextMenu contextMenu = new ContextMenu();
-			MenuItem low = new MenuItem("Slow");
-			MenuItem medium= new MenuItem("Regular");
-			MenuItem high= new MenuItem("Fast");
-			low.setOnAction(evt -> player.setFireFrequencyLow());
+			//MenuItem low = new MenuItem("Slow");
+			//MenuItem medium= new MenuItem("Regular");
+			//MenuItem high= new MenuItem("Fast");
+			/*low.setOnAction(evt -> player.setFireFrequencyLow());
 			medium.setOnAction(evt -> player.setFireFrequencyMedium());
 			high.setOnAction(evt -> player.setFireFrequencyHigh());
 			contextMenu.getItems().addAll(low, medium, high);
-			contextMenu.show(player.getView(), e.getScreenX(), e.getScreenY());
-		});*/
+			contextMenu.show(player.getView(), e.getScreenX(), e.getScreenY());*/
+		});
+	}
+	private void processInput(Input input, long now) {
+		if (input.isPause())
+		{
+			pause(now);
+		}
+		if (input.isExit()) {
+			Platform.exit();
+			System.exit(0);
+		}
+
+	}
+	private void pause(long now) {
+		if (player.canPause(now))
+			player.pause(now);
 	}
 
 
