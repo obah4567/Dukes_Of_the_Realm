@@ -24,23 +24,13 @@ public class Main extends Application {
 	private Pane playfieldLayer;
 
 	private Image playerImage;
-	private Image enemyImage;
-	private Image enemyImage1;
-	private Image missileImage;
+	//private Image enemyImage;
 
-	private Player player;
-	private List<Enemy> enemies = new ArrayList<>();
-	private List<Missile> missiles = new ArrayList<>();
-
-	private Text scoreMessage = new Text();
-	private int scoreValue = 0;
-	private boolean collision = false;
 
 	private Scene scene;
 	private Input input;
-	private AnimationTimer gameLoop;
 	
-	private boolean justPause = false, withPause = true;
+	//private boolean justPause = false, withPause = true;
 	
 	Group root;
 	
@@ -60,7 +50,7 @@ public class Main extends Application {
 		
 		loadGame();
 		
-		gameLoop = new AnimationTimer() {
+		/*gameLoop = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 				processInput(input, now);
@@ -69,89 +59,42 @@ public class Main extends Application {
 				player.processInput();
 
 				// add random enemies
-				spawnEnemies(true);
+				//spawnEnemies(true);
 
 				// movement
 				player.move();
-				enemies.forEach(sprite -> sprite.move());
-				missiles.forEach(sprite -> sprite.move());
 
 				// check collisions
 				checkCollisions();
 
-				// update sprites in scene
-				player.updateUI();
-				enemies.forEach(sprite -> sprite.updateUI());
-				missiles.forEach(sprite -> sprite.updateUI());
+			// update sprites in scene
+			// check if sprite can be removed
 
-				// check if sprite can be removed
-				enemies.forEach(sprite -> sprite.checkRemovability());
-				missiles.forEach(sprite -> sprite.checkRemovability());
+		}
 
-				// remove removables from list, layer, etc
-				removeSprites(enemies);
-				removeSprites(missiles);
-
-				// update score, health, etc
-				update();
-			}
-
-			private void processInput(Input input, long now) {
-				if (input.isExit()) {
-					Platform.exit();
-					System.exit(0);
-				} else if (input.isFire()) {
-					fire(now);
-				}
-
-			}
-
-		};
-		gameLoop.start();
+	};
+		gameLoop.start();*/
 	}
 
 	private void loadGame() {
-		playerImage = new Image(getClass().getResource("/images/alien.png").toExternalForm(), 100, 100, true, true);
-		enemyImage = new Image(getClass().getResource("/images/enemy.png").toExternalForm(), 50, 50, true, true);		
-		enemyImage1 = new Image(getClass().getResource("/images/ninja.jpg").toExternalForm(), 50, 50, true, true);
 		
-		missileImage = new Image(getClass().getResource("/images/pinapple.png").toExternalForm(), 20, 20, true, true);
-
-		input = new Input(scene);
-		input.addListeners();
-
+		playerImage = new Image(getClass().getResource("/images/royaume.jpg").toExternalForm(), 100, 100, true, true);
+		//enemyImage = new Image(getClass().getResource("/images/enemy.png").toExternalForm(), 50, 50, true, true);		
 		createPlayer();
-		createStatusBar();
 		
-		scene.setOnMousePressed(e -> {
-			player.setX(e.getX() - (player.getWidth() / 2));
-			player.setY(e.getY() - (player.getHeight() / 2));
-		});
-	}
-
-
-	public void createStatusBar() {
-		HBox statusBar = new HBox();
-		scoreMessage.setText("Score : 0          Life : " + player.getHealth());
-		statusBar.getChildren().addAll(scoreMessage);
-		statusBar.getStyleClass().add("statusBar");
-		statusBar.relocate(0, Settings.SCENE_HEIGHT);
-		statusBar.setPrefSize(Settings.SCENE_WIDTH, Settings.STATUS_BAR_HEIGHT);
-		root.getChildren().add(statusBar);
 	}
 
 	private void createPlayer() {
 		double x = (Settings.SCENE_WIDTH - playerImage.getWidth()) / 2.0;
 		double y = Settings.SCENE_HEIGHT * 0.7;
-		player = new Player(playfieldLayer, playerImage, x, y, Settings.PLAYER_HEALTH, Settings.PLAYER_DAMAGE,
-				Settings.PLAYER_SPEED, input);
+		Player = new Player(playfieldLayer , playerImage, x,y);
 		
 		player.getView().setOnMousePressed(e -> {
 			System.out.println("Click on player");
 			e.consume();
 		});
 		
-		player.getView().setOnContextMenuRequested(e -> {
+		/*player.getView().setOnContextMenuRequested(e -> {
 			ContextMenu contextMenu = new ContextMenu();
 			MenuItem low = new MenuItem("Slow");
 			MenuItem medium= new MenuItem("Regular");
@@ -161,90 +104,9 @@ public class Main extends Application {
 			high.setOnAction(evt -> player.setFireFrequencyHigh());
 			contextMenu.getItems().addAll(low, medium, high);
 			contextMenu.show(player.getView(), e.getScreenX(), e.getScreenY());
-		});
+		});*/
 	}
 
-	private void spawnEnemies(boolean random) {
-		if (random && rnd.nextInt(Settings.ENEMY_SPAWN_RANDOMNESS) != 0) {
-			return;
-		}
-		double speed = rnd.nextDouble() * 3 + 1.0;
-		double x = rnd.nextDouble() * (Settings.SCENE_WIDTH - enemyImage.getWidth());
-		double y = -enemyImage.getHeight();
-		double x1 = rnd.nextDouble() * (Settings.SCENE_WIDTH - enemyImage.getWidth());
-		double y1 = -enemyImage.getHeight();
-		
-		Enemy enemy = new Enemy(playfieldLayer, enemyImage, x, y, 1, 1, speed);
-		Enemy enemy1 = new Enemy(playfieldLayer, enemyImage1, x1, y1, 1, 1, speed);
-		enemies.add(enemy);
-		enemies.add(enemy1);
-		
-	}
-
-	private void fire(long now) {
-		if (player.canFire(now)) {
-			Missile missile = new Missile(playfieldLayer, missileImage, player.getCenterX(), player.getY(),
-					Settings.MISSILE_DAMAGE, Settings.MISSILE_SPEED);
-			missiles.add(missile);
-			player.fire(now);
-		}
-	}
-
-	private void removeSprites(List<? extends Sprite> spriteList) {
-		Iterator<? extends Sprite> iter = spriteList.iterator();
-		while (iter.hasNext()) {
-			Sprite sprite = iter.next();
-
-			if (sprite.isRemovable()) {
-				// remove from layer
-				sprite.removeFromLayer();
-				// remove from list
-				iter.remove();
-			}
-		}
-	}
-
-	private void checkCollisions() {
-		collision = false;
-
-		for (Enemy enemy : enemies) {
-			for (Missile missile : missiles) {
-				if (missile.collidesWith(enemy)) {
-					enemy.damagedBy(missile);
-					missile.remove();
-					collision = true;
-					scoreValue += 10 + (Settings.SCENE_HEIGHT - player.getY()) / 10;
-				}
-			}
-
-			if (player.collidesWith(enemy)) {
-				collision = true;
-				enemy.remove();
-				player.damagedBy(enemy);
-				if (player.getHealth() < 1)
-					gameOver();
-			}
-		}
-
-	}
-
-	private void gameOver() {
-		HBox hbox = new HBox();
-		hbox.setPrefSize(Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
-		hbox.getStyleClass().add("message");
-		Text message = new Text();
-		message.getStyleClass().add("message");
-		message.setText("Game over");
-		hbox.getChildren().add(message);
-		root.getChildren().add(hbox);
-		gameLoop.stop();
-	}
-
-	private void update() {
-		if (collision) {
-			scoreMessage.setText("Score : " + scoreValue + "          Life : " + player.getHealth());
-		}
-	}
 
 	public static void main(String[] args) {
 		launch(args);

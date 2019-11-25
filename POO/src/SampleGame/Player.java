@@ -16,6 +16,14 @@ public class Player extends Sprite {
 	private double fireFrequency;
 	private double lastFire = 0;
 	
+	
+	
+	public Player(Pane layer, Image image, double x, double y) {
+		
+		super(layer, image, x, y, health, damage);
+		init();
+	}
+
 	public Player(Pane layer, Image image, double x, double y, int health,
 			double damage, double speed, Input input) {
 
