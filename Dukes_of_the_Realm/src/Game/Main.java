@@ -25,6 +25,7 @@ public class Main extends Application {
 
 	private Image castleImg;
 	private Image neutCastleImg;
+	private Image zonesNeutres;
 	//private Image freeZoneImg;
 
 	private Player player;
@@ -106,6 +107,7 @@ public class Main extends Application {
 	private void loadGame() {
 		castleImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 100, 100, true, true);
 		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 100, 100, true, true);
+		zonesNeutres = new Image(getClass().getResource("/images/carre-vert-clair.png").toExternalForm(), 100, 100, true, true);
 		//freeZoneImg = new Image(getClass().getResource("/images/freeZone.png").toExternalForm(), 20, 20, true, true);
 
 		input = new Input(scene);
@@ -178,7 +180,8 @@ public class Main extends Application {
 		//int size = nbChateau;
 		for (int i = 0; i < 5; i++)
 		{
-			neutrals[i] = new NeutralCastle(neutCastleImg, playfieldLayer, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
+			//neutrals[i] = new NeutralCastle(neutCastleImg, playfieldLayer, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
+			neutrals[i] = new NeutralCastle(zonesNeutres, playfieldLayer, "nom");
 			nbNeutrals++;
 			NeutralCastle c = neutrals[i];
 			c.getView().setOnContextMenuRequested(e -> {
