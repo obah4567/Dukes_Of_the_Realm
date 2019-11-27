@@ -13,7 +13,7 @@ public class Castle extends Sprites{
 	private int troops[];
 	private Production production;
 	private Order order;
-	private char gate;
+	private String gate;
 
 	//Constructors
 	public Castle(Image img, Pane layer, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, int nbNeutrals, Player player)
@@ -31,6 +31,8 @@ public class Castle extends Sprites{
         this.level = 1;
         //give a name
         this.duc = Settings.DUC_NAMES[r.nextInt(22)];
+        this.order = new Order(0, 0, 0, null);
+        this.production = new Production("rien", 0);
 	}
 
     public Castle(Image img, Pane layer, String duc)
@@ -48,6 +50,8 @@ public class Castle extends Sprites{
         this.treasure = 0;
         this.level = 1;
         this.duc = duc;
+        this.order = new Order(0, 0, 0, null);
+        this.production = new Production("rien", 0);
 	}
 
 
@@ -84,7 +88,7 @@ public class Castle extends Sprites{
 		return order;
 	}
 
-	public char getGate() {
+	public String getGate() {
 		return gate;
 	}
 
@@ -120,7 +124,7 @@ public class Castle extends Sprites{
 		this.order = order;
 	}
 
-	public void setGate(char gate) {
+	public void setGate(String gate) {
 		this.gate = gate;
 	}
 

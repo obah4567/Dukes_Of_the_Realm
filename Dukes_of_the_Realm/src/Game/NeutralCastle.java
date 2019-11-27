@@ -13,11 +13,4 @@ public class NeutralCastle extends Castle{
 		super(img, layer, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
 		setDuc("baron");
 	}
-
-	public NeutralCastle(Image img, Pane layer, String duc) {
-		super(img, layer, duc);
-		// TODO Auto-generated constructor stub
-	}
-	
-	
 }

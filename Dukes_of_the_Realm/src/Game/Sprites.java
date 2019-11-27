@@ -46,13 +46,12 @@ public class Sprites {
 		this.width_image = image.getWidth();
 		this.heigth_image = image.getHeight();
 		//Coordinates
-        int x = 0, y = 0;
         Random r = new Random();
-        x = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image) ; //dimension image chateau
-        y = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image) ;
-                
-        this.dx = x;
-		this.dy = y;
+        do
+        {
+        	dx = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image) ; //dimension image chateau
+        	dy = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image) ;
+        }while(collisionWithEdge()) ;   
 		//put the image on the screen at the right coordinates
 		this.imgView.relocate(dx, dy);
 		//add to the arrayList population to handle collision
@@ -108,16 +107,16 @@ public class Sprites {
     
     public boolean collision(Castle[] ennemies, int nbEnnemies, Castle[] neutrals, int nbNeutrals, Player player)
     {
-    	if (distance(this.dx, this.dy, player.getCastle().getDx(), player.getCastle().getDy()) < player.getCastle().getWidth_Image()*1.5)
+    	if (Settings.distance(this.dx, this.dy, player.getCastle().getDx(), player.getCastle().getDy()) < player.getCastle().getWidth_Image()*1.5)
     		return true;
     	for (int i = 0; i < nbEnnemies; i ++)
     	{
-    		if (distance(this.dx, this.dy, ennemies[i].getDx(), ennemies[i].getDy()) < ennemies[i].getWidth_Image()*1.5)
+    		if (Settings.distance(this.dx, this.dy, ennemies[i].getDx(), ennemies[i].getDy()) < ennemies[i].getWidth_Image()*1.5)
     			return true;
     	}
     	for (int i = 0; i < nbNeutrals; i++)
     	{
-    		if (distance(this.dx, this.dy, neutrals[i].getDx(), neutrals[i].getDy()) < this.getWidth_Image()*1.5)
+    		if (Settings.distance(this.dx, this.dy, neutrals[i].getDx(), neutrals[i].getDy()) < this.getWidth_Image()*1.5)
     			return true;
     	}
     	return false;
@@ -127,9 +126,6 @@ public class Sprites {
     	return (this.dx < this.getWidth_Image() && this.dy < this.getHeigth_Image());
     }
     
-    public double distance(double x1, double y1, double x2, double y2)
-    {
-    	return Math.sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
-    }
+  
 
 }

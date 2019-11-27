@@ -2,7 +2,7 @@ package Game;
 
 public class Production {
 
-	private String products;
+	private String products = "rien";
 	private long timeLeft;
 	
 	public Production(String prod, int time)

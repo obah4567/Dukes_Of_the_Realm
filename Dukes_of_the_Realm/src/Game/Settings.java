@@ -27,9 +27,21 @@ public class Settings {
 	public static final int SCENE_WIDTH = 1600;
     public static final int SCENE_HEIGHT = 900;
 	public static final int STATUS_BAR_HEIGHT = 45;
+	
+	public static final String BLANK = "                  ";
+	public static final String SBLANK = "     ";
 
-	public static final char GATES[] = {'s', 'n', 'w', 'e'};
+	public static final String GATES[] = {"Sud", "Nord", "Ouest", "Est"};
 	public static final String DUC_NAMES[] = {"Ousmane", "Red", "Roger", "Arthur", "Loupi", "Jean", 
 			"Aurel", "Petit", "Gros", "Alexandre", "Gourd", "Lourd", "Laella", "Arthas", "Gaspard",
 			"Salomon", "Blaise", "Romain", "Joffrey", "Stannis", "Tywin", "Salazar"};
+	
+	  public static double distance(double x1, double y1, double x2, double y2)
+	    {
+	    	return Math.sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+	    }
+
+	
+	
+	
 }
