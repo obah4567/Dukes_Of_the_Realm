@@ -268,16 +268,16 @@ public class Main extends Application {
 				player.getCastle().getTroops()[1] + " chevaliers | " + 
 				player.getCastle().getTroops()[2] + " onagres " + Settings.SBLANK + 
 				" Produit : " +	player.getCastle().getProduction().getProducts() + 
-				Settings.SBLANK + " Ordres : " + ordres
+				Settings.SBLANK + " Ordre : " + ordres
 				+ Settings.SBLANK + " Porte : " + player.getCastle().getGate());
 	}
 	private void updateStatus(Castle ennemi)
 	{
 		String ordres = new String();
-		if (player.getCastle().getOrder().getTarget() == null)
+		if (ennemi.getOrder().getTarget() == null)
 			ordres = "Aucun";
 		else
-			ordres = player.getCastle().getOrder().getTarget().getDuc();
+			ordres = ennemi.getOrder().getTarget().getDuc();
 		stats.setText("Chateau de : " + ennemi.getDuc() + Settings.SBLANK +
 				" Niveau : " + ennemi.getLevel() + Settings.SBLANK + 
 				" trésor : " + ennemi.getTreasure() + Settings.SBLANK + 
@@ -285,12 +285,22 @@ public class Main extends Application {
 				ennemi.getTroops()[1] + " chevaliers | " + 
 				ennemi.getTroops()[2] + " onagres " + Settings.SBLANK + 
 				" Produit : " +	ennemi.getProduction().getProducts() + 
-				Settings.SBLANK + " Ordres : " + ordres 
+				Settings.SBLANK + " Ordre : " + ordres 
 				+ Settings.SBLANK + " Porte : " + ennemi.getGate());
 	}
 	private void updateStatus(NeutralCastle neutral)
 	{
+		String ordres = new String("Aucun");
 		
+		stats.setText("Chateau de : " + neutral.getDuc() + Settings.SBLANK +
+				" Niveau : " + neutral.getLevel() + Settings.SBLANK + 
+				" trésor : " + neutral.getTreasure() + Settings.SBLANK + 
+				" Troupes : " + neutral.getTroops()[0] +" piquiers | " +
+				neutral.getTroops()[1] + " chevaliers | " + 
+				neutral.getTroops()[2] + " onagres " + Settings.SBLANK + 
+				" Produit : " +	neutral.getProduction().getProducts() + 
+				Settings.SBLANK + " Ordre : " + ordres 
+				+ Settings.SBLANK + " Porte : " + neutral.getGate());
 	}
 
 	public static void main(String[] args) {

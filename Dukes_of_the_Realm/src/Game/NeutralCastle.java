@@ -11,6 +11,6 @@ public class NeutralCastle extends Castle{
 			int nbNeutrals, Player player)
 	{
 		super(img, layer, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
-		setDuc("baron");
+		setDuc("Baron lambda");
 	}
 }
