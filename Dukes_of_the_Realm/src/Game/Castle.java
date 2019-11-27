@@ -1,5 +1,5 @@
 package Game;
-import java.util.*;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -14,34 +14,23 @@ public class Castle extends Sprites{
 	private Production production;
 	private Order order;
 	private char gate;
-	//coordinates
-	private double dx;
-	private double dy;
-
-	private double width_image;
-	private double heigth_image;
 
 	//Constructors
-	public Castle(Image img, Pane layer)
+	public Castle(Image img, Pane layer, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, Player player)
 	{
-		super(layer, img);
+		super(layer, img, ennemies, nbEnnemies, neutrals, player);
 		Random r = new Random();
-        //coordonates
-		this.dx = r.nextInt(Settings.SCENE_WIDTH - 2*(int)this.width_image) + 2*(int)this.width_image; //dimension image chateau
-		this.dy = r.nextInt(Settings.SCENE_HEIGHT - 2*(int)this.heigth_image) + 2*(int)this.heigth_image;
-        //size image
-		this.width_image = img.getWidth();
-		this.heigth_image = img.getHeight();
+        
         //where is the gate
         this.gate = Settings.GATES[r.nextInt(4)];
+        //army
         this.troops = new int[3];
         this.troops[0] = 0; this.troops[1] = 0; troops[2] = 0;
+        
         this.treasure = 0;
         this.level = 1;
+        //give a name
         this.duc = Settings.DUC_NAMES[r.nextInt(5)];
-        this.imgView.relocate(dx, dy);
-        
-		addToLayer();
 	}
 
     public Castle(Image img, Pane layer, String duc)
@@ -49,15 +38,9 @@ public class Castle extends Sprites{
 		super(layer, img);
 		Random r = new Random();
         
-        //size image
-		this.width_image = img.getWidth();
-		this.heigth_image = img.getHeight();
-		//coordonates
-		//int x = 0, y = 0;
-		this.dx = r.nextInt(Settings.SCENE_WIDTH - 2*(int)this.width_image) + 2*(int)this.width_image; //dimension image chateau
-		this.dy = r.nextInt(Settings.SCENE_HEIGHT - 2*(int)this.heigth_image) + 2*(int)this.heigth_image;
         //where is the gate
         this.gate = Settings.GATES[r.nextInt(4)];
+        //army
         this.troops = new int[3];
         this.troops[0] = 0; 
         this.troops[1] = 0; 
@@ -65,9 +48,6 @@ public class Castle extends Sprites{
         this.treasure = 0;
         this.level = 1;
         this.duc = duc;
-        this.imgView.relocate(dx, dy);
-
-		addToLayer();
 	}
 
 
@@ -108,14 +88,6 @@ public class Castle extends Sprites{
 		return gate;
 	}
 
-	public double getDx() {
-		return dx;
-	}
-
-	public double getDy() {
-		return dy;
-	}
-
 	public void setImgView(ImageView imgView) {
 		this.imgView = imgView;
 	}
@@ -150,14 +122,6 @@ public class Castle extends Sprites{
 
 	public void setGate(char gate) {
 		this.gate = gate;
-	}
-
-	public void setDx(double dx) {
-		this.dx = dx;
-	}
-
-	public void setDy(double dy) {
-		this.dy = dy;
 	}
 
 

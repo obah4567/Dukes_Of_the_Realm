@@ -28,13 +28,16 @@ public class Main extends Application {
 	//private Image freeZoneImg;
 
 	private Player player;
-	private Castle[] ennemies;
+	private Castle[] ennemies = new Castle[5];
+	private int nbEnnemies = 0;
 	private Castle[] neutrals;
-	//private List<NeutralCastle> neutrals = new ArrayList<>();
+	/*private ArrayList<Sprites> population = new ArrayList<Sprites>();
+	private Iterator<Sprites> it = population.iterator();*/
+	
 	
 	private Text scoreMessage = new Text();
 	private int scoreValue = 0;
-	private boolean collision = false;
+
 
 	private Scene scene;
 	private Input input;
@@ -155,7 +158,8 @@ public class Main extends Application {
 		//int size = nbChateau;
 		for (int i = 0; i < 5; i++)
 		{
-			ennemies[i] = new Castle(castleImg, playfieldLayer);
+			ennemies[i] = new Castle(castleImg, playfieldLayer, ennemies, nbEnnemies, neutrals, player);
+			nbEnnemies++;
 			/*static int n = i;
 			ennemies[i].getView().setOnContextMenuRequested(e -> {
 				ContextMenu contextMenu = new ContextMenu();
