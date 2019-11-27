@@ -52,6 +52,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		root = new Group();
+		primaryStage.setTitle("Dukes of the Realm");
 		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT + Settings.STATUS_BAR_HEIGHT);
 		scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
 		primaryStage.setScene(scene);
@@ -104,7 +105,7 @@ public class Main extends Application {
 
 	private void loadGame() {
 		castleImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 100, 100, true, true);
-		neutCastleImg = new Image(getClass().getResource("/images/neutCastle3.png").toExternalForm(), 90, 90, true, true);
+		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 100, 100, true, true);
 		//freeZoneImg = new Image(getClass().getResource("/images/freeZone.png").toExternalForm(), 20, 20, true, true);
 
 		input = new Input(scene);
