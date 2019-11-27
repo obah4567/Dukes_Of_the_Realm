@@ -3,7 +3,11 @@ package Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+
+import java.util.ArrayList;
 import java.util.Random;
+
+import com.sun.javafx.scene.control.skin.VirtualFlow.ArrayLinkedList;
 public class Castle extends Sprites{
 
 	//game structures
@@ -14,6 +18,8 @@ public class Castle extends Sprites{
 	private Production production;
 	private Order order;
 	private char gate;
+	//
+	private Troops troupes;
 
 	//Constructors
 	public Castle(Image img, Pane layer, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, int nbNeutrals, Player player)
@@ -124,6 +130,54 @@ public class Castle extends Sprites{
 		this.gate = gate;
 	}
 
+	///////
+	
+	public boolean prod_Cours() {
+		long tours = production.getTimeLeft()-1;
+		int cout = troupes.getProductionCost();
+		
+		return ((production.getTimeLeft() > 0 || tours >= 0) && cout >=0);
+	}
+	
+	public long revenuCastel() {
+		
+		return (getLevel()* 10) / production.getTimeLeft();
+	}
+	
+	public void prod() {
+		
+		Troops[] troope = new Troops[100];
+		ArrayList<Troops> troupe = new ArrayList<Troops>();
+		
+		long tours = production.getTimeLeft();
+		int cout_de_Prod = troupes.getProductionCost();
+		
+		if (tours > 0) {
+			revenuCastel();
+			tours -=1;
+		}
+		cout_de_Prod += 1; 
+		
+		if (production.getTimeLeft() >= 5  && troupes.getProductionCost() >= 100) {
+			
+			for (int i = 0; i< troupes.getProductionCost(); i=i+100) {
+				
+				if (troupes.getProductionCost() >= 100 && troupes.getProductionCost() < 500) {
+					troope[i] = new Pikeman();
+				}
+				
+				if (troupes.getProductionCost() >= 500 && troupes.getProductionCost() < 1000) {
+					troope[i] = new Knights();
+				}
+				if (troupes.getProductionCost() >= 1000) {
+					troope[i] = new Onager();
+				}
+				//tours = tours -1;
+				
+			}
+			
+		}
+	}
 
 
 }
