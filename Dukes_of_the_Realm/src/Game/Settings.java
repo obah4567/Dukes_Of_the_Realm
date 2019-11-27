@@ -29,5 +29,7 @@ public class Settings {
 	public static final int STATUS_BAR_HEIGHT = 45;
 
 	public static final char GATES[] = {'s', 'n', 'w', 'e'};
-	public static final String DUC_NAMES[] = {"Ousmane", "Red", "Roger", "Arthur", "Loupi"};
+	public static final String DUC_NAMES[] = {"Ousmane", "Red", "Roger", "Arthur", "Loupi", "Jean", 
+			"Aurel", "Petit", "Gros", "Alexandre", "Gourd", "Lourd", "Laella", "Arthas", "Gaspard",
+			"Salomon", "Blaise", "Romain", "Joffrey", "Stannis", "Tywin", "Salazar"};
 }

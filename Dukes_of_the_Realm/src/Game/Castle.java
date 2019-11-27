@@ -7,7 +7,7 @@ import java.util.Random;
 public class Castle extends Sprites{
 
 	//game structures
-	private String duc;
+	protected String duc;
 	private int treasure;
 	private int level;
 	private int troops[];
@@ -16,9 +16,9 @@ public class Castle extends Sprites{
 	private char gate;
 
 	//Constructors
-	public Castle(Image img, Pane layer, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, Player player)
+	public Castle(Image img, Pane layer, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, int nbNeutrals, Player player)
 	{
-		super(layer, img, ennemies, nbEnnemies, neutrals, player);
+		super(layer, img, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
 		Random r = new Random();
         
         //where is the gate
@@ -30,7 +30,7 @@ public class Castle extends Sprites{
         this.treasure = 0;
         this.level = 1;
         //give a name
-        this.duc = Settings.DUC_NAMES[r.nextInt(5)];
+        this.duc = Settings.DUC_NAMES[r.nextInt(22)];
 	}
 
     public Castle(Image img, Pane layer, String duc)

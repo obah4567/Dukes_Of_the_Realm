@@ -7,8 +7,10 @@ import javafx.scene.layout.Pane;
 
 public class NeutralCastle extends Castle{
 
-	public NeutralCastle(Image img, Pane layer, int dx, int dy)
+	public NeutralCastle(Image img, Pane layer, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, 
+			int nbNeutrals, Player player)
 	{
-		super(img, layer);
+		super(img, layer, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
+		setDuc("baron");
 	}
 }

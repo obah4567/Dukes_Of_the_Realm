@@ -16,7 +16,8 @@ public class Sprites {
 	private double dy;
 
 
-    public Sprites(Pane layer, Image image, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, Player player)
+    public Sprites(Pane layer, Image image, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, 
+    		int nbNeutrals, Player player)
     {
         this.layer = layer;
         this.imgView = new ImageView(image);
@@ -28,9 +29,9 @@ public class Sprites {
         Random r = new Random();
         do 
         {
-        	dx = r.nextInt(Settings.SCENE_WIDTH - 2*(int)this.width_image) + 2*(int)this.width_image; //dimension image chateau
-        	dy = r.nextInt(Settings.SCENE_HEIGHT - 2*(int)this.heigth_image) + 2*(int)this.heigth_image;
-        }while (this.collision(ennemies, nbEnnemies, neutrals, player));
+        	dx = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image); //dimension image chateau
+        	dy = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image);
+        }while (this.collision(ennemies, nbEnnemies, neutrals, nbNeutrals, player) || collisionWithEdge());
         
 		//put the image on the screen at the right coordinates
 		this.imgView.relocate(dx, dy);
@@ -47,8 +48,8 @@ public class Sprites {
 		//Coordinates
         int x = 0, y = 0;
         Random r = new Random();
-        x = r.nextInt(Settings.SCENE_WIDTH - 2*(int)this.width_image) + 2*(int)this.width_image; //dimension image chateau
-        y = r.nextInt(Settings.SCENE_HEIGHT - 2*(int)this.heigth_image) + 2*(int)this.heigth_image;
+        x = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image) ; //dimension image chateau
+        y = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image) ;
                 
         this.dx = x;
 		this.dy = y;
@@ -105,7 +106,7 @@ public class Sprites {
         this.layer.getChildren().add(this.imgView);
     }
     
-    public boolean collision(Castle[] ennemies, int nbEnnemies, Castle[] neutrals, Player player)
+    public boolean collision(Castle[] ennemies, int nbEnnemies, Castle[] neutrals, int nbNeutrals, Player player)
     {
     	if (distance(this.dx, this.dy, player.getCastle().getDx(), player.getCastle().getDy()) < player.getCastle().getWidth_Image()*1.5)
     		return true;
@@ -114,7 +115,16 @@ public class Sprites {
     		if (distance(this.dx, this.dy, ennemies[i].getDx(), ennemies[i].getDy()) < ennemies[i].getWidth_Image()*1.5)
     			return true;
     	}
+    	for (int i = 0; i < nbNeutrals; i++)
+    	{
+    		if (distance(this.dx, this.dy, neutrals[i].getDx(), neutrals[i].getDy()) < this.getWidth_Image()*1.5)
+    			return true;
+    	}
     	return false;
+    }
+    public boolean collisionWithEdge()
+    {
+    	return (this.dx < this.getWidth_Image() && this.dy < this.getHeigth_Image());
     }
     
     public double distance(double x1, double y1, double x2, double y2)

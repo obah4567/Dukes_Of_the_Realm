@@ -1,9 +1,9 @@
 package Game;
 
-import java.util.ArrayList;
+/*import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
+import java.util.Random;*/
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -19,7 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 public class Main extends Application {
-	private Random rnd = new Random();
+	//private Random rnd = new Random();
 
 	private Pane playfieldLayer;
 
@@ -30,7 +30,8 @@ public class Main extends Application {
 	private Player player;
 	private Castle[] ennemies = new Castle[5];
 	private int nbEnnemies = 0;
-	private Castle[] neutrals;
+	private NeutralCastle[] neutrals = new NeutralCastle[5];
+	private int nbNeutrals = 0;
 	/*private ArrayList<Sprites> population = new ArrayList<Sprites>();
 	private Iterator<Sprites> it = population.iterator();*/
 	
@@ -103,7 +104,7 @@ public class Main extends Application {
 
 	private void loadGame() {
 		castleImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 100, 100, true, true);
-		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 20, 20, true, true);
+		neutCastleImg = new Image(getClass().getResource("/images/neutCastle3.png").toExternalForm(), 90, 90, true, true);
 		//freeZoneImg = new Image(getClass().getResource("/images/freeZone.png").toExternalForm(), 20, 20, true, true);
 
 		input = new Input(scene);
@@ -111,6 +112,7 @@ public class Main extends Application {
 
 		createPlayer();
 		generateEnnemies();
+		generateNeutrals();
 		//createStatusBar();
 
 
@@ -132,8 +134,7 @@ public class Main extends Application {
 	}
 
 	private void createPlayer() {
-		/*double x = (Settings.SCENE_WIDTH - playerImage.getWidth()) / 2.0;
-		double y = Settings.SCENE_HEIGHT * 0.7;*/
+	
 		Castle c = new Castle(castleImg, playfieldLayer, "Moi");
 		player = new Player(input, c);
 
@@ -154,22 +155,40 @@ public class Main extends Application {
 	}
 	private void generateEnnemies()
 	{
-		Castle[] ennemies = new Castle[5];
 		//int size = nbChateau;
 		for (int i = 0; i < 5; i++)
 		{
-			ennemies[i] = new Castle(castleImg, playfieldLayer, ennemies, nbEnnemies, neutrals, player);
+			ennemies[i] = new Castle(castleImg, playfieldLayer, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
 			nbEnnemies++;
-			/*static int n = i;
-			ennemies[i].getView().setOnContextMenuRequested(e -> {
+			Castle c = ennemies[i];
+			c.getView().setOnContextMenuRequested(e -> {
 				ContextMenu contextMenu = new ContextMenu();
 				MenuItem low = new MenuItem("Slow");
 				MenuItem medium= new MenuItem("Regular");
 				MenuItem high= new MenuItem("Fast");
 
 				contextMenu.getItems().addAll(low, medium, high);
-				contextMenu.show(ennemies[i].getView(), e.getScreenX(), e.getScreenY());
-			});*/
+				contextMenu.show(c.getView(), e.getScreenX(), e.getScreenY());
+			});
+			}
+		}
+	private void generateNeutrals()
+	{
+		//int size = nbChateau;
+		for (int i = 0; i < 5; i++)
+		{
+			neutrals[i] = new NeutralCastle(neutCastleImg, playfieldLayer, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
+			nbNeutrals++;
+			NeutralCastle c = neutrals[i];
+			c.getView().setOnContextMenuRequested(e -> {
+				ContextMenu contextMenu = new ContextMenu();
+				MenuItem low = new MenuItem("Slow");
+				MenuItem medium= new MenuItem("Regular");
+				MenuItem high= new MenuItem("Fast");
+
+				contextMenu.getItems().addAll(low, medium, high);
+				contextMenu.show(c.getView(), e.getScreenX(), e.getScreenY());
+			});
 			}
 		}
 
