@@ -131,15 +131,15 @@ public class Main extends Application {
 
 		scene.setOnMousePressed(e -> {
 			if (Settings.distance(player.getCastle().getDx(), player.getCastle().getDy(), 
-					e.getX(), e.getY()) < player.getCastle().getWidth_Image()*1.5)
+					e.getX(), e.getY()) < player.getCastle().getWidth_Image())
 				updateStatus(player);
 			for (int i = 0; i < 5; i ++)
 			{
 				if (Settings.distance(ennemies[i].getDx(), ennemies[i].getDy(), 
-						e.getX(), e.getY()) < ennemies[i].getWidth_Image()*1.5)
+						e.getX(), e.getY()) < ennemies[i].getWidth_Image())
 					updateStatus(ennemies[i]);
 				if (Settings.distance(neutrals[i].getDx(), neutrals[i].getDy(), 
-						e.getX(), e.getY()) < neutrals[i].getWidth_Image()*1.5)
+						e.getX(), e.getY()) < neutrals[i].getWidth_Image())
 					updateStatus(neutrals[i]);
 			}
 			//player.setX(e.getX() - (player.getWidth() / 2));
@@ -269,7 +269,7 @@ public class Main extends Application {
 				player.getCastle().getTroops()[2] + " onagres " + Settings.SBLANK + 
 				" Produit : " +	player.getCastle().getProduction().getProducts() + 
 				Settings.SBLANK + " Ordres : " + ordres
-				+ Settings.SBLANK + " Porte : à " + " Ouest ");
+				+ Settings.SBLANK + " Porte : " + player.getCastle().getGate());
 	}
 	private void updateStatus(Castle ennemi)
 	{
@@ -286,7 +286,7 @@ public class Main extends Application {
 				ennemi.getTroops()[2] + " onagres " + Settings.SBLANK + 
 				" Produit : " +	ennemi.getProduction().getProducts() + 
 				Settings.SBLANK + " Ordres : " + ordres 
-				+ Settings.SBLANK + " Porte : à " + " Ouest ");
+				+ Settings.SBLANK + " Porte : " + ennemi.getGate());
 	}
 	private void updateStatus(NeutralCastle neutral)
 	{
