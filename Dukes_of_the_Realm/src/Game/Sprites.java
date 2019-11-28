@@ -38,7 +38,7 @@ public class Sprites {
    
         addToLayer();
     }
-    public Sprites(Pane layer, Image image)
+    public Sprites(Pane layer, Image image) //Constructor for player
     {
         this.layer = layer;
         this.imgView = new ImageView(image);
@@ -104,6 +104,9 @@ public class Sprites {
 	public void addToLayer() {
         this.layer.getChildren().add(this.imgView);
     }
+	 public void removeFromLayer() {
+	        this.layer.getChildren().remove(this.imgView);
+	}
     
     public boolean collision(ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, 
     		 Player player, ArrayList<Sprites> freeZones)
@@ -125,8 +128,7 @@ public class Sprites {
     	size = freeZones.size();
     	for (int i = 0; i < size; i++)
     	{
-    		Sprites s = freeZones.get(i);
-    		if (Settings.distance(this.dx, this.dy, s.getDx(), s.getDy()) < this.getWidth_Image()*1.5)
+    		if (Settings.distance(this.dx, this.dy, freeZones.get(i).getDx(), freeZones.get(i).getDy()) < this.getWidth_Image()*1.5)
     			return true;
     	}
     	return false;

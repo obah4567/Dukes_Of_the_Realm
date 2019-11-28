@@ -31,7 +31,7 @@ public class Main extends Application {
 	
 	private Castle lastCastle = null;
 	private NeutralCastle lastNeutral = null;
-
+	private boolean option = false;
 	
 	/*private Castle[] ennemies = new Castle[5];
 	private int nbEnnemies = 0;
@@ -42,13 +42,9 @@ public class Main extends Application {
 	private ArrayList<NeutralCastle> neutrals = new ArrayList<NeutralCastle>();
 	private ArrayList<Sprites> freeZones = new ArrayList<Sprites>();
 
-	
-	
-	
-	
 	private Text stats = new Text();
-	
-
+	private Text options = new Text();
+	private HBox optionsBar;
 
 	private Scene scene;
 	private Input input;
@@ -115,7 +111,7 @@ public class Main extends Application {
 	}
 
 	private void loadGame() {
-		castlePlayerImg = new Image(getClass().getResource("/images/castlePlayer.png").toExternalForm(), 100, 100, true, true);
+		castlePlayerImg = new Image(getClass().getResource("/images/castlePlayer.png").toExternalForm(), 200, 200, true, true);
 		castleImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 100, 100, true, true);
 		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 80, 80, true, true);
 		freeZoneImg = new Image(getClass().getResource("/images/freeZone.png").toExternalForm(), 20, 20, true, true);
@@ -134,9 +130,21 @@ public class Main extends Application {
 			if (Settings.distance(player.getCastle().getDx(), player.getCastle().getDy(), 
 					e.getX(), e.getY()) < player.getCastle().getWidth_Image())
 			{
+				if (lastCastle == player.getCastle())
+				{
+					internOptions(player.getCastle());
+					option = true;
+				}
+				else
+				{
+					lastCastle = player.getCastle();
+					lastNeutral = null;
+					option = false;
+					if (optionsBar != null)
+						optionsBar.getChildren().remove(optionsBar);
+					optionsBar = null;
+				}
 				updateStatus(player.getCastle());
-				lastCastle = player.getCastle();
-				lastNeutral = null;
 			}
 			else
 			{
@@ -146,9 +154,21 @@ public class Main extends Application {
 					if (Settings.distance(intermediaire.getDx(), intermediaire.getDy(), 
 							e.getX(), e.getY()) < intermediaire.getWidth_Image())
 					{
+						if (lastCastle == intermediaire)
+						{
+							option = true;
+							externOptions(intermediaire);
+						}
+						else
+						{
+							lastCastle = intermediaire;
+							lastNeutral = null;
+							option = false;
+							if (optionsBar != null)
+								optionsBar.getChildren().remove(optionsBar);
+							optionsBar = null;
+						}
 						updateStatus(intermediaire);
-						lastCastle = intermediaire;
-						lastNeutral = null;
 					}
 					
 					NeutralCastle intermediaire2 = neutrals.get(i);
@@ -156,8 +176,21 @@ public class Main extends Application {
 							e.getX(), e.getY()) < intermediaire2.getWidth_Image())
 					{
 						updateStatus(intermediaire2);
-						lastNeutral = intermediaire2;
-						lastCastle = null;
+						if (lastNeutral == intermediaire2)
+						{
+							option = true;
+							externOptions(intermediaire2);
+						}
+						else
+							{
+							lastNeutral = intermediaire2;
+							lastCastle = null;
+							option = false;
+							if (optionsBar != null)
+								playfieldLayer.getChildren().remove(optionsBar);
+							optionsBar = null;
+							}
+						updateStatus(intermediaire2);
 					}
 				}
 					//if (Settings.distance(neutrals[i].getDx(), neutrals[i].getDy(), 
@@ -358,6 +391,30 @@ public class Main extends Application {
 				" Produit : " +	neutral.getProduction().getProducts() + 
 				Settings.SBLANK + " Ordre : " + ordres 
 				+ Settings.SBLANK + " Porte : " + neutral.getGate());
+	}
+	public void internOptions(Castle c)
+	{
+		optionsBar = new HBox();
+		options.setText("Produire des unités");
+		optionsBar.getChildren().addAll(options);
+		optionsBar.getStyleClass().add("statusBar");
+		optionsBar.relocate(c.getDx() + c.getWidth_Image(), c.getDy());
+		optionsBar.setPrefSize(c.getWidth_Image(), c.getHeigth_Image()/3);
+		root.getChildren().add(optionsBar);
+	}
+	public void externOptions(Castle c)
+	{
+		optionsBar = new HBox();
+		options.setText("Attaquer");
+		optionsBar.getChildren().addAll(options);
+		optionsBar.getStyleClass().add("statusBar");
+		optionsBar.relocate(c.getDx() + c.getWidth_Image(), c.getDy());
+		optionsBar.setPrefSize(c.getWidth_Image(), c.getHeigth_Image()/3);
+		root.getChildren().add(optionsBar);
+	}
+	public void externOptions(Sprites fz)
+	{
+		
 	}
 
 	public static void main(String[] args) {

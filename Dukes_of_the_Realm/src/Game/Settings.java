@@ -49,7 +49,7 @@ public class Settings {
 	
 	public static final int NB_NEUT_CASTLE = 5;
 	public static final int NB_ENN_CASTLE = 5;
-	public static final int NB_FREE_ZONES = 7;
+	public static final int NB_FREE_ZONES = 10;
 	
 	
 	  public static double distance(double x1, double y1, double x2, double y2)
