@@ -16,8 +16,8 @@ public class Sprites {
 	private double dy;
 
 
-    public Sprites(Pane layer, Image image, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, 
-    		int nbNeutrals, Player player)
+    public Sprites(Pane layer, Image image, ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, 
+    		 Player player, ArrayList<Sprites> freeZones)
     {
         this.layer = layer;
         this.imgView = new ImageView(image);
@@ -31,14 +31,14 @@ public class Sprites {
         {
         	dx = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image); //dimension image chateau
         	dy = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image);
-        }while (this.collision(ennemies, nbEnnemies, neutrals, nbNeutrals, player) || collisionWithEdge());
+        }while (this.collision(ennemies, neutrals, player, freeZones) || collisionWithEdge());
         
 		//put the image on the screen at the right coordinates
 		this.imgView.relocate(dx, dy);
    
         addToLayer();
     }
-    public Sprites(Pane layer, Image image)
+    public Sprites(Pane layer, Image image) //Constructor for player
     {
         this.layer = layer;
         this.imgView = new ImageView(image);
@@ -46,13 +46,12 @@ public class Sprites {
 		this.width_image = image.getWidth();
 		this.heigth_image = image.getHeight();
 		//Coordinates
-        int x = 0, y = 0;
         Random r = new Random();
-        x = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image) ; //dimension image chateau
-        y = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image) ;
-                
-        this.dx = x;
-		this.dy = y;
+        do
+        {
+        	dx = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image) ; //dimension image chateau
+        	dy = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image) ;
+        }while(collisionWithEdge()) ;   
 		//put the image on the screen at the right coordinates
 		this.imgView.relocate(dx, dy);
 		//add to the arrayList population to handle collision
@@ -105,19 +104,31 @@ public class Sprites {
 	public void addToLayer() {
         this.layer.getChildren().add(this.imgView);
     }
+	 public void removeFromLayer() {
+	        this.layer.getChildren().remove(this.imgView);
+	}
     
-    public boolean collision(Castle[] ennemies, int nbEnnemies, Castle[] neutrals, int nbNeutrals, Player player)
+    public boolean collision(ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, 
+    		 Player player, ArrayList<Sprites> freeZones)
     {
-    	if (distance(this.dx, this.dy, player.getCastle().getDx(), player.getCastle().getDy()) < player.getCastle().getWidth_Image()*1.5)
+    	if (Settings.distance(this.dx, this.dy, player.getCastle().getDx(), player.getCastle().getDy()) < player.getCastle().getWidth_Image()*1.5)
     		return true;
-    	for (int i = 0; i < nbEnnemies; i ++)
+    	int size = ennemies.size();
+    	for (int i = 0; i < size; i ++)
     	{
-    		if (distance(this.dx, this.dy, ennemies[i].getDx(), ennemies[i].getDy()) < ennemies[i].getWidth_Image()*1.5)
+    		if (Settings.distance(this.dx, this.dy, ennemies.get(i).getDx(), ennemies.get(i).getDy()) < ennemies.get(i).getWidth_Image()*1.5)
     			return true;
     	}
-    	for (int i = 0; i < nbNeutrals; i++)
+    	size = neutrals.size();
+    	for (int i = 0; i < size; i++)
     	{
-    		if (distance(this.dx, this.dy, neutrals[i].getDx(), neutrals[i].getDy()) < this.getWidth_Image()*1.5)
+    		if (Settings.distance(this.dx, this.dy, neutrals.get(i).getDx(), neutrals.get(i).getDy()) < this.getWidth_Image()*1.5)
+    			return true;
+    	}
+    	size = freeZones.size();
+    	for (int i = 0; i < size; i++)
+    	{
+    		if (Settings.distance(this.dx, this.dy, freeZones.get(i).getDx(), freeZones.get(i).getDy()) < this.getWidth_Image()*1.5)
     			return true;
     	}
     	return false;
@@ -127,9 +138,6 @@ public class Sprites {
     	return (this.dx < this.getWidth_Image() && this.dy < this.getHeigth_Image());
     }
     
-    public double distance(double x1, double y1, double x2, double y2)
-    {
-    	return Math.sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
-    }
+  
 
 }

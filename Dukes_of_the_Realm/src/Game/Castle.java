@@ -3,40 +3,38 @@ package Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-
-import java.util.ArrayList;
-import java.util.Random;
-
-import com.sun.javafx.scene.control.skin.VirtualFlow.ArrayLinkedList;
+import java.util.*;
 public class Castle extends Sprites{
 
 	//game structures
 	protected String duc;
 	private int treasure;
 	private int level;
-	private int troops[];
+	private int troops[] = new int[3];
 	private Production production;
 	private Order order;
-	private char gate;
-	//
+	private String gate;
+	
 	private Troops troupes;
 
 	//Constructors
-	public Castle(Image img, Pane layer, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, int nbNeutrals, Player player)
+	public Castle(Image img, Pane layer, ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, Player player, ArrayList<Sprites> freeZones)
 	{
-		super(layer, img, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
+		super(layer, img, ennemies, neutrals, player, freeZones);
 		Random r = new Random();
         
         //where is the gate
         this.gate = Settings.GATES[r.nextInt(4)];
         //army
         this.troops = new int[3];
-        this.troops[0] = 0; this.troops[1] = 0; troops[2] = 0;
+        this.troops[0] = Settings.NB_PIK_DUC; this.troops[1] = Settings.NB_KNI_DUC; troops[2] = Settings.NB_ONA_DUC;
         
         this.treasure = 0;
         this.level = 1;
         //give a name
         this.duc = Settings.DUC_NAMES[r.nextInt(22)];
+        this.order = new Order(0, 0, 0, null);
+        this.production = new Production("rien", 0);
 	}
 
     public Castle(Image img, Pane layer, String duc)
@@ -48,12 +46,12 @@ public class Castle extends Sprites{
         this.gate = Settings.GATES[r.nextInt(4)];
         //army
         this.troops = new int[3];
-        this.troops[0] = 0; 
-        this.troops[1] = 0; 
-        troops[2] = 0;
-        this.treasure = 0;
+        this.troops[0] = Settings.NB_PIK_DUC; this.troops[1] = Settings.NB_KNI_DUC; this.troops[2] = Settings.NB_ONA_DUC;
+        this.treasure = 50;
         this.level = 1;
         this.duc = duc;
+        this.order = new Order(0, 0, 0, null);
+        this.production = new Production("rien", 0);
 	}
 
 
@@ -90,7 +88,7 @@ public class Castle extends Sprites{
 		return order;
 	}
 
-	public char getGate() {
+	public String getGate() {
 		return gate;
 	}
 
@@ -114,8 +112,10 @@ public class Castle extends Sprites{
 		this.level = level;
 	}
 
-	public void setTroops(int[] troops) {
-		this.troops = troops;
+	public void setTroops(int pik, int kni, int ona) {
+		this.troops[0] = pik;
+		this.troops[1] = kni;
+		this.troops[2] = ona;
 	}
 
 	public void setProduction(Production production) {
@@ -126,11 +126,10 @@ public class Castle extends Sprites{
 		this.order = order;
 	}
 
-	public void setGate(char gate) {
+	public void setGate(String gate) {
 		this.gate = gate;
 	}
-
-	///////
+	
 	
 	public boolean prod_Cours() {
 		long tours = production.getTimeLeft()-1;
@@ -178,6 +177,7 @@ public class Castle extends Sprites{
 			
 		}
 	}
+
 
 
 }
