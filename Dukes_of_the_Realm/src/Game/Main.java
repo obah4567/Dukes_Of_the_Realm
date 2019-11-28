@@ -1,9 +1,8 @@
 package Game;
 
-/*import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;*/
+import java.util.ArrayList;
+//import java.util.List;
+
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -23,33 +22,32 @@ public class Main extends Application {
 
 	private Pane playfieldLayer;
 
+	private Image castlePlayerImg;
 	private Image castleImg;
 	private Image neutCastleImg;
-	//private Image freeZoneImg;
+	private Image freeZoneImg;
 
 	private Player player;
 	
-	private Castle[] ennemies = new Castle[5];
+	private Castle lastCastle = null;
+	private NeutralCastle lastNeutral = null;
+
+	
+	/*private Castle[] ennemies = new Castle[5];
 	private int nbEnnemies = 0;
 	private NeutralCastle[] neutrals = new NeutralCastle[5];
-	private int nbNeutrals = 0;
-	private Sprites[] freeZones = new Sprites[5];
-	private int nbfreeZones = 0;
+	private int nbNeutrals = 0;*/
 	
-	/* 
-	 
 	private ArrayList<Castle> ennemies = new ArrayList<Castle>();
-	private Iterator<Castle> it1 = ennemies.iterator();
 	private ArrayList<NeutralCastle> neutrals = new ArrayList<NeutralCastle>();
-	private Iterator<NeutralCastle> it2 = neutrals.iterator();
 	private ArrayList<Sprites> freeZones = new ArrayList<Sprites>();
-	private Iterator<Sprites> it3 = freeZones.iterator();
+
 	
-	*/
+	
 	
 	
 	private Text stats = new Text();
-	private int scoreValue = 0;
+	
 
 
 	private Scene scene;
@@ -57,6 +55,7 @@ public class Main extends Application {
 	private AnimationTimer gameLoop;
 	private boolean pause = false;
 	private long lastPause = 0;
+	private long lastTurn = 0;
 
 	Group root;
 
@@ -98,7 +97,7 @@ public class Main extends Application {
 
 				}
 				// update score, health, etc
-				update();
+				update(now);
 			}
 
 			private void processInput(Input input, long now) {
@@ -116,9 +115,10 @@ public class Main extends Application {
 	}
 
 	private void loadGame() {
+		castlePlayerImg = new Image(getClass().getResource("/images/castlePlayer.png").toExternalForm(), 100, 100, true, true);
 		castleImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 100, 100, true, true);
 		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 80, 80, true, true);
-		//freeZoneImg = new Image(getClass().getResource("/images/freeZone.png").toExternalForm(), 20, 20, true, true);
+		freeZoneImg = new Image(getClass().getResource("/images/freeZone.png").toExternalForm(), 20, 20, true, true);
 
 		input = new Input(scene);
 		input.addListeners();
@@ -126,33 +126,61 @@ public class Main extends Application {
 		createPlayer();
 		generateEnnemies();
 		generateNeutrals();
+		generateFreeZones();
 		createStatusBar();
 
 
 		scene.setOnMousePressed(e -> {
 			if (Settings.distance(player.getCastle().getDx(), player.getCastle().getDy(), 
 					e.getX(), e.getY()) < player.getCastle().getWidth_Image())
-				updateStatus(player);
-			for (int i = 0; i < 5; i ++)
 			{
-				if (Settings.distance(ennemies[i].getDx(), ennemies[i].getDy(), 
-						e.getX(), e.getY()) < ennemies[i].getWidth_Image())
-					updateStatus(ennemies[i]);
-				if (Settings.distance(neutrals[i].getDx(), neutrals[i].getDy(), 
-						e.getX(), e.getY()) < neutrals[i].getWidth_Image())
-					updateStatus(neutrals[i]);
+				updateStatus(player.getCastle());
+				lastCastle = player.getCastle();
+				lastNeutral = null;
 			}
-			//player.setX(e.getX() - (player.getWidth() / 2));
-			//player.setY(e.getY() - (player.getHeight() / 2));
-		});
+			else
+			{
+				for (int i = 0; i < 5/*or ennemies.size*/; i++)
+				{
+					Castle intermediaire = ennemies.get(i);
+					if (Settings.distance(intermediaire.getDx(), intermediaire.getDy(), 
+							e.getX(), e.getY()) < intermediaire.getWidth_Image())
+					{
+						updateStatus(intermediaire);
+						lastCastle = intermediaire;
+						lastNeutral = null;
+					}
+					
+					NeutralCastle intermediaire2 = neutrals.get(i);
+					if (Settings.distance(intermediaire2.getDx(), intermediaire2.getDy(), 
+							e.getX(), e.getY()) < intermediaire2.getWidth_Image())
+					{
+						updateStatus(intermediaire2);
+						lastNeutral = intermediaire2;
+						lastCastle = null;
+					}
+				}
+					//if (Settings.distance(neutrals[i].getDx(), neutrals[i].getDy(), 
+							//e.getX(), e.getY()) < neutrals[i].getWidth_Image())//ebauche de bouton clear
+				}
+			});
+		}
+	
+	public void clear()
+	{
+		stats.setText(" ");
 	}
 
 
+	//Creation structures
+	
+	
 	public void createStatusBar() {
 		HBox statusBar = new HBox();
-		stats.setText("Chateau de : " + Settings.BLANK + " Niveau : " + Settings.BLANK +
+		/*stats.setText("Chateau de : " + Settings.BLANK + " Niveau : " + Settings.BLANK +
 				" trésor : " + Settings.BLANK + " Troupes : " + Settings.BLANK + " Produit : " +
 				Settings.BLANK + " Ordres : " + Settings.BLANK + " Porte : " + Settings.BLANK);
+		*/
 		statusBar.getChildren().addAll(stats);
 		statusBar.getStyleClass().add("statusBar");
 		statusBar.relocate(0, Settings.SCENE_HEIGHT);
@@ -160,15 +188,16 @@ public class Main extends Application {
 		root.getChildren().add(statusBar);
 	}
 
+	
 	private void createPlayer() {
 	
-		Castle c = new Castle(castleImg, playfieldLayer, "Moi");
+		Castle c = new Castle(castlePlayerImg, playfieldLayer, "Joueur");
 		player = new Player(input, c);
 
-		player.getCastle().getView().setOnMousePressed(e -> {
+		/*player.getCastle().getView().setOnMousePressed(e -> {
 			updateStatus(player);
 			e.consume();
-		});
+		});*/
 
 		player.getCastle().getView().setOnContextMenuRequested(e -> {
 			ContextMenu contextMenu = new ContextMenu();
@@ -183,11 +212,10 @@ public class Main extends Application {
 	private void generateEnnemies()
 	{
 		//int size = nbChateau;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < Settings.NB_ENN_CASTLE; i++)
 		{
-			ennemies[i] = new Castle(castleImg, playfieldLayer, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
-			nbEnnemies++;
-			Castle c = ennemies[i];
+			Castle c = new Castle(castleImg, playfieldLayer, ennemies, neutrals, player, freeZones);
+			ennemies.add(c);
 			c.getView().setOnContextMenuRequested(e -> {
 				ContextMenu contextMenu = new ContextMenu();
 				MenuItem low = new MenuItem("Slow");
@@ -202,22 +230,38 @@ public class Main extends Application {
 	private void generateNeutrals()
 	{
 		//int size = nbChateau;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < Settings.NB_NEUT_CASTLE; i++)
 		{
-			neutrals[i] = new NeutralCastle(neutCastleImg, playfieldLayer, ennemies, nbEnnemies, neutrals, nbNeutrals, player);
-			nbNeutrals++;
-			NeutralCastle c = neutrals[i];
-			c.getView().setOnContextMenuRequested(e -> {
+			NeutralCastle n = new NeutralCastle(neutCastleImg, playfieldLayer, ennemies, neutrals, player, freeZones);
+			neutrals.add(n);
+			n.getView().setOnContextMenuRequested(e -> {
 				ContextMenu contextMenu = new ContextMenu();
 				MenuItem low = new MenuItem("Slow");
 				MenuItem medium= new MenuItem("Regular");
 				MenuItem high= new MenuItem("Fast");
 
 				contextMenu.getItems().addAll(low, medium, high);
-				contextMenu.show(c.getView(), e.getScreenX(), e.getScreenY());
+				contextMenu.show(n.getView(), e.getScreenX(), e.getScreenY());
 			});
-			}
 		}
+	}
+	private void generateFreeZones()
+	{
+		for (int i = 0; i < Settings.NB_FREE_ZONES; i ++)
+		{
+			Sprites fz = new Sprites(playfieldLayer, freeZoneImg, ennemies, neutrals, player, freeZones);
+			freeZones.add(fz);
+			fz.getView().setOnContextMenuRequested(e -> {
+				ContextMenu contextMenu = new ContextMenu();
+				MenuItem low = new MenuItem("Slow");
+				MenuItem medium= new MenuItem("Regular");
+				MenuItem high= new MenuItem("Fast");
+
+				contextMenu.getItems().addAll(low, medium, high);
+				contextMenu.show(fz.getView(), e.getScreenX(), e.getScreenY());
+			});
+		}
+	}
 
 	public boolean canPause(long now)
 	{
@@ -247,13 +291,26 @@ public class Main extends Application {
 		gameLoop.stop();
 	}
 	*/
-	private void update() {
-
-		/*if (collision) {
-			scoreMessage.setText("Score : " + scoreValue + "          Life : " + player.getHealth());
-		}*/
+	private void update(long now) {
+		if (now - lastTurn > Settings.TIME_TURN)
+		{
+			player.getCastle().setTreasure(player.getCastle().getTreasure() + 10*player.getCastle().getLevel());
+			for (int i = 0; i < ennemies.size(); i++)
+			{
+				ennemies.get(i).setTreasure(ennemies.get(i).getTreasure() + 10*ennemies.get(i).getLevel());
+			}
+			for (int i = 0; i < neutrals.size(); i++)
+			{
+				neutrals.get(i).setTreasure(neutrals.get(i).getTreasure() + 2*neutrals.get(i).getLevel());
+			}
+			lastTurn = now;
+			if (lastCastle != null)
+				updateStatus(lastCastle);
+			if(lastNeutral != null)
+				updateStatus(lastNeutral);
+		}
 	}
-	private void updateStatus(Player player)
+	/*private void updateStatus(Player player)
 	{
 		String ordres = new String();
 		if (player.getCastle().getOrder().getTarget() == null)
@@ -270,23 +327,23 @@ public class Main extends Application {
 				" Produit : " +	player.getCastle().getProduction().getProducts() + 
 				Settings.SBLANK + " Ordre : " + ordres
 				+ Settings.SBLANK + " Porte : " + player.getCastle().getGate());
-	}
-	private void updateStatus(Castle ennemi)
+	}*/
+	private void updateStatus(Castle castle)
 	{
 		String ordres = new String();
-		if (ennemi.getOrder().getTarget() == null)
+		if (castle.getOrder().getTarget() == null)
 			ordres = "Aucun";
 		else
-			ordres = ennemi.getOrder().getTarget().getDuc();
-		stats.setText("Chateau de : " + ennemi.getDuc() + Settings.SBLANK +
-				" Niveau : " + ennemi.getLevel() + Settings.SBLANK + 
-				" trésor : " + ennemi.getTreasure() + Settings.SBLANK + 
-				" Troupes : " + ennemi.getTroops()[0] +" piquiers | " +
-				ennemi.getTroops()[1] + " chevaliers | " + 
-				ennemi.getTroops()[2] + " onagres " + Settings.SBLANK + 
-				" Produit : " +	ennemi.getProduction().getProducts() + 
+			ordres = castle.getOrder().getTarget().getDuc();
+		stats.setText("Chateau de : " + castle.getDuc() + Settings.SBLANK +
+				" Niveau : " + castle.getLevel() + Settings.SBLANK + 
+				" trésor : " + castle.getTreasure() + Settings.SBLANK + 
+				" Troupes : " + castle.getTroops()[0] +" piquiers | " +
+				castle.getTroops()[1] + " chevaliers | " + 
+				castle.getTroops()[2] + " onagres " + Settings.SBLANK + 
+				" Produit : " +	castle.getProduction().getProducts() + 
 				Settings.SBLANK + " Ordre : " + ordres 
-				+ Settings.SBLANK + " Porte : " + ennemi.getGate());
+				+ Settings.SBLANK + " Porte : " + castle.getGate());
 	}
 	private void updateStatus(NeutralCastle neutral)
 	{

@@ -16,8 +16,8 @@ public class Sprites {
 	private double dy;
 
 
-    public Sprites(Pane layer, Image image, Castle[] ennemies, int nbEnnemies, Castle[] neutrals, 
-    		int nbNeutrals, Player player)
+    public Sprites(Pane layer, Image image, ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, 
+    		 Player player, ArrayList<Sprites> freeZones)
     {
         this.layer = layer;
         this.imgView = new ImageView(image);
@@ -31,7 +31,7 @@ public class Sprites {
         {
         	dx = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image); //dimension image chateau
         	dy = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image);
-        }while (this.collision(ennemies, nbEnnemies, neutrals, nbNeutrals, player) || collisionWithEdge());
+        }while (this.collision(ennemies, neutrals, player, freeZones) || collisionWithEdge());
         
 		//put the image on the screen at the right coordinates
 		this.imgView.relocate(dx, dy);
@@ -105,18 +105,28 @@ public class Sprites {
         this.layer.getChildren().add(this.imgView);
     }
     
-    public boolean collision(Castle[] ennemies, int nbEnnemies, Castle[] neutrals, int nbNeutrals, Player player)
+    public boolean collision(ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, 
+    		 Player player, ArrayList<Sprites> freeZones)
     {
     	if (Settings.distance(this.dx, this.dy, player.getCastle().getDx(), player.getCastle().getDy()) < player.getCastle().getWidth_Image()*1.5)
     		return true;
-    	for (int i = 0; i < nbEnnemies; i ++)
+    	int size = ennemies.size();
+    	for (int i = 0; i < size; i ++)
     	{
-    		if (Settings.distance(this.dx, this.dy, ennemies[i].getDx(), ennemies[i].getDy()) < ennemies[i].getWidth_Image()*1.5)
+    		if (Settings.distance(this.dx, this.dy, ennemies.get(i).getDx(), ennemies.get(i).getDy()) < ennemies.get(i).getWidth_Image()*1.5)
     			return true;
     	}
-    	for (int i = 0; i < nbNeutrals; i++)
+    	size = neutrals.size();
+    	for (int i = 0; i < size; i++)
     	{
-    		if (Settings.distance(this.dx, this.dy, neutrals[i].getDx(), neutrals[i].getDy()) < this.getWidth_Image()*1.5)
+    		if (Settings.distance(this.dx, this.dy, neutrals.get(i).getDx(), neutrals.get(i).getDy()) < this.getWidth_Image()*1.5)
+    			return true;
+    	}
+    	size = freeZones.size();
+    	for (int i = 0; i < size; i++)
+    	{
+    		Sprites s = freeZones.get(i);
+    		if (Settings.distance(this.dx, this.dy, s.getDx(), s.getDy()) < this.getWidth_Image()*1.5)
     			return true;
     	}
     	return false;

@@ -22,19 +22,35 @@ public class Settings {
 	public static final int DAMMAGES_PIKEMAN = 1;
 	public static final int DAMMAGES_KNIGHT = 5;
 	public static final int DAMMAGES_ONAGER = 10;
+	
+	public static final int NB_PIK_DUC = 300;
+	public static final int NB_KNI_DUC = 100;
+	public static final int NB_ONA_DUC = 20;
+	public static final int NB_PIK_NEUT = 30;
+	public static final int NB_KNI_NEUT = 100;
+	public static final int NB_ONA_NEUT = 2;
+
 
 	// WINDOW
-	public static final int SCENE_WIDTH = 1600;
+	public static final int SCENE_WIDTH = 1800;
     public static final int SCENE_HEIGHT = 900;
 	public static final int STATUS_BAR_HEIGHT = 45;
 	
 	public static final String BLANK = "                  ";
-	public static final String SBLANK = "     ";
+	public static final String SBLANK = "      ";
 
 	public static final String GATES[] = {"Sud", "Nord", "Ouest", "Est"};
 	public static final String DUC_NAMES[] = {"Ousmane", "Red", "Roger", "Arthur", "Loupi", "Jean", 
 			"Aurel", "Petit", "Gros", "Alexandre", "Gourd", "Lourd", "Laella", "Arthas", "Gaspard",
 			"Salomon", "Blaise", "Romain", "Joffrey", "Stannis", "Tywin", "Salazar"};
+	
+	
+	public static final int TIME_TURN = 100000000;
+	
+	public static final int NB_NEUT_CASTLE = 5;
+	public static final int NB_ENN_CASTLE = 5;
+	public static final int NB_FREE_ZONES = 7;
+	
 	
 	  public static double distance(double x1, double y1, double x2, double y2)
 	    {
