@@ -14,6 +14,7 @@ public class Sprites {
     
     private double dx;
 	private double dy;
+	private boolean removable = false;
 
 
     public Sprites(Pane layer, Image image, ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, 
@@ -82,6 +83,12 @@ public class Sprites {
     	return this.layer;
     }
     
+    public boolean isRemovable() {
+        return removable;
+    }
+    public void remove() {
+        this.removable = true;
+    }
     public void setImgView(ImageView imgView) {
 		this.imgView = imgView;
 	}

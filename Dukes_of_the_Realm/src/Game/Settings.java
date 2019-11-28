@@ -32,12 +32,12 @@ public class Settings {
 
 
 	// WINDOW
-	public static final int SCENE_WIDTH = 1800;
-    public static final int SCENE_HEIGHT = 900;
+	public static final int SCENE_WIDTH = 1900;
+    public static final int SCENE_HEIGHT = 1000;
 	public static final int STATUS_BAR_HEIGHT = 45;
 	
 	public static final String BLANK = "                  ";
-	public static final String SBLANK = "      ";
+	public static final String SBLANK = "  ";
 
 	public static final String GATES[] = {"Sud", "Nord", "Ouest", "Est"};
 	public static final String DUC_NAMES[] = {"Ousmane", "Red", "Roger", "Arthur", "Loupi", "Jean", 

@@ -90,10 +90,10 @@ public class Main extends Application {
 
 					// update sprites in scene
 					//player.updateUI();
-
+					update(now);
 				}
 				// update score, health, etc
-				update(now);
+				
 			}
 
 			private void processInput(Input input, long now) {
@@ -141,7 +141,7 @@ public class Main extends Application {
 					lastNeutral = null;
 					option = false;
 					if (optionsBar != null)
-						optionsBar.getChildren().remove(optionsBar);
+						root.getChildren().remove(optionsBar);
 					optionsBar = null;
 				}
 				updateStatus(player.getCastle());
@@ -165,7 +165,7 @@ public class Main extends Application {
 							lastNeutral = null;
 							option = false;
 							if (optionsBar != null)
-								optionsBar.getChildren().remove(optionsBar);
+								root.getChildren().remove(optionsBar);
 							optionsBar = null;
 						}
 						updateStatus(intermediaire);
@@ -187,7 +187,7 @@ public class Main extends Application {
 							lastCastle = null;
 							option = false;
 							if (optionsBar != null)
-								playfieldLayer.getChildren().remove(optionsBar);
+								root.getChildren().remove(optionsBar);
 							optionsBar = null;
 							}
 						updateStatus(intermediaire2);
@@ -211,7 +211,7 @@ public class Main extends Application {
 	public void createStatusBar() {
 		HBox statusBar = new HBox();
 		/*stats.setText("Chateau de : " + Settings.BLANK + " Niveau : " + Settings.BLANK +
-				" trésor : " + Settings.BLANK + " Troupes : " + Settings.BLANK + " Produit : " +
+				" trï¿½sor : " + Settings.BLANK + " Troupes : " + Settings.BLANK + " Produit : " +
 				Settings.BLANK + " Ordres : " + Settings.BLANK + " Porte : " + Settings.BLANK);
 		*/
 		statusBar.getChildren().addAll(stats);
@@ -353,7 +353,7 @@ public class Main extends Application {
 		
 		stats.setText("Chateau de : " + player.getCastle().getDuc() + Settings.SBLANK +
 				" Niveau : " + player.getCastle().getLevel() + Settings.SBLANK + 
-				" trésor : " + player.getCastle().getTreasure() + Settings.SBLANK + 
+				" trï¿½sor : " + player.getCastle().getTreasure() + Settings.SBLANK + 
 				" Troupes : " + player.getCastle().getTroops()[0] +" piquiers | " +
 				player.getCastle().getTroops()[1] + " chevaliers | " + 
 				player.getCastle().getTroops()[2] + " onagres " + Settings.SBLANK + 
@@ -370,7 +370,7 @@ public class Main extends Application {
 			ordres = castle.getOrder().getTarget().getDuc();
 		stats.setText("Chateau de : " + castle.getDuc() + Settings.SBLANK +
 				" Niveau : " + castle.getLevel() + Settings.SBLANK + 
-				" trésor : " + castle.getTreasure() + Settings.SBLANK + 
+				" tresor : " + castle.getTreasure() + Settings.SBLANK + 
 				" Troupes : " + castle.getTroops()[0] +" piquiers | " +
 				castle.getTroops()[1] + " chevaliers | " + 
 				castle.getTroops()[2] + " onagres " + Settings.SBLANK + 
@@ -384,7 +384,7 @@ public class Main extends Application {
 		
 		stats.setText("Chateau de : " + neutral.getDuc() + Settings.SBLANK +
 				" Niveau : " + neutral.getLevel() + Settings.SBLANK + 
-				" trésor : " + neutral.getTreasure() + Settings.SBLANK + 
+				" tresor : " + neutral.getTreasure() + Settings.SBLANK + 
 				" Troupes : " + neutral.getTroops()[0] +" piquiers | " +
 				neutral.getTroops()[1] + " chevaliers | " + 
 				neutral.getTroops()[2] + " onagres " + Settings.SBLANK + 
@@ -395,7 +395,7 @@ public class Main extends Application {
 	public void internOptions(Castle c)
 	{
 		optionsBar = new HBox();
-		options.setText("Produire des unités");
+		options.setText("Produire des unites");
 		optionsBar.getChildren().addAll(options);
 		optionsBar.getStyleClass().add("statusBar");
 		optionsBar.relocate(c.getDx() + c.getWidth_Image(), c.getDy());
