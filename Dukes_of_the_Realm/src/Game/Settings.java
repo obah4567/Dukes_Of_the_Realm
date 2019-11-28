@@ -37,7 +37,7 @@ public class Settings {
 	public static final int STATUS_BAR_HEIGHT = 45;
 	
 	public static final String BLANK = "                  ";
-	public static final String SBLANK = "  ";
+	public static final String SBLANK = "      ";
 
 	public static final String GATES[] = {"Sud", "Nord", "Ouest", "Est"};
 	public static final String DUC_NAMES[] = {"Ousmane", "Red", "Roger", "Arthur", "Loupi", "Jean", 

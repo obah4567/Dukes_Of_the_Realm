@@ -10,8 +10,8 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
+//import javafx.scene.control.ContextMenu;
+//mport javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -227,72 +227,31 @@ public class Main extends Application {
 		Castle c = new Castle(castlePlayerImg, playfieldLayer, "Joueur");
 		player = new Player(input, c);
 
-		/*player.getCastle().getView().setOnMousePressed(e -> {
-			updateStatus(player);
-			e.consume();
-		});*/
-
-		player.getCastle().getView().setOnContextMenuRequested(e -> {
-			ContextMenu contextMenu = new ContextMenu();
-			MenuItem low = new MenuItem("Slow");
-			MenuItem medium= new MenuItem("Regular");
-			MenuItem high= new MenuItem("Fast");
-
-			contextMenu.getItems().addAll(low, medium, high);
-			contextMenu.show(player.getCastle().getView(), e.getScreenX(), e.getScreenY());
-		});
 	}
 	private void generateEnnemies()
 	{
-		//int size = nbChateau;
 		for (int i = 0; i < Settings.NB_ENN_CASTLE; i++)
 		{
 			Castle c = new Castle(castleImg, playfieldLayer, ennemies, neutrals, player, freeZones);
 			ennemies.add(c);
-			c.getView().setOnContextMenuRequested(e -> {
-				ContextMenu contextMenu = new ContextMenu();
-				MenuItem low = new MenuItem("Slow");
-				MenuItem medium= new MenuItem("Regular");
-				MenuItem high= new MenuItem("Fast");
-
-				contextMenu.getItems().addAll(low, medium, high);
-				contextMenu.show(c.getView(), e.getScreenX(), e.getScreenY());
-			});
 			}
-		}
+	}
+	
 	private void generateNeutrals()
 	{
-		//int size = nbChateau;
 		for (int i = 0; i < Settings.NB_NEUT_CASTLE; i++)
 		{
 			NeutralCastle n = new NeutralCastle(neutCastleImg, playfieldLayer, ennemies, neutrals, player, freeZones);
 			neutrals.add(n);
-			n.getView().setOnContextMenuRequested(e -> {
-				ContextMenu contextMenu = new ContextMenu();
-				MenuItem low = new MenuItem("Slow");
-				MenuItem medium= new MenuItem("Regular");
-				MenuItem high= new MenuItem("Fast");
-
-				contextMenu.getItems().addAll(low, medium, high);
-				contextMenu.show(n.getView(), e.getScreenX(), e.getScreenY());
-			});
 		}
 	}
+	
 	private void generateFreeZones()
 	{
 		for (int i = 0; i < Settings.NB_FREE_ZONES; i ++)
 		{
 			Sprites fz = new Sprites(playfieldLayer, freeZoneImg, ennemies, neutrals, player, freeZones);
 			freeZones.add(fz);
-			fz.getView().setOnContextMenuRequested(e -> {
-				ContextMenu contextMenu = new ContextMenu();
-				MenuItem low = new MenuItem("Slow");
-				MenuItem medium= new MenuItem("Regular");
-				MenuItem high= new MenuItem("Fast");
-
-				contextMenu.getItems().addAll(low, medium, high);
-				contextMenu.show(fz.getView(), e.getScreenX(), e.getScreenY());
-			});
 		}
 	}
 
@@ -343,24 +302,7 @@ public class Main extends Application {
 				updateStatus(lastNeutral);
 		}
 	}
-	/*private void updateStatus(Player player)
-	{
-		String ordres = new String();
-		if (player.getCastle().getOrder().getTarget() == null)
-			ordres = "Aucun";
-		else
-			ordres = player.getCastle().getOrder().getTarget().getDuc();
-		
-		stats.setText("Chateau de : " + player.getCastle().getDuc() + Settings.SBLANK +
-				" Niveau : " + player.getCastle().getLevel() + Settings.SBLANK + 
-				" tr�sor : " + player.getCastle().getTreasure() + Settings.SBLANK + 
-				" Troupes : " + player.getCastle().getTroops()[0] +" piquiers | " +
-				player.getCastle().getTroops()[1] + " chevaliers | " + 
-				player.getCastle().getTroops()[2] + " onagres " + Settings.SBLANK + 
-				" Produit : " +	player.getCastle().getProduction().getProducts() + 
-				Settings.SBLANK + " Ordre : " + ordres
-				+ Settings.SBLANK + " Porte : " + player.getCastle().getGate());
-	}*/
+
 	private void updateStatus(Castle castle)
 	{
 		String ordres = new String();
