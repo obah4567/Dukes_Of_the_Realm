@@ -32,8 +32,8 @@ public class Settings {
 
 
 	// WINDOW
-	public static final int SCENE_WIDTH = 1900;
-    public static final int SCENE_HEIGHT = 1000;
+	public static final int SCENE_WIDTH = 1875;
+    public static final int SCENE_HEIGHT = 980;
 	public static final int STATUS_BAR_HEIGHT = 45;
 	
 	public static final String BLANK = "                  ";
