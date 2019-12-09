@@ -176,9 +176,9 @@ public class Main extends Application {
 						opt2 = null;
 					}
 					updateStatus(lastCastle);
-					competition.removeAll(competition);
-					competition2.removeAll(competition2);
 				}
+				competition.removeAll(competition);
+				competition2.removeAll(competition2);
 				}});
 		}
 	
