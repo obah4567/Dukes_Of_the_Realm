@@ -21,18 +21,18 @@ import javafx.scene.input.MouseEvent;
 
 public class Options extends Parent{
 	private Pane layer;
-	private String label;
+	private char label;
     private double dx = 0;
     private double dy = 0;
     private Castle c;
-    private Circle ci;
+    //private Circle ci;
     
     Rectangle background;
     Text labelOption;
     
-    public Options(Pane layer, String l, double x, double y, Castle c){
+    public Options(Pane layer, char l, double x, double y, Castle c){
         this.layer = layer;
-    	label =  new String(l);
+    	label =  l;
         dx = x;
         dy = y;
         this.c = c;
@@ -44,7 +44,10 @@ public class Options extends Parent{
         background.setArcWidth(10);
        	this.layer.getChildren().add(background);
         background.relocate(dx - c.getWidth_Image()/2, dy - 20);
-       	labelOption = new Text(label);
+       	if (l == 'a')
+       		labelOption = new Text("Attaquer");
+       	if (l == 'p')
+       		labelOption = new Text("Produire des unités");
        	labelOption.setFont(new Font(18));
        	labelOption.setFill(Color.WHITE);
        	labelOption.setX(25);
@@ -71,7 +74,7 @@ public class Options extends Parent{
         });
     }
 
-	public String getLabel() {
+	public char getLabel() {
 		return label;
 	}
 
@@ -91,7 +94,7 @@ public class Options extends Parent{
 		return background;
 	}
 
-	public void setLabel(String label) {
+	public void setLabel(char label) {
 		this.label = label;
 	}
 

@@ -153,27 +153,33 @@ public class Main extends Application {
 				}
 				int index = handleCompetition(e.getX(), e.getY());
 				if (comp)
-					optionMenu(competition2.get(index));
+				{
+					if (!competition2.isEmpty())
+						optionMenu(competition2.get(index));
+				}
 				else
 				{
-					Castle intermediate = competition.get(index);
-					if (lastCastle == intermediate)
+					if (!competition.isEmpty())
 					{
-						option = true;
-						options(intermediate);
-						option2 = false;
-					}
-					else
-					{
-						option = false;
-						option2 = false;
-						lastCastle = intermediate;							
-						if (opt1 != null )
-							opt1.removeFromLayer();
-						if (opt2 != null)
-							opt2.removeFromLayer();
-						opt1 = null;
-						opt2 = null;
+						Castle intermediate = competition.get(index);
+						if (lastCastle == intermediate)
+						{
+							option = true;
+							options(intermediate);
+							option2 = false;
+						}
+						else
+						{
+							option = false;
+							option2 = false;
+							lastCastle = intermediate;							
+							if (opt1 != null )
+								opt1.removeFromLayer();
+							if (opt2 != null)
+								opt2.removeFromLayer();
+							opt1 = null;
+							opt2 = null;
+						}
 					}
 					updateStatus(lastCastle);
 				}
@@ -328,7 +334,7 @@ public class Main extends Application {
 					castle.getTroops()[1] + " chevaliers | " + 
 					castle.getTroops()[2] + " onagres " + Settings.SBLANK + 
 					" Produit : " +	castle.getProduction().getProducts() + 
-					Settings.SBLANK + " Ordre : " + ordres 
+					Settings.SBLANK + " Ordre : " + ordres
 					+ Settings.SBLANK + " Porte : " + castle.getGate());
 		}
 	}
@@ -336,38 +342,45 @@ public class Main extends Application {
 	//Options 
 	public void options(Castle c)
 	{
-		//Attack
+		if (opt1 != null)
+			opt1.removeFromLayer();
 		if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image())
-			opt1 = new Options(playfieldLayer, "Attaquer", c.getDx() - c.getWidth_Image(), c.getDy()  , lastCastle);
+			opt1 = new Options(playfieldLayer, 'a', c.getDx() - c.getWidth_Image(), c.getDy()  , lastCastle);
 		else
-			opt1 = new Options(playfieldLayer, "Attaquer", c.getDx() + c.getWidth_Image(), c.getDy()  , lastCastle);
+			opt1 = new Options(playfieldLayer, 'a', c.getDx() + c.getWidth_Image(), c.getDy()  , lastCastle);
 		
 		if (c.getDuc() == "Joueur")
 		{
+			if (opt2 != null)
+				opt2.removeFromLayer();
 			if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image())
-				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() - c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
+				opt2 = new Options(playfieldLayer, 'p', c.getDx() - c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
 			else
-				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() + c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
+				opt2 = new Options(playfieldLayer, 'p', c.getDx() + c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
 			opt1.labelOption.setText("Envoyer des troupes");
-			opt1.setLabel("Envoyer des troupes");
+			opt1.setLabel('e');
 		}
 	}
 	
 	public void optionMenu(Options opt)
 	{
-		if (opt.getLabel().equals("Attaquer"))
+		if (opt.getLabel() == 'a')
 		{
-			stats.setText(opt.getLabel() + " sur " + lastCastle.getDuc() + Settings.SSBLANK + "Piquiers : " + Settings.SBLANK + 
-					" | Chevaliers : " + Settings.SBLANK + " | Onagres : " + Settings.SBLANK);
+			stats.setText(opt.labelOption.getText() + " sur " + lastCastle.getDuc() + Settings.SSBLANK +
+					"Piquiers : " + Settings.SBLANK + " | Chevaliers : " + Settings.SBLANK + 
+					" | Onagres : " + Settings.SBLANK );
 		}
-		if (opt.getLabel().equals("Envoyer des troupes"))
+		if (opt.getLabel() == 'e')
 		{
-			stats.setText(opt.getLabel() + " sur " + lastCastle.getDuc() + Settings.SSBLANK + "Piquiers : " + Settings.SBLANK + 
+			if (player.getListCastle().size() > 1)
+				stats.setText(opt.getLabel() + " sur " + lastCastle.getDuc() + Settings.SSBLANK + "Piquiers : " + Settings.SBLANK + 
 					" | Chevaliers : " + Settings.SBLANK + " | Onagres : " + Settings.SBLANK);
+			else
+				stats.setText("Vous ne pouvez vous envoyer de troupes à un autre chateau, vous ne possédez qu'un chateau.");
 		}
-		else
+		if (opt.getLabel() == 'p')
 		{
-			stats.setText(opt.getLabel());
+			stats.setText(opt.labelOption.getText());
 		}
 		opt1.removeFromLayer();
 		if (opt2 != null)

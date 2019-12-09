@@ -1,19 +1,22 @@
 package Game;
 
+import java.util.ArrayList;
+
 public class Player {
 
-	private Castle castle;
+	private ArrayList<Castle> listCastle;
 	private Input input;
 
 	public Player(Input input, Castle castle)
 	{
         this.input = input;
-        this.castle = castle;
+        this.listCastle = new ArrayList<Castle>();
+        this.listCastle.add(castle);
 	}
 	
-	public Castle getCastle()
+	public ArrayList<Castle> getListCastle()
 	{
-		return this.castle;
+		return this.listCastle;
 	}
 	public Input getInput()
 	{
