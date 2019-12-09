@@ -28,24 +28,28 @@ public class Main extends Application {
 	private Image castlePlayerImg;
 	private Image castleImg;
 	private Image neutCastleImg;
-	private Image freeZoneImg;
 
 	private Player player;
 	private Castle lastCastle = null;
-	private NeutralCastle lastNeutral = null;
+	//private NeutralCastle lastNeutral = null;
 	
-	private ArrayList<Castle> ennemies = new ArrayList<Castle>();
-	private ArrayList<NeutralCastle> neutrals = new ArrayList<NeutralCastle>();
-	private ArrayList<Sprites> freeZones = new ArrayList<Sprites>();
+	private ArrayList<Castle> world = new ArrayList<Castle>();
+	private ArrayList<Castle> competition = new ArrayList<Castle>();
+	private ArrayList<Options> competition2 = new ArrayList<Options>();
 
 	private Text stats = new Text();
-	private Text options = new Text();
 	private boolean option = false;
-	private HBox optionsBar;
+	private boolean option2 = false;
+	private boolean comp = false;
+
+	private Options opt1;
+	private Options opt2;
+
 
 	private boolean pause = false;
 	private long lastPause = 0;
 	private long lastTurn = 0;
+	private long lastCliq = 0;
 
 	Group root;
 
@@ -108,8 +112,7 @@ public class Main extends Application {
 	private void loadGame() {
 		castlePlayerImg = new Image(getClass().getResource("/images/castlePlayer.png").toExternalForm(), 200, 200, true, true);
 		castleImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 100, 100, true, true);
-		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 80, 80, true, true);
-		freeZoneImg = new Image(getClass().getResource("/images/freeZone.png").toExternalForm(), 20, 20, true, true);
+		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 100, 100, true, true);
 
 		input = new Input(scene);
 		input.addListeners();
@@ -117,103 +120,66 @@ public class Main extends Application {
 		createPlayer();
 		generateEnnemies();
 		generateNeutrals();
-		generateFreeZones();
 		createStatusBar();
 
 
 		scene.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.SECONDARY)
 			{
-				
+				//Nothing happens
 			}
 			else
 			{
-				if (option)
+				if (option == true)
 				{
-					if (Settings.distance(e.getX(), e.getY(), optionsBar.getLayoutX(), optionsBar.getLayoutY()) < optionsBar.getWidth())
-						optionMenu();
-				}
-				
-				
-				if (Settings.distance(player.getCastle().getDx(), player.getCastle().getDy(), 
-						e.getX(), e.getY()) < player.getCastle().getWidth_Image())
-				{
-					if (lastCastle == player.getCastle())
+					if (opt1 != null)
 					{
-						internOptions(player.getCastle());
+						if (Settings.distance(e.getX(), e.getY(), opt1.getDx(), opt1.getDy()) < opt1.getBackground().getHeight())
+							competition2.add(opt1);
+					}
+					if (opt2 != null)
+					{
+						if (Settings.distance(e.getX(), e.getY(), opt2.getDx(), opt2.getDy()) < opt2.getBackground().getHeight())
+							competition2.add(opt2);
+					}
+				}
+			
+				for (int i = 0; i < world.size(); i++)
+				{
+					Castle intermediaire = world.get(i);
+					if (Settings.distance(intermediaire.getDx(), intermediaire.getDy(), 
+							e.getX(), e.getY()) < intermediaire.getWidth_Image())
+						competition.add(intermediaire);
+				}
+				int index = handleCompetition(e.getX(), e.getY());
+				if (comp)
+					optionMenu(competition2.get(index));
+				else
+				{
+					Castle intermediate = competition.get(index);
+					if (lastCastle == intermediate)
+					{
 						option = true;
+						options(intermediate);
+						option2 = false;
 					}
 					else
 					{
-						lastCastle = player.getCastle();
-						lastNeutral = null;
 						option = false;
-						if (optionsBar != null)
-							root.getChildren().remove(optionsBar);
-						optionsBar = null;
+						option2 = false;
+						lastCastle = intermediate;							
+						if (opt1 != null )
+							opt1.removeFromLayer();
+						if (opt2 != null)
+							opt2.removeFromLayer();
+						opt1 = null;
+						opt2 = null;
 					}
-					updateStatus(player.getCastle());
+					updateStatus(lastCastle);
+					competition.removeAll(competition);
+					competition2.removeAll(competition2);
 				}
-				else
-				{
-					for (int i = 0; i < ennemies.size(); i++)
-					{
-						Castle intermediaire = ennemies.get(i);
-						if (Settings.distance(intermediaire.getDx(), intermediaire.getDy(), 
-								e.getX(), e.getY()) < intermediaire.getWidth_Image())
-						{
-							if (lastCastle == intermediaire)
-							{
-								if (!option)
-								{
-									option = true;
-									externOptions(intermediaire);
-								}
-							}
-							else
-							{
-								lastCastle = intermediaire;
-								lastNeutral = null;
-								option = false;
-								if (optionsBar != null)
-									root.getChildren().remove(optionsBar);
-								optionsBar = null;
-							}
-							updateStatus(intermediaire);
-						}
-					}
-					for (int i = 0; i < neutrals.size(); i++)
-					{
-						NeutralCastle intermediaire = neutrals.get(i);
-						if (Settings.distance(intermediaire.getDx(), intermediaire.getDy(), 
-								e.getX(), e.getY()) < intermediaire.getWidth_Image())
-						{
-							updateStatus(intermediaire);
-							if (lastNeutral == intermediaire)
-							{
-								if (!option)
-								{
-									option = true;
-									externOptions(intermediaire);
-								}
-							}
-							else
-								{
-								lastNeutral = intermediaire;
-								lastCastle = null;
-								option = false;
-								if (optionsBar != null)
-									root.getChildren().remove(optionsBar);
-								optionsBar = null;
-								}
-							updateStatus(intermediaire);
-						}
-					}
-						//if (Settings.distance(neutrals[i].getDx(), neutrals[i].getDy(), 
-								//e.getX(), e.getY()) < neutrals[i].getWidth_Image())//ebauche de bouton clear
-					}
-			}
-			});
+				}});
 		}
 	
 	public void clear()
@@ -221,16 +187,42 @@ public class Main extends Application {
 		stats.setText(" ");
 	}
 
+	public int handleCompetition(double dx, double dy)
+	{
+		double min1 = 10000000, min2 = 10000000;
+		int index = 0, index2 = 0;
+		for (int i = 0; i < competition2.size(); i++)
+		{
+			if (Settings.distance(dx, dy, competition2.get(i).getDx(), competition2.get(i).getDy()) < min1);
+			{
+				min1 = Settings.distance(dx, dy, competition2.get(i).getDx(), competition2.get(i).getDy());
+				index = i;
+			}
+		}
+		for (int i = 0; i < competition.size(); i++)
+		{
+			if (Settings.distance(dx, dy, competition.get(i).getDx(), competition.get(i).getDy()) < min2)
+			{
+				min2 = Settings.distance(dx, dy, competition.get(i).getDx(), competition.get(i).getDy());
+				index2 = i;
+			}
+		}
+		if (min1 > min2)
+		{
+			comp = false;
+			return index2;
+		}
+		comp = true;
+		return index;
+	}
+	
+	
 
 	//Creation structures
 	
 	
 	public void createStatusBar() {
 		HBox statusBar = new HBox();
-		/*stats.setText("Chateau de : " + Settings.BLANK + " Niveau : " + Settings.BLANK +
-				" tr�sor : " + Settings.BLANK + " Troupes : " + Settings.BLANK + " Produit : " +
-				Settings.BLANK + " Ordres : " + Settings.BLANK + " Porte : " + Settings.BLANK);
-		*/
 		statusBar.getChildren().addAll(stats);
 		statusBar.getStyleClass().add("statusBar");
 		statusBar.relocate(0, Settings.SCENE_HEIGHT);
@@ -243,14 +235,15 @@ public class Main extends Application {
 	
 		Castle c = new Castle(castlePlayerImg, playfieldLayer, "Joueur");
 		player = new Player(input, c);
+		world.add(c);
 
 	}
 	private void generateEnnemies()
 	{
 		for (int i = 0; i < Settings.NB_ENN_CASTLE; i++)
 		{
-			Castle c = new Castle(castleImg, playfieldLayer, ennemies, neutrals, player, freeZones);
-			ennemies.add(c);
+			Castle c = new Castle(castleImg, playfieldLayer, world);
+			world.add(c);
 			}
 	}
 	
@@ -258,19 +251,11 @@ public class Main extends Application {
 	{
 		for (int i = 0; i < Settings.NB_NEUT_CASTLE; i++)
 		{
-			NeutralCastle n = new NeutralCastle(neutCastleImg, playfieldLayer, ennemies, neutrals, player, freeZones);
-			neutrals.add(n);
+			NeutralCastle n = new NeutralCastle(neutCastleImg, playfieldLayer, world);
+			world.add(n);
 		}
 	}
 	
-	private void generateFreeZones()
-	{
-		for (int i = 0; i < Settings.NB_FREE_ZONES; i ++)
-		{
-			Sprites fz = new Sprites(playfieldLayer, freeZoneImg, ennemies, neutrals, player, freeZones);
-			freeZones.add(fz);
-		}
-	}
 
 	public boolean canPause(long now)
 	{
@@ -287,6 +272,11 @@ public class Main extends Application {
 				pause = true;
 		}
 	}
+	public boolean canCliq(long now)
+	{
+		return (now - lastCliq > 10000 * 10000);
+	}
+
 	/*
 	private void gameOver() {
 		HBox hbox = new HBox();
@@ -303,102 +293,88 @@ public class Main extends Application {
 	private void update(long now) {
 		if (now - lastTurn > Settings.TIME_TURN)
 		{
-			player.getCastle().setTreasure(player.getCastle().getTreasure() + 10*player.getCastle().getLevel());
-			for (int i = 0; i < ennemies.size(); i++)
+			for (int i = 0; i < world.size(); i++)
 			{
-				ennemies.get(i).setTreasure(ennemies.get(i).getTreasure() + 10*ennemies.get(i).getLevel());
-			}
-			for (int i = 0; i < neutrals.size(); i++)
-			{
-				neutrals.get(i).setTreasure(neutrals.get(i).getTreasure() + 2*neutrals.get(i).getLevel());
+				if (world.get(i).getClass() == NeutralCastle.class)
+				{
+					world.get(i).setTreasure(world.get(i).getTreasure() + 4*world.get(i).getLevel());
+				}
+				if (world.get(i).getClass() == Castle.class)
+					world.get(i).setTreasure(world.get(i).getTreasure() + 10*world.get(i).getLevel());
 			}
 			lastTurn = now;
 			if (lastCastle != null)
 				updateStatus(lastCastle);
-			if(lastNeutral != null)
-				updateStatus(lastNeutral);
 		}
 	}
 
 	private void updateStatus(Castle castle)
 	{
-		String ordres = new String();
-		if (castle.getOrder().getTarget() == null)
-			ordres = "Aucun";
-		else
-			ordres = castle.getOrder().getTarget().getDuc();
-		stats.setText("Chateau de : " + castle.getDuc() + Settings.SBLANK +
-				" Niveau : " + castle.getLevel() + Settings.SBLANK + 
-				" tresor : " + castle.getTreasure() + Settings.SBLANK + 
-				" Troupes : " + castle.getTroops()[0] +" piquiers | " +
-				castle.getTroops()[1] + " chevaliers | " + 
-				castle.getTroops()[2] + " onagres " + Settings.SBLANK + 
-				" Produit : " +	castle.getProduction().getProducts() + 
-				Settings.SBLANK + " Ordre : " + ordres 
-				+ Settings.SBLANK + " Porte : " + castle.getGate());
-	}
-	private void updateStatus(NeutralCastle neutral)
-	{
-		String ordres = new String("Aucun");
-		
-		stats.setText("Chateau de : " + neutral.getDuc() + Settings.SBLANK +
-				" Niveau : " + neutral.getLevel() + Settings.SBLANK + 
-				" tresor : " + neutral.getTreasure() + Settings.SBLANK + 
-				" Troupes : " + neutral.getTroops()[0] +" piquiers | " +
-				neutral.getTroops()[1] + " chevaliers | " + 
-				neutral.getTroops()[2] + " onagres " + Settings.SBLANK + 
-				" Produit : " +	neutral.getProduction().getProducts() + 
-				Settings.SBLANK + " Ordre : " + ordres 
-				+ Settings.SBLANK + " Porte : " + neutral.getGate());
-	}
-	public void internOptions(Castle c)
-	{
-		optionsBar = new HBox();
-		options.setText("Produire des unites");
-		optionsBar.getChildren().addAll(options);
-		optionsBar.getStyleClass().add("statusBar");
-		if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image()){
-			optionsBar.relocate(c.getDx() - c.getWidth_Image() + 20, c.getDy()); }
-		else {
-			optionsBar.relocate(c.getDx() + c.getWidth_Image() - 20, c.getDy()); }
-		optionsBar.setPrefSize(c.getWidth_Image(), c.getHeigth_Image()/3);
-		root.getChildren().add(optionsBar);
-	}
-	public void externOptions(Castle c)
-	{
-		optionsBar = new HBox();
-		options.setText("Attaquer");
-		optionsBar.getChildren().addAll(options);
-		optionsBar.getStyleClass().add("statusBar");
-		if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image()) {
-			optionsBar.relocate(c.getDx() - c.getWidth_Image() - 15 , c.getDy()); }
-		else {
-			optionsBar.relocate(c.getDx() + c.getWidth_Image() + 5, c.getDy()); }
-		optionsBar.setPrefSize(c.getWidth_Image(), c.getHeigth_Image()/3);
-		root.getChildren().add(optionsBar);
-	}
-	public void optionMenu()
-	{
-		if (options.getText() == "Attaquer")
+		if (option2 == true)
 		{
-			root.getChildren().remove(optionsBar);
-			optionsBar = null;
-			option = false;
-			lastCastle = null;
-			lastNeutral = null;
 			
-			stats.setText("Attaque : " + Settings.SBLANK + "Piquiers : " + Settings.SBLANK + 
+		}
+		else
+		{
+			String ordres = new String();
+			if (castle.getOrder().getTarget() == null)
+				ordres = "Aucun";
+			else
+				ordres = castle.getOrder().getTarget().getDuc();
+			stats.setText("Chateau de : " + castle.getDuc() + Settings.SBLANK +
+					" Niveau : " + castle.getLevel() + Settings.SBLANK + 
+					" tresor : " + castle.getTreasure() + Settings.SBLANK + 
+					" Troupes : " + castle.getTroops()[0] +" piquiers | " +
+					castle.getTroops()[1] + " chevaliers | " + 
+					castle.getTroops()[2] + " onagres " + Settings.SBLANK + 
+					" Produit : " +	castle.getProduction().getProducts() + 
+					Settings.SBLANK + " Ordre : " + ordres 
+					+ Settings.SBLANK + " Porte : " + castle.getGate());
+		}
+	}
+
+	//Options 
+	public void options(Castle c)
+	{
+		//Attack
+		if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image())
+			opt1 = new Options(playfieldLayer, "Attaquer", c.getDx() - c.getWidth_Image(), c.getDy()  , lastCastle);
+		else
+			opt1 = new Options(playfieldLayer, "Attaquer", c.getDx() + c.getWidth_Image(), c.getDy()  , lastCastle);
+		
+		if (c.getDuc() == "Joueur")
+		{
+			if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image())
+				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() - c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
+			else
+				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() + c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
+			opt1.labelOption.setText("Envoyer des troupes");
+			opt1.setLabel("Envoyer des troupes");
+		}
+	}
+	
+	public void optionMenu(Options opt)
+	{
+		if (opt.getLabel().equals("Attaquer"))
+		{
+			stats.setText(opt.getLabel() + " sur " + lastCastle.getDuc() + Settings.SSBLANK + "Piquiers : " + Settings.SBLANK + 
+					" | Chevaliers : " + Settings.SBLANK + " | Onagres : " + Settings.SBLANK);
+		}
+		if (opt.getLabel().equals("Envoyer des troupes"))
+		{
+			stats.setText(opt.getLabel() + " sur " + lastCastle.getDuc() + Settings.SSBLANK + "Piquiers : " + Settings.SBLANK + 
 					" | Chevaliers : " + Settings.SBLANK + " | Onagres : " + Settings.SBLANK);
 		}
 		else
 		{
-			lastCastle = null;
-			lastNeutral = null;
-			root.getChildren().remove(optionsBar);
-			optionsBar = null;
-			option = false;
-			stats.setText("Produire des unités de ?");
+			stats.setText(opt.getLabel());
 		}
+		opt1.removeFromLayer();
+		if (opt2 != null)
+			opt2.removeFromLayer();
+		opt1 = null;
+		opt2 = null;
+		option2 = true;
 	}
 
 	public static void main(String[] args) {

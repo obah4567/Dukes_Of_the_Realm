@@ -16,9 +16,9 @@ public class Castle extends Sprites{
 	private String gate;
 
 	//Constructors
-	public Castle(Image img, Pane layer, ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, Player player, ArrayList<Sprites> freeZones)
+	public Castle(Image img, Pane layer, ArrayList<Castle> world)
 	{
-		super(layer, img, ennemies, neutrals, player, freeZones);
+		super(layer, img, world);
 		Random r = new Random();
         
         //where is the gate

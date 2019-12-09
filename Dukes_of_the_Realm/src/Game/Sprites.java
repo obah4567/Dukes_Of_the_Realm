@@ -3,6 +3,8 @@ package Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 import java.util.*;
 
 public class Sprites {
@@ -11,14 +13,14 @@ public class Sprites {
     
     protected double width_image;
     protected double heigth_image;
+    private Circle bg;
     
     private double dx;
 	private double dy;
 	private boolean removable = false;
 
 
-    public Sprites(Pane layer, Image image, ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, 
-    		 Player player, ArrayList<Sprites> freeZones)
+    public Sprites(Pane layer, Image image, ArrayList<Castle> world)
     {
         this.layer = layer;
         this.imgView = new ImageView(image);
@@ -26,18 +28,22 @@ public class Sprites {
 		this.width_image = image.getWidth();
 		this.heigth_image = image.getHeight();
 		//Coordinates
-        
         Random r = new Random();
         do 
         {
-        	dx = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image); //dimension image chateau
+        	dx = r.nextInt(Settings.SCENE_WIDTH - (int)this.width_image);
         	dy = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image);
-        }while (this.collision(ennemies, neutrals, player, freeZones) || collisionWithEdge());
+        }while (this.collision(world) || collisionWithEdge());
         
 		//put the image on the screen at the right coordinates
-		this.imgView.relocate(dx, dy);
-   
+		this.imgView.relocate(dx - this.width_image/2, dy - this.heigth_image/2);
+	
         addToLayer();
+        //Circle is the position of the image
+        /*this.bg = new Circle(dx, dy, 5);
+		this.bg.setFill(Color.RED); 
+        this.layer.getChildren().add(bg); 
+        this.bg.relocate(dx, dy);*/
     }
     public Sprites(Pane layer, Image image) //Constructor for player
     {
@@ -54,9 +60,15 @@ public class Sprites {
         	dy = r.nextInt(Settings.SCENE_HEIGHT - (int)this.heigth_image) ;
         }while(collisionWithEdge()) ;   
 		//put the image on the screen at the right coordinates
-		this.imgView.relocate(dx, dy);
-		//add to the arrayList population to handle collision
+		this.imgView.relocate(dx - this.width_image/2, dy - this.heigth_image/2);
+		
         addToLayer();
+        //Circle is the position of the image
+        /*
+        this.bg = new Circle(dx, dy, 5);
+		this.bg.setFill(Color.RED); 
+        this.layer.getChildren().add(bg); 
+        this.bg.relocate(dx, dy);*/
     }
     public double getDx()
     {
@@ -115,34 +127,18 @@ public class Sprites {
 	        this.layer.getChildren().remove(this.imgView);
 	}
     
-    public boolean collision(ArrayList<Castle> ennemies, ArrayList<NeutralCastle> neutrals, 
-    		 Player player, ArrayList<Sprites> freeZones)
+    public boolean collision (ArrayList<Castle> world)
     {
-    	if (Settings.distance(this.dx, this.dy, player.getCastle().getDx(), player.getCastle().getDy()) < player.getCastle().getWidth_Image()*1.5)
-    		return true;
-    	int size = ennemies.size();
-    	for (int i = 0; i < size; i ++)
+    	for (int i = 0; i < world.size(); i++)
     	{
-    		if (Settings.distance(this.dx, this.dy, ennemies.get(i).getDx(), ennemies.get(i).getDy()) < ennemies.get(i).getWidth_Image()*1.5)
-    			return true;
-    	}
-    	size = neutrals.size();
-    	for (int i = 0; i < size; i++)
-    	{
-    		if (Settings.distance(this.dx, this.dy, neutrals.get(i).getDx(), neutrals.get(i).getDy()) < this.getWidth_Image()*1.5)
-    			return true;
-    	}
-    	size = freeZones.size();
-    	for (int i = 0; i < size; i++)
-    	{
-    		if (Settings.distance(this.dx, this.dy, freeZones.get(i).getDx(), freeZones.get(i).getDy()) < this.getWidth_Image()*1.5)
+    		if (Settings.distance(this.dx, this.dy, world.get(i).getDx(), world.get(i).getDy()) < Settings.DISTANCE_MIN_BETWEEN_CASTLES)
     			return true;
     	}
     	return false;
     }
     public boolean collisionWithEdge()
     {
-    	return (this.dx < this.getWidth_Image() && this.dy < this.getHeigth_Image());
+    	return (this.dx - this.getWidth_Image()/2 < 0 || this.dy - this.getHeigth_Image()/2 < 0);
     }
     
   
