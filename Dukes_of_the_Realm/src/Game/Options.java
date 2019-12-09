@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.paint.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.input.MouseEvent;
 
 public class Options extends Parent{
 	private Pane layer;
@@ -38,21 +39,17 @@ public class Options extends Parent{
         int size = 100;
         if (c.getDuc() == "Joueur")
         	size = 200;
-        background = new Rectangle(size, 40, Color.WHITE);
+        background = new Rectangle(size, 40, Color.BLACK);
         background.setArcHeight(10);
         background.setArcWidth(10);
        	this.layer.getChildren().add(background);
         background.relocate(dx - c.getWidth_Image()/2, dy - 20);
        	labelOption = new Text(label);
        	labelOption.setFont(new Font(18));
-       	labelOption.setFill(Color.GREY);
+       	labelOption.setFill(Color.WHITE);
        	labelOption.setX(25);
        	labelOption.setY(45);
-        Light.Distant light = new Light.Distant();
-        light.setAzimuth(-45.0);
-        Lighting li = new Lighting();
-        li.setLight(light);
-        background.setEffect(li);
+        
         this.layer.getChildren().add(labelOption);
         labelOption.relocate(dx - c.getWidth_Image()/2 + 5, dy - 15);
         /*
@@ -60,6 +57,18 @@ public class Options extends Parent{
         this.ci.setFill(Color.RED);
         this.ci.relocate(dx, dy);
         this.layer.getChildren().add(ci);*/
+        labelOption.setOnMouseEntered(new EventHandler<MouseEvent>(){
+            public void handle(MouseEvent me){
+                background.setFill(Color.LIGHTGREY);
+                labelOption.setFill(Color.GREY);
+            }
+        });
+        labelOption.setOnMouseExited(new EventHandler<MouseEvent>(){
+            public void handle(MouseEvent me){
+                background.setFill(Color.BLACK);
+                labelOption.setFill(Color.WHITE);
+            }
+        });
     }
 
 	public String getLabel() {
