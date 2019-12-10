@@ -16,6 +16,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.scene.shape.*;
+import java.util.Random;
 
 public class Main extends Application {
 	
@@ -36,8 +38,16 @@ public class Main extends Application {
 	private ArrayList<Castle> world = new ArrayList<Castle>();
 	private ArrayList<Castle> competition = new ArrayList<Castle>();
 	private ArrayList<Options> competition2 = new ArrayList<Options>();
-
+	private ArrayList<ArrayList<Troops>> armies = new ArrayList<ArrayList<Troops>>();
+	private ArrayList<ArrayList<Troops>> defenders = new ArrayList<ArrayList<Troops>>();
+	
+	private ArrayList<Castle> sources = new ArrayList<Castle>();
+	private ArrayList<Castle> targets = new ArrayList<Castle>();
+	
 	private Text stats = new Text();
+	
+	private ZoneText z;
+	
 	private boolean option = false;
 	private boolean option2 = false;
 	private boolean comp = false;
@@ -45,11 +55,11 @@ public class Main extends Application {
 	private Options opt1;
 	private Options opt2;
 
-
+	public Random r = new Random();
+	
 	private boolean pause = false;
 	private long lastPause = 0;
 	private long lastTurn = 0;
-	private long lastCliq = 0;
 
 	Group root;
 
@@ -230,10 +240,12 @@ public class Main extends Application {
 	public void createStatusBar() {
 		HBox statusBar = new HBox();
 		statusBar.getChildren().addAll(stats);
+		stats.setTranslateY(10);
+		stats.translateYProperty();
 		statusBar.getStyleClass().add("statusBar");
 		statusBar.relocate(0, Settings.SCENE_HEIGHT);
 		statusBar.setPrefSize(Settings.SCENE_WIDTH, Settings.STATUS_BAR_HEIGHT);
-		root.getChildren().add(statusBar);
+		this.playfieldLayer.getChildren().add(statusBar);
 	}
 
 	
@@ -278,10 +290,7 @@ public class Main extends Application {
 				pause = true;
 		}
 	}
-	public boolean canCliq(long now)
-	{
-		return (now - lastCliq > 10000 * 10000);
-	}
+	
 
 	/*
 	private void gameOver() {
@@ -311,6 +320,11 @@ public class Main extends Application {
 			lastTurn = now;
 			if (lastCastle != null)
 				updateStatus(lastCastle);
+			if (!armies.isEmpty())
+			{
+				moveTroops();
+				clash();
+			}
 		}
 	}
 
@@ -337,6 +351,119 @@ public class Main extends Application {
 					Settings.SBLANK + " Ordre : " + ordres
 					+ Settings.SBLANK + " Porte : " + castle.getGate());
 		}
+	}
+	private void attack(Castle source, Castle target)
+	{
+		armies.add(source.getOrder().instanceTroops(playfieldLayer));
+		sources.add(source);
+		targets.add(target);
+		defenders.add(target.defend());
+	}
+	
+	
+	
+	private void moveTroops()
+	{
+		if (armies.isEmpty())
+		{
+			
+		}
+		else
+		{
+			for (int i = 0; i < armies.size(); i++)
+			{
+				if (armies.get(i).isEmpty())
+					armies.remove(i);
+				else
+				{
+					int nbInsideGate = 0;
+					for (int j = 0; j < armies.get(i).size(); j++)
+					{
+						//
+						if (armies.get(i).get(i).getRectangle().getX() == sources.get(i).getDx() && 
+							armies.get(i).get(i).getRectangle().getY() == sources.get(i).getDy())
+						{
+							if (nbInsideGate < Settings.SIZEGATE)
+							{
+								if (targets.get(i).getDx() > sources.get(i).getDx())
+								{
+									armies.get(i).get(i).getRectangle().relocate(sources.get(i).getDx() +
+										sources.get(i).getWidth_Image()/2, sources.get(i).getDy() + 
+										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
+									nbInsideGate++;
+								}
+								else
+								{
+									armies.get(i).get(i).getRectangle().relocate(sources.get(i).getDx() -
+										sources.get(i).getWidth_Image()/2, sources.get(i).getDy() + 
+										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
+								}
+							}
+						}
+						else
+						{
+							double a = (sources.get(i).getDy() - armies.get(i).get(i).getRectangle().getY())/
+								(sources.get(i).getDx() - armies.get(i).get(i).getRectangle().getX());
+							double b = ((sources.get(i).getDy() + armies.get(i).get(i).getRectangle().getY() - 
+								a *(sources.get(i).getDx() + armies.get(i).get(i).getRectangle().getX()))/2);
+							armies.get(i).get(i).getRectangle().relocate( armies.get(i).get(i).getRectangle().getX(), a* armies.get(i).get(i).getRectangle().getX() + b);
+						}
+					}
+				}	
+			}
+		}
+	}
+	private void clash()
+	{
+		for (int i = 0; i < armies.size(); i++)
+		{
+			for (int j = 0; j < armies.get(i).size(); j++)
+			{
+				Troops intermediate = armies.get(i).get(j);
+				if (Settings.distance(intermediate.getRectangle().getX(), intermediate.getRectangle().getY(), 
+						targets.get(i).getDx(), targets.get(i).getDy()) > targets.get(i).getWidth_Image()/3)
+				{
+					if (sources.get(i).getDuc().equals(targets.get(i).getDuc()))
+					{
+						if (armies.get(i).get(j).getClass() == Pikeman.class)
+						{
+							targets.get(i).setTroops0(targets.get(i).getTroops()[0] + 1);
+							armies.get(i).remove(j);
+						}
+						if (armies.get(i).get(j).getClass() == Knights.class)
+						{
+							targets.get(i).setTroops1(targets.get(i).getTroops()[1] + 1);
+							armies.get(i).remove(j);
+						}
+						if (armies.get(i).get(j).getClass() == Onager.class)
+						{
+							targets.get(i).setTroops2(targets.get(i).getTroops()[2] + 1);
+							armies.get(i).remove(j);
+						}		
+					}
+					else
+					{
+						if (dammage(intermediate.getDammages(), i))//Chateau pris
+						{
+							targets.get(i).setDuc(sources.get(i).getDuc());
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private boolean dammage(int dammages, int indice)
+	{
+		ArrayList<Troops> def = defenders.get(indice);
+		if (def.isEmpty())
+			return true;
+		int unit = r.nextInt(def.size());
+		def.get(unit).setHealth(dammages);
+		if (def.get(unit).getHealth() < 1)
+			def.remove(unit);
+		return false;
+		
 	}
 
 	//Options 
@@ -366,9 +493,11 @@ public class Main extends Application {
 	{
 		if (opt.getLabel() == 'a')
 		{
-			stats.setText(opt.labelOption.getText() + " sur " + lastCastle.getDuc() + Settings.SSBLANK +
-					"Piquiers : " + Settings.SBLANK + " | Chevaliers : " + Settings.SBLANK + 
-					" | Onagres : " + Settings.SBLANK );
+			stats.setText(opt.labelOption.getText() + "  " + lastCastle.getDuc() + Settings.SBLANK +
+					"Piquiers : " + Settings.BLANK + " | " + Settings.SBLANK + " Chevaliers : " + Settings.BLANK + 
+					" | " + Settings.SBLANK + " Onagres : " + Settings.BLANK );
+			z = new ZoneText(playfieldLayer);
+			root.getChildren().add(z.c1);
 		}
 		if (opt.getLabel() == 'e')
 		{

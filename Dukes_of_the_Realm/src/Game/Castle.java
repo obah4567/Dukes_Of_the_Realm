@@ -115,7 +115,22 @@ public class Castle extends Sprites{
 		this.troops[1] = kni;
 		this.troops[2] = ona;
 	}
-
+	
+	public void setTroops0(int nb)
+	{
+		this.troops[0] = this.troops[0] + nb;
+	}
+	
+	public void setTroops1(int nb)
+	{
+		this.troops[1] = this.troops[1] + nb;
+	}
+	
+	public void setTroops2(int nb)
+	{
+		this.troops[2] = this.troops[2] + nb;
+	}
+	
 	public void setProduction(Production production) {
 		this.production = production;
 	}
@@ -127,7 +142,23 @@ public class Castle extends Sprites{
 	public void setGate(String gate) {
 		this.gate = gate;
 	}
-
-
-
+	public ArrayList<Troops> instanceTroops()
+	{
+		this.troops[0] = this.troops[0] - getOrder().getNbPyk();
+		this.troops[1] = this.troops[1] - getOrder().getNbKni();
+		this.troops[2] = this.troops[2] - getOrder().getNbOna();
+		return this.order.instanceTroops(this.layer);
+	}
+	public ArrayList<Troops> defend()
+	{
+		ArrayList<Troops> def = new ArrayList<Troops>();
+		for (int i = 0; i < troops[0]; i++)
+			def.add(new Pikeman());
+		for (int i = 0; i < troops[1]; i++)
+			def.add(new Knights());
+		for (int i = 0; i < troops[2]; i++)
+			def.add(new Onager());
+		troops[0] = 0; troops[1] = 0; troops[2] = 0;
+		return def;
+	}
 }

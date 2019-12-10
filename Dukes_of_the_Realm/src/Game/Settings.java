@@ -13,7 +13,7 @@ public class Settings {
 
 	public static final int SPEED_PIKEMAN = 2;
 	public static final int SPEED_KNIGHT = 6;
-	public static final int SPEED_ONAGER = 1;
+	public static final int SPEED_ONAGER = 8;
 
 	public static final int HEALTH_PIKEMAN = 1;
 	public static final int HEALTH_KNIGHT = 3;
@@ -30,10 +30,11 @@ public class Settings {
 	public static final int NB_KNI_NEUT = 100;
 	public static final int NB_ONA_NEUT = 2;
 
+	public static final int SIZEGATE = 10;
 
 	// WINDOW
-	public static final int SCENE_WIDTH = 1500;
-    public static final int SCENE_HEIGHT = 700;
+	public static final int SCENE_WIDTH = 1800;
+    public static final int SCENE_HEIGHT = 900;
 	public static final int STATUS_BAR_HEIGHT = 45;
 	
 	public static final String BLANK = "                  ";
