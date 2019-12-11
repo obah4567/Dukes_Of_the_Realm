@@ -38,11 +38,13 @@ public class Main extends Application {
 	private ArrayList<Castle> world = new ArrayList<Castle>();
 	private ArrayList<Castle> competition = new ArrayList<Castle>();
 	private ArrayList<Options> competition2 = new ArrayList<Options>();
+	
 	private ArrayList<ArrayList<Troops>> armies = new ArrayList<ArrayList<Troops>>();
 	private ArrayList<ArrayList<Troops>> defenders = new ArrayList<ArrayList<Troops>>();
-	
 	private ArrayList<Castle> sources = new ArrayList<Castle>();
 	private ArrayList<Castle> targets = new ArrayList<Castle>();
+	
+	private ArrayList<Options> arrayOptions = new ArrayList<Options>();
 	
 	private Text stats = new Text();
 	
@@ -472,34 +474,35 @@ public class Main extends Application {
 		if (opt1 != null)
 			opt1.removeFromLayer();
 		if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image())
-			opt1 = new Options(playfieldLayer, 'a', c.getDx() - c.getWidth_Image(), c.getDy()  , lastCastle);
+			opt1 = new Options(playfieldLayer, "Attaquer", c.getDx() - c.getWidth_Image(), c.getDy()  , lastCastle);
 		else
-			opt1 = new Options(playfieldLayer, 'a', c.getDx() + c.getWidth_Image(), c.getDy()  , lastCastle);
+			opt1 = new Options(playfieldLayer, "Attaquer", c.getDx() + c.getWidth_Image(), c.getDy()  , lastCastle);
 		
 		if (c.getDuc() == "Joueur")
 		{
 			if (opt2 != null)
 				opt2.removeFromLayer();
 			if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image())
-				opt2 = new Options(playfieldLayer, 'p', c.getDx() - c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
+				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() - c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
 			else
-				opt2 = new Options(playfieldLayer, 'p', c.getDx() + c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
+				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() + c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
 			opt1.labelOption.setText("Envoyer des troupes");
-			opt1.setLabel('e');
+			opt1.setLabel("Envoyer des troupes");
 		}
 	}
 	
 	public void optionMenu(Options opt)
 	{
-		if (opt.getLabel() == 'a')
-		{
+		
+		if (opt.getLabel().equals("Attaquer"))
+		/*{
 			stats.setText(opt.labelOption.getText() + "  " + lastCastle.getDuc() + Settings.SBLANK +
 					"Piquiers : " + Settings.BLANK + " | " + Settings.SBLANK + " Chevaliers : " + Settings.BLANK + 
 					" | " + Settings.SBLANK + " Onagres : " + Settings.BLANK );
 			z = new ZoneText(playfieldLayer);
 			root.getChildren().add(z.c1);
 		}
-		if (opt.getLabel() == 'e')
+		if (opt.getLabel().equals("Envoyer des troupes"))
 		{
 			if (player.getListCastle().size() > 1)
 				stats.setText(opt.getLabel() + " sur " + lastCastle.getDuc() + Settings.SSBLANK + "Piquiers : " + Settings.SBLANK + 
@@ -507,10 +510,31 @@ public class Main extends Application {
 			else
 				stats.setText("Vous ne pouvez vous envoyer de troupes à un autre chateau, vous ne possédez qu'un chateau.");
 		}
-		if (opt.getLabel() == 'p')
+		if (opt.getLabel() == "Produire des unités")
 		{
 			stats.setText(opt.labelOption.getText());
+		}*/
+		if (opt.getLabel().equals("Attaquer"))
+		{
+			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -40, opt.getC(), 150, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + opt.getC().getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + opt.getC().getTroops()[1], opt.getDx() + 160, opt.getDy(), opt.getC(), 170, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + opt.getC().getTroops()[2], opt.getDx() + 330, opt.getDy(), opt.getC(), 160, 40));
+			ZoneText z = new ZoneText(playfieldLayer, opt.getDx(), opt.getDy());
 		}
+		if (opt.getLabel().equals("Envoyer des troupes"))
+		{
+			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -40, opt.getC(), 150, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + opt.getC().getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + opt.getC().getTroops()[1], opt.getDx() + 160, opt.getDy(), opt.getC(), 170, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + opt.getC().getTroops()[2], opt.getDx() + 330, opt.getDy(), opt.getC(), 160, 40));
+			ZoneText z = new ZoneText(playfieldLayer, opt.getDx(), opt.getDy());
+		}
+		if (opt.getLabel().equals("Produire des unités"))
+		{
+			arrayOptions.add(new Options(playfieldLayer, "Vous souhaitez produire ", opt.getDx() + 15, opt.getDy() - 40, opt.getC(), 100, 40));
+		}
+		
 		opt1.removeFromLayer();
 		if (opt2 != null)
 			opt2.removeFromLayer();

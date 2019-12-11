@@ -23,29 +23,48 @@ public class ZoneText {
 	private HBox knih;
 	private HBox onah;
 	
+	private double dx;
+	private double dy;
+	
 	 Circle c1;
 	 Circle c2;
 	 Circle c3;
 	
-	public ZoneText(Pane layer)
+	public ZoneText(Pane layer, double dx, double dy)
 	{
 		this.layer = layer;
-		/*this.pykh = new HBox();
+		this.pykh = new HBox();
 		this.knih = new HBox();
 		this.onah = new HBox();
-
-		this.pyk = new TextField();
-		this.kni = new TextField();
-		this.ona = new TextField();
+		
+		//pykh.setBackground(null);
+		this.pyk = new TextField("0");
+		this.kni = new TextField("0");
+		this.ona = new TextField("0");
 		
 		this.pykh.getChildren().add(this.pyk);
 		this.knih.getChildren().add(this.kni);
 		this.onah.getChildren().add(this.ona);
 
-		pykh.relocate(100, Settings.SCENE_HEIGHT - 20);*/
-		c1 = new Circle(260, Settings.SCENE_HEIGHT +30, 2);
-		c2 = new Circle(460, Settings.SCENE_HEIGHT + 30, 2);
-		c3 = new Circle(670, Settings.SCENE_HEIGHT + 30, 2);
+		pykh.relocate(dx - 40, dy + 20);
+		knih.relocate(dx + 160, dy + 40);
+		onah.relocate(dx + 330, dy + 40);
+		
+		this.pyk.relocate(dx - 40, dy + 20);
+		this.kni.relocate(dx + 160, dy + 40);
+		this.ona.relocate(dx + 330, dy + 40);
+		
+		this.layer.getChildren().add(pyk);
+		this.layer.getChildren().add(kni);
+		this.layer.getChildren().add(ona);
+		this.layer.getChildren().add(pykh);
+		this.layer.getChildren().add(knih);
+		this.layer.getChildren().add(onah);
+		
+		
+		c1 = new Circle(dx - 40, dy + 20, 2);
+		c2 = new Circle(dx + 160, dy + 40, 2);
+		c3 = new Circle(dx + 330, dy + 40, 2);
 		c1.setFill(Color.RED);
 		c2.setFill(Color.RED);
 		c3.setFill(Color.RED);

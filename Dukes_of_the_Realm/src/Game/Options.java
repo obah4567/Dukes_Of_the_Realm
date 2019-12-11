@@ -1,6 +1,6 @@
 package Game;
 
-import javafx.scene.Parent;
+
 //import javafx.application.Application;
 //import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,9 +19,9 @@ import javafx.scene.text.Text;
 import javafx.scene.layout.Pane;
 import javafx.scene.input.MouseEvent;
 
-public class Options extends Parent{
+public class Options {
 	private Pane layer;
-	private char label;
+	private String label;
     private double dx = 0;
     private double dy = 0;
     private Castle c;
@@ -30,7 +30,7 @@ public class Options extends Parent{
     Rectangle background;
     Text labelOption;
     
-    public Options(Pane layer, char l, double x, double y, Castle c){
+    public Options(Pane layer, String l, double x, double y, Castle c){
         this.layer = layer;
     	label =  l;
         dx = x;
@@ -44,17 +44,12 @@ public class Options extends Parent{
         background.setArcWidth(10);
        	this.layer.getChildren().add(background);
         background.relocate(dx - c.getWidth_Image()/2, dy - 20);
-       	if (l == 'a')
-       		labelOption = new Text("Attaquer");
-       	if (l == 'p')
-       		labelOption = new Text("Produire des unités");
+       	labelOption = new Text(l);
        	labelOption.setFont(new Font(18));
-       	labelOption.setFill(Color.WHITE);
-       	labelOption.setX(25);
-       	labelOption.setY(45);
+       	labelOption.setFill(Color.WHITE);       
         
         this.layer.getChildren().add(labelOption);
-        labelOption.relocate(dx - c.getWidth_Image()/2 + 5, dy - 15);
+        labelOption.relocate(dx - c.getWidth_Image()/2 + 10, dy - 15);
         /*
         this.ci = new Circle(dx, dy, 2);
         this.ci.setFill(Color.RED);
@@ -73,8 +68,28 @@ public class Options extends Parent{
             }
         });
     }
+    public Options(Pane layer, String l, double x, double y, Castle c,double wRectangle, double hRectangle)
+    {
+        this.layer = layer;
+        label =  l;
+        dx = x;
+        dy = y;
+        this.c = c;
+        background = new Rectangle(wRectangle, hRectangle, Color.BLACK);
+        background.setArcHeight(13);
+        background.setArcWidth(13);
+        this.layer.getChildren().add(background);
+        background.relocate(dx - c.getWidth_Image()/2, dy - 20);
+        
+        labelOption = new Text(l);
+        labelOption.setFont(new Font(18));
+       	labelOption.setFill(Color.WHITE);        
+        this.layer.getChildren().add(labelOption);
+        labelOption.relocate(dx - c.getWidth_Image()/2 + 10, dy - 15);
+        
+    }
 
-	public char getLabel() {
+	public String getLabel() {
 		return label;
 	}
 
@@ -94,7 +109,7 @@ public class Options extends Parent{
 		return background;
 	}
 
-	public void setLabel(char label) {
+	public void setLabel(String label) {
 		this.label = label;
 	}
 
