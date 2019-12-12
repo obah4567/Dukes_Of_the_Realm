@@ -4,12 +4,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 public abstract class Troops {
-	private Pane layer;
-	private int productionCost;
-	private int timeCost;
-	private int speed;
-	private int health;
-	private int dammages;
+	protected Pane layer;
+	protected int productionCost;
+	protected int timeCost;
+	protected int speed;
+	protected int health;
+	protected int dammages;
 	protected Rectangle r;
 
 	

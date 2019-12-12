@@ -75,7 +75,7 @@ public class Options {
         dx = x;
         dy = y;
         this.c = c;
-        background = new Rectangle(wRectangle, hRectangle, Color.BLACK);
+        background = new Rectangle(wRectangle, hRectangle, Color.GREY);
         background.setArcHeight(13);
         background.setArcWidth(13);
         this.layer.getChildren().add(background);
