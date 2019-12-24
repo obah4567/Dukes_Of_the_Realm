@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import javafx.scene.layout.Pane;
 
 public class Order {
-	private Pane layer;
 	private int nbPyk;
 	private int nbKni;
 	private int nbOna;
@@ -31,7 +30,7 @@ public class Order {
 	public Castle getTarget() {
 		return target;
 	}
-	public void setNbPyk1(int nbPyk) {
+	public void setNbPyk(int nbPyk) {
 		this.nbPyk = nbPyk;
 	}
 	public void setNbKni(int nbKni) {
@@ -60,5 +59,15 @@ public class Order {
 			this.army.add(new Pikeman(layer));
 		}
 		return army;
+	}
+	public void sendOrder(Castle target, int nbPyk, int nbKni, int nbOna)
+	{
+		if (nbPyk != 0 && nbKni != 0 && nbOna != 0)
+		{
+			setNbPyk(nbPyk);
+			setNbKni(nbKni);
+			setNbOna(nbOna);
+			setTarget(target);
+		}
 	}
 }

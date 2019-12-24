@@ -32,7 +32,7 @@ public class Main extends Application {
 	private Image neutCastleImg;
 
 	private Player player;
-	private Castle lastCastle = null;
+	public Castle lastCastle = null;
 	//private NeutralCastle lastNeutral = null;
 	
 	private ArrayList<Castle> world = new ArrayList<Castle>();
@@ -93,18 +93,8 @@ public class Main extends Application {
 				}
 				else
 				{
-					// player input
-					//player.processInput();
-
-					// movement
-					//player.move();
-
-					// update sprites in scene
-					//player.updateUI();
 					update(now);
 				}
-				// update score, health, etc
-				
 			}
 
 			private void processInput(Input input, long now) {
@@ -142,7 +132,17 @@ public class Main extends Application {
 			}
 			else
 			{
-				if (option == true)
+				if (option2)
+				{
+					if (Settings.distance(e.getX(),e.getY(), arrayOptions.get(4).getDx(), 
+							arrayOptions.get(4).getDy()) < arrayOptions.get(4).getBackground().getHeight());
+						competition2.add(arrayOptions.get(4));
+						
+					if (Settings.distance(e.getX(),e.getY(), arrayOptions.get(5).getDx(), 
+							arrayOptions.get(5).getDy()) < arrayOptions.get(5).getBackground().getHeight());
+						competition2.add(arrayOptions.get(5));
+				}
+				if (option)
 				{
 					if (opt1 != null)
 					{
@@ -167,7 +167,44 @@ public class Main extends Application {
 				if (comp)
 				{
 					if (!competition2.isEmpty())
-						optionMenu(competition2.get(index));
+					{
+						if (competition2.get(index).getC() != null)
+								optionMenu(competition2.get(index));
+						else
+						{
+							if (competition2.get(index).getLabel().equals("Clear"))
+								{
+									z.getPyk().clear();
+									z.getKni().clear();
+									z.getOna().clear();
+								}
+							if (competition2.get(index).getLabel().equals("Ok"))
+							{
+								int pyk, kni, ona;
+								if (z.getTextPyk().equals(""))
+									pyk = 0;
+								else
+									pyk = Integer.valueOf(z.getTextPyk());
+								if (z.getTextKni().equals(""))
+									kni = 0;
+								else
+									kni = Integer.valueOf(z.getTextKni());
+								if (z.getTextOna().equals(""))
+									ona = 0;
+								else
+									ona = Integer.valueOf(z.getTextOna());									
+								player.getListCastle().get(0).getOrder().sendOrder(lastCastle, pyk, kni, ona);
+								z.removeFromLayer();
+								for (int i = 0; i < arrayOptions.size(); i++)
+									arrayOptions.get(i).removeFromLayer();
+								arrayOptions.clear();
+								z = null;
+								option2 = false;
+								option = false;
+								
+							}
+						}
+					}
 				}
 				else
 				{
@@ -182,6 +219,15 @@ public class Main extends Application {
 						}
 						else
 						{
+							if (option2)
+							{
+								if (z!= null)
+									z.removeFromLayer();
+								for (int i = 0; i < arrayOptions.size(); i++)
+									arrayOptions.get(i).removeFromLayer();
+								arrayOptions.clear();
+							}
+							z = null;
 							option = false;
 							option2 = false;
 							lastCastle = intermediate;							
@@ -193,8 +239,8 @@ public class Main extends Application {
 							opt2 = null;
 						}
 					}
-					updateStatus(lastCastle);
 				}
+				updateStatus(lastCastle);
 				competition.removeAll(competition);
 				competition2.removeAll(competition2);
 				}});
@@ -332,12 +378,7 @@ public class Main extends Application {
 
 	private void updateStatus(Castle castle)
 	{
-		if (option2 == true)
-		{
-			
-		}
-		else
-		{
+		
 			String ordres = new String();
 			if (castle.getOrder().getTarget() == null)
 				ordres = "Aucun";
@@ -352,8 +393,13 @@ public class Main extends Application {
 					" Produit : " +	castle.getProduction().getProducts() + 
 					Settings.SBLANK + " Ordre : " + ordres
 					+ Settings.SBLANK + " Porte : " + castle.getGate());
-		}
+		
 	}
+
+	
+	
+	
+	
 	private void attack(Castle source, Castle target)
 	{
 		armies.add(source.getOrder().instanceTroops(playfieldLayer));
@@ -375,7 +421,12 @@ public class Main extends Application {
 			for (int i = 0; i < armies.size(); i++)
 			{
 				if (armies.get(i).isEmpty())
+				{
 					armies.remove(i);
+					/*defenders.remove(i);
+					sources.remove(i);
+					targets.remove(i);*/
+				}
 				else
 				{
 					int nbInsideGate = 0;
@@ -486,56 +537,36 @@ public class Main extends Application {
 				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() - c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
 			else
 				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() + c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
-			opt1.labelOption.setText("Envoyer des troupes");
 			opt1.setLabel("Envoyer des troupes");
 		}
 	}
 	
 	public void optionMenu(Options opt)
 	{
-		
-		if (opt.getLabel().equals("Attaquer"))
-		/*{
-			stats.setText(opt.labelOption.getText() + "  " + lastCastle.getDuc() + Settings.SBLANK +
-					"Piquiers : " + Settings.BLANK + " | " + Settings.SBLANK + " Chevaliers : " + Settings.BLANK + 
-					" | " + Settings.SBLANK + " Onagres : " + Settings.BLANK );
-			z = new ZoneText(playfieldLayer);
-			root.getChildren().add(z.c1);
-		}
-		if (opt.getLabel().equals("Envoyer des troupes"))
-		{
-			if (player.getListCastle().size() > 1)
-				stats.setText(opt.getLabel() + " sur " + lastCastle.getDuc() + Settings.SSBLANK + "Piquiers : " + Settings.SBLANK + 
-					" | Chevaliers : " + Settings.SBLANK + " | Onagres : " + Settings.SBLANK);
-			else
-				stats.setText("Vous ne pouvez vous envoyer de troupes à un autre chateau, vous ne possédez qu'un chateau.");
-		}
-		if (opt.getLabel() == "Produire des unités")
-		{
-			stats.setText(opt.labelOption.getText());
-		}*/
 		if (opt.getLabel().equals("Attaquer"))
 		{
+			z = new ZoneText(playfieldLayer, lastCastle, player.getListCastle().get(0), opt.getDx(), opt.getDy());
 			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -40, opt.getC(), 150, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + opt.getC().getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + opt.getC().getTroops()[1], opt.getDx() + 160, opt.getDy(), opt.getC(), 170, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + opt.getC().getTroops()[2], opt.getDx() + 330, opt.getDy(), opt.getC(), 160, 40));
-			ZoneText z = new ZoneText(playfieldLayer, opt.getDx(), opt.getDy());
+			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + player.getListCastle().get(0).getTroops()[1], opt.getDx() + 160, opt.getDy(), opt.getC(), 170, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + player.getListCastle().get(0).getTroops()[2], opt.getDx() + 330, opt.getDy(), opt.getC(), 160, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Clear", opt.getDx() + 110, opt.getDy() + 80));
+			arrayOptions.add(new Options(playfieldLayer, "Ok", opt.getDx() + 330, opt.getDy() + 80));
 		}
 		if (opt.getLabel().equals("Envoyer des troupes"))
 		{
 			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -40, opt.getC(), 150, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + opt.getC().getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
 			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + opt.getC().getTroops()[1], opt.getDx() + 160, opt.getDy(), opt.getC(), 170, 40));
 			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + opt.getC().getTroops()[2], opt.getDx() + 330, opt.getDy(), opt.getC(), 160, 40));
-			ZoneText z = new ZoneText(playfieldLayer, opt.getDx(), opt.getDy());
+			z = new ZoneText(playfieldLayer, lastCastle, player.getListCastle().get(0), opt.getDx(), opt.getDy());
 		}
 		if (opt.getLabel().equals("Produire des unités"))
 		{
-			arrayOptions.add(new Options(playfieldLayer, "Vous souhaitez produire ", opt.getDx() + 15, opt.getDy() - 40, opt.getC(), 100, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Vous souhaitez produire ", opt.getDx() + 15, opt.getDy() - 40, opt.getC(), 200, 40));
 		}
-		
-		opt1.removeFromLayer();
+		if (opt1 != null)
+			opt1.removeFromLayer();
 		if (opt2 != null)
 			opt2.removeFromLayer();
 		opt1 = null;

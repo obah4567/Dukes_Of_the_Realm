@@ -1,21 +1,11 @@
 package Game;
 
-
-//import javafx.application.Application;
-//import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-//import javafx.scene.Group;
-//import javafx.scene.Scene;
-//import javafx.scene.control.Button;
-//import javafx.scene.effect.Light;
-//import javafx.scene.effect.Lighting;
-//import javafx.scene.effect.Reflection;
+
 import javafx.scene.paint.Color;
-//import javafx.stage.Stage;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-//import javafx.scene.paint.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.input.MouseEvent;
 
@@ -24,11 +14,11 @@ public class Options {
 	private String label;
     private double dx = 0;
     private double dy = 0;
-    private Castle c;
-    //private Circle ci;
+    private Castle c = null;
+    private Circle ci;
     
-    Rectangle background;
-    Text labelOption;
+    private Rectangle background;
+    private Text labelOption;
     
     public Options(Pane layer, String l, double x, double y, Castle c){
         this.layer = layer;
@@ -86,9 +76,52 @@ public class Options {
        	labelOption.setFill(Color.WHITE);        
         this.layer.getChildren().add(labelOption);
         labelOption.relocate(dx - c.getWidth_Image()/2 + 10, dy - 15);
+        this.ci = new Circle(dx, dy, 2);
+        this.ci.setFill(Color.RED);
+        this.ci.relocate(dx, dy);
+        this.layer.getChildren().add(ci);
         
     }
-
+    
+    public Options(Pane layer, String l, double x, double y){
+        this.layer = layer;
+    	label =  l;
+        dx = x;
+        dy = y;
+        int size = 80;
+        if (label.length() < 4)
+        	size = 50;
+        background = new Rectangle(size, 40, Color.BLACK);
+        background.setArcHeight(10);
+        background.setArcWidth(10);
+       	this.layer.getChildren().add(background);
+        background.relocate(dx, dy - 20);
+       	
+        labelOption = new Text(l);
+       	labelOption.setFont(new Font(18));
+       	labelOption.setFill(Color.WHITE);       
+        
+        this.layer.getChildren().add(labelOption);
+        labelOption.relocate(dx + 10, dy - 15);
+        this.ci = new Circle(dx, dy, 2);
+        this.ci.setFill(Color.RED);
+        this.ci.relocate(dx, dy);
+        this.layer.getChildren().add(ci);
+      
+        labelOption.setOnMouseEntered(new EventHandler<MouseEvent>(){
+            public void handle(MouseEvent me){
+                background.setFill(Color.LIGHTGREY);
+                labelOption.setFill(Color.GREY);
+            }
+        });
+        
+        labelOption.setOnMouseExited(new EventHandler<MouseEvent>(){
+            public void handle(MouseEvent me){
+                background.setFill(Color.BLACK);
+                labelOption.setFill(Color.WHITE);
+            }
+        });
+    }
 	public String getLabel() {
 		return label;
 	}

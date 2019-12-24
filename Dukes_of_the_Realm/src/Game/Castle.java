@@ -44,7 +44,7 @@ public class Castle extends Sprites{
         this.gate = Settings.GATES[r.nextInt(4)];
         //army
         this.troops = new int[3];
-        this.troops[0] = Settings.NB_PIK_DUC; this.troops[1] = Settings.NB_KNI_DUC; this.troops[2] = Settings.NB_ONA_DUC;
+        this.troops[0] = 1000; this.troops[1] = 1000; this.troops[2] = 100;
         this.treasure = 50;
         this.level = 1;
         this.duc = duc;
