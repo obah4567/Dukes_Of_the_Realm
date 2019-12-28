@@ -65,5 +65,8 @@ public abstract class Troops {
 	{
 		return this.r;
 	}
-	
+	public void removeFromLayer()
+	{
+		this.layer.getChildren().remove(this.r);
+	}
 }

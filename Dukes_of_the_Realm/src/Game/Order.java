@@ -43,23 +43,6 @@ public class Order {
 		this.target = target;
 	}
 	
-	public ArrayList<Troops> instanceTroops(Pane layer)
-	{
-		ArrayList<Troops> army = new ArrayList<Troops>();
-		for (int i = 0; i < nbOna; i++)
-		{
-			this.army.add(new Onager(layer));
-		}
-		for (int i = 0; i < nbKni; i++)
-		{
-			this.army.add(new Knights(layer));
-		}
-		for (int i = 0; i < nbPyk; i++)
-		{
-			this.army.add(new Pikeman(layer));
-		}
-		return army;
-	}
 	public void sendOrder(Castle target, int nbPyk, int nbKni, int nbOna)
 	{
 		if (nbPyk != 0 && nbKni != 0 && nbOna != 0)

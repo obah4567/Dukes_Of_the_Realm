@@ -14,6 +14,7 @@ public class Castle extends Sprites{
 	private Production production;
 	private Order order;
 	private String gate;
+	private ArrayList<Troops> def = new ArrayList<Troops>();
 
 	//Constructors
 	public Castle(Image img, Pane layer, ArrayList<Castle> world)
@@ -89,7 +90,10 @@ public class Castle extends Sprites{
 	public String getGate() {
 		return gate;
 	}
-
+	public ArrayList<Troops> getDef()
+	{
+		return this.def;
+	}
 	public void setImgView(ImageView imgView) {
 		this.imgView = imgView;
 	}
@@ -144,21 +148,74 @@ public class Castle extends Sprites{
 	}
 	public ArrayList<Troops> instanceTroops()
 	{
+		ArrayList<Troops> army = new ArrayList<Troops>();
+		for (int i = 0; i < this.order.getNbOna(); i++)
+		{
+			army.add(new Onager(layer));
+		}
+		for (int i = 0; i < this.order.getNbKni(); i++)
+		{
+			army.add(new Knights(layer));
+		}
+		for (int i = 0; i < this.order.getNbPyk(); i++)
+		{
+			army.add(new Pikeman(layer));
+		}
+		
 		this.troops[0] = this.troops[0] - getOrder().getNbPyk();
 		this.troops[1] = this.troops[1] - getOrder().getNbKni();
 		this.troops[2] = this.troops[2] - getOrder().getNbOna();
-		return this.order.instanceTroops(this.layer);
+
+		return army;
+		
 	}
-	public ArrayList<Troops> defend()
+	public boolean defend() // Mise en place de l'unité de défense : 6/3/2
 	{
-		ArrayList<Troops> def = new ArrayList<Troops>();
-		for (int i = 0; i < troops[0]; i++)
+		for (int i = 0; i < troops[0] && i < 6; i++)
+		{
 			def.add(new Pikeman());
-		for (int i = 0; i < troops[1]; i++)
+			this.troops[0]--;
+		}
+		for (int i = 0; i < troops[1] && i < 3; i++)
+		{
 			def.add(new Knights());
-		for (int i = 0; i < troops[2]; i++)
+			this.troops[1]--;
+		}
+		for (int i = 0; i < troops[2] && i < 1; i++)
+		{
 			def.add(new Onager());
-		troops[0] = 0; troops[1] = 0; troops[2] = 0;
-		return def;
+			this.troops[2]--;
+		}
+		if (def.size() < 10)
+		{
+			boolean canAddTroops = true;
+			while (canAddTroops)
+			{
+				if (troops[0] > 0)
+				{
+					def.add(new Pikeman());
+					this.troops[0]--;
+				}
+				else
+				{
+					if (troops[1] > 0)
+					{
+						def.add(new Knights());
+						this.troops[1]--;
+					}
+					else
+					{
+						if (troops[2] > 0)
+						{
+							def.add(new Onager());
+							this.troops[2]--;
+						}
+						else
+							canAddTroops = false;
+					}
+				}
+			}
+		}
+		return def.isEmpty();
 	}
 }

@@ -64,7 +64,7 @@ public class ZoneText {
 		
 		
 		this.layer.getChildren().addAll(pyk, kni, ona);
-		
+		/*
 		c = new Circle(dx, dy, 2);
 		c1 = new Circle(dx, dy + 20, 2);
 		c2 = new Circle(dx + 160, dy + 20, 2);
@@ -78,7 +78,7 @@ public class ZoneText {
 		this.layer.getChildren().add(c1);
 		this.layer.getChildren().add(c2);
 		this.layer.getChildren().add(c3);
-	
+		*/
 	}
 	public void removeFromLayer()
 	{

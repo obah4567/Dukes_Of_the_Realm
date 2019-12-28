@@ -40,7 +40,6 @@ public class Main extends Application {
 	private ArrayList<Options> competition2 = new ArrayList<Options>();
 	
 	private ArrayList<ArrayList<Troops>> armies = new ArrayList<ArrayList<Troops>>();
-	private ArrayList<ArrayList<Troops>> defenders = new ArrayList<ArrayList<Troops>>();
 	private ArrayList<Castle> sources = new ArrayList<Castle>();
 	private ArrayList<Castle> targets = new ArrayList<Castle>();
 	
@@ -194,6 +193,7 @@ public class Main extends Application {
 								else
 									ona = Integer.valueOf(z.getTextOna());									
 								player.getListCastle().get(0).getOrder().sendOrder(lastCastle, pyk, kni, ona);
+								attack(player.getListCastle().get(0), lastCastle);
 								z.removeFromLayer();
 								for (int i = 0; i < arrayOptions.size(); i++)
 									arrayOptions.get(i).removeFromLayer();
@@ -248,7 +248,7 @@ public class Main extends Application {
 	
 	public void clear()
 	{
-		stats.setText(" ");
+		stats.setText("");
 	}
 
 	public int handleCompetition(double dx, double dy)
@@ -402,10 +402,10 @@ public class Main extends Application {
 	
 	private void attack(Castle source, Castle target)
 	{
-		armies.add(source.getOrder().instanceTroops(playfieldLayer));
+		armies.add(source.instanceTroops());
 		sources.add(source);
 		targets.add(target);
-		defenders.add(target.defend());
+		//defenders.add(target.defend());
 	}
 	
 	
@@ -423,9 +423,8 @@ public class Main extends Application {
 				if (armies.get(i).isEmpty())
 				{
 					armies.remove(i);
-					/*defenders.remove(i);
 					sources.remove(i);
-					targets.remove(i);*/
+					targets.remove(i);
 				}
 				else
 				{
@@ -433,21 +432,21 @@ public class Main extends Application {
 					for (int j = 0; j < armies.get(i).size(); j++)
 					{
 						//
-						if (armies.get(i).get(i).getRectangle().getX() == sources.get(i).getDx() && 
-							armies.get(i).get(i).getRectangle().getY() == sources.get(i).getDy())
+						if (armies.get(i).get(j).getRectangle().getX() == sources.get(i).getDx() && 
+							armies.get(i).get(j).getRectangle().getY() == sources.get(i).getDy())
 						{
 							if (nbInsideGate < Settings.SIZEGATE)
 							{
 								if (targets.get(i).getDx() > sources.get(i).getDx())
 								{
-									armies.get(i).get(i).getRectangle().relocate(sources.get(i).getDx() +
+									armies.get(i).get(j).getRectangle().relocate(sources.get(i).getDx() +
 										sources.get(i).getWidth_Image()/2, sources.get(i).getDy() + 
 										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
 									nbInsideGate++;
 								}
 								else
 								{
-									armies.get(i).get(i).getRectangle().relocate(sources.get(i).getDx() -
+									armies.get(i).get(j).getRectangle().relocate(sources.get(i).getDx() -
 										sources.get(i).getWidth_Image()/2, sources.get(i).getDy() + 
 										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
 								}
@@ -455,11 +454,11 @@ public class Main extends Application {
 						}
 						else
 						{
-							double a = (sources.get(i).getDy() - armies.get(i).get(i).getRectangle().getY())/
-								(sources.get(i).getDx() - armies.get(i).get(i).getRectangle().getX());
-							double b = ((sources.get(i).getDy() + armies.get(i).get(i).getRectangle().getY() - 
-								a *(sources.get(i).getDx() + armies.get(i).get(i).getRectangle().getX()))/2);
-							armies.get(i).get(i).getRectangle().relocate( armies.get(i).get(i).getRectangle().getX(), a* armies.get(i).get(i).getRectangle().getX() + b);
+							double a = (sources.get(i).getDy() - armies.get(i).get(j).getRectangle().getY())/
+								(sources.get(i).getDx() - armies.get(i).get(j).getRectangle().getX());
+							double b = ((sources.get(i).getDy() + armies.get(i).get(j).getRectangle().getY() - 
+								a *(sources.get(i).getDx() + armies.get(i).get(j).getRectangle().getX()))/2);
+							armies.get(i).get(j).getRectangle().relocate( armies.get(i).get(j).getRectangle().getX(), a* armies.get(i).get(j).getRectangle().getX() + b);
 						}
 					}
 				}	
@@ -474,13 +473,14 @@ public class Main extends Application {
 			{
 				Troops intermediate = armies.get(i).get(j);
 				if (Settings.distance(intermediate.getRectangle().getX(), intermediate.getRectangle().getY(), 
-						targets.get(i).getDx(), targets.get(i).getDy()) > targets.get(i).getWidth_Image()/3)
+						targets.get(i).getDx(), targets.get(i).getDy()) < targets.get(i).getWidth_Image()/3)
 				{
 					if (sources.get(i).getDuc().equals(targets.get(i).getDuc()))
 					{
 						if (armies.get(i).get(j).getClass() == Pikeman.class)
 						{
 							targets.get(i).setTroops0(targets.get(i).getTroops()[0] + 1);
+							armies.get(i).get(j).removeFromLayer();
 							armies.get(i).remove(j);
 						}
 						if (armies.get(i).get(j).getClass() == Knights.class)
@@ -496,9 +496,21 @@ public class Main extends Application {
 					}
 					else
 					{
-						if (dammage(intermediate.getDammages(), i))//Chateau pris
+						if (targets.get(i).getDef() == null)
 						{
-							targets.get(i).setDuc(sources.get(i).getDuc());
+							if (targets.get(i).defend())
+							{
+								targets.get(i).setDuc(sources.get(i).getDuc());
+								return;
+							}
+						}
+						if (dammage(intermediate.getDammages(), i))//ligne de défense vide
+						{
+							if (targets.get(i).defend())
+							{
+								targets.get(i).setDuc(sources.get(i).getDuc());
+								return;
+							}
 						}
 					}
 				}
@@ -506,9 +518,9 @@ public class Main extends Application {
 		}
 	}
 	
-	private boolean dammage(int dammages, int indice)
+	private boolean dammage(int dammages, int index)
 	{
-		ArrayList<Troops> def = defenders.get(indice);
+		ArrayList<Troops> def = targets.get(index).getDef();
 		if (def.isEmpty())
 			return true;
 		int unit = r.nextInt(def.size());

@@ -76,10 +76,10 @@ public class Options {
        	labelOption.setFill(Color.WHITE);        
         this.layer.getChildren().add(labelOption);
         labelOption.relocate(dx - c.getWidth_Image()/2 + 10, dy - 15);
-        this.ci = new Circle(dx, dy, 2);
+        /*this.ci = new Circle(dx, dy, 2);
         this.ci.setFill(Color.RED);
         this.ci.relocate(dx, dy);
-        this.layer.getChildren().add(ci);
+        this.layer.getChildren().add(ci);*/
         
     }
     
@@ -103,11 +103,12 @@ public class Options {
         
         this.layer.getChildren().add(labelOption);
         labelOption.relocate(dx + 10, dy - 15);
+        /*
         this.ci = new Circle(dx, dy, 2);
         this.ci.setFill(Color.RED);
         this.ci.relocate(dx, dy);
         this.layer.getChildren().add(ci);
-      
+      	*/
         labelOption.setOnMouseEntered(new EventHandler<MouseEvent>(){
             public void handle(MouseEvent me){
                 background.setFill(Color.LIGHTGREY);

@@ -47,7 +47,7 @@ public class Settings {
 			"Salomon", "Blaise", "Romain", "Joffrey", "Stannis", "Tywin", "Salazar"};
 	
 	
-	public static final int TIME_TURN = 100000000;
+	public static final long TIME_TURN = 1000000 * 1000;
 	
 	public static final int NB_NEUT_CASTLE = 5;
 	public static final int NB_ENN_CASTLE = 5;
