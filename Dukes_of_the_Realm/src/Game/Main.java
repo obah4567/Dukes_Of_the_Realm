@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.shape.*;
 import java.util.Random;
@@ -300,7 +301,7 @@ public class Main extends Application {
 	private void createPlayer() {
 	
 		Castle c = new Castle(castlePlayerImg, playfieldLayer, "Joueur");
-		player = new Player(input, c);
+		player = new Player(c);
 		world.add(c);
 
 	}
@@ -427,23 +428,31 @@ public class Main extends Application {
 					for (int j = 0; j < armies.get(i).size(); j++)
 					{
 						//
-						if (armies.get(i).get(j).getRectangle().getX() == sources.get(i).getDx() && 
-							armies.get(i).get(j).getRectangle().getY() == sources.get(i).getDy())
+						if (armies.get(i).get(j).getRectangle().getX() - sources.get(i).getDx() < sources.get(i).getHeigth_Image()/4 && 
+							armies.get(i).get(j).getRectangle().getY() - sources.get(i).getDy() < sources.get(i).getHeigth_Image()/4)
 						{
 							if (nbInsideGate < Settings.SIZEGATE)
 							{
 								if (targets.get(i).getDx() > sources.get(i).getDx())
 								{
-									armies.get(i).get(j).getRectangle().relocate(sources.get(i).getDx() +
+									armies.get(i).get(j).getRectangle().setX(sources.get(i).getDx() +
+										sources.get(i).getWidth_Image()/2);
+									armies.get(i).get(j).getRectangle().setY(sources.get(i).getDy() + 
+										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
+									/*armies.get(i).get(j).getRectangle().relocate(sources.get(i).getDx() +
 										sources.get(i).getWidth_Image()/2, sources.get(i).getDy() + 
 										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
-									nbInsideGate++;
+									nbInsideGate++;*/
 								}
 								else
 								{
-									armies.get(i).get(j).getRectangle().relocate(sources.get(i).getDx() -
+									armies.get(i).get(j).getRectangle().setX(sources.get(i).getDx() -
+											sources.get(i).getWidth_Image()/2);
+										armies.get(i).get(j).getRectangle().setY(sources.get(i).getDy() + 
+											sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
+									/*armies.get(i).get(j).getRectangle().relocate(sources.get(i).getDx() -
 										sources.get(i).getWidth_Image()/2, sources.get(i).getDy() + 
-										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
+										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);*/
 								}
 							}
 						}
@@ -451,14 +460,18 @@ public class Main extends Application {
 						{
 							double a = (sources.get(i).getDy() - armies.get(i).get(j).getRectangle().getY())/
 								(sources.get(i).getDx() - armies.get(i).get(j).getRectangle().getX());
-							double b = ((sources.get(i).getDy() + armies.get(i).get(j).getRectangle().getY() - 
-								a *(sources.get(i).getDx() + armies.get(i).get(j).getRectangle().getX()))/2);
-							if (armies.get(i).get(j).getRectangle().getX() > targets.get(i).getDx())
-								armies.get(i).get(j).getRectangle().relocate( armies.get(i).get(j).getRectangle().getX() + armies.get(i).get(j).getSpeed(), 
-										a * (armies.get(i).get(j).getRectangle().getX() + 2) + b);
+							double b = sources.get(i).getDy() - a * sources.get(i).getDx();
+							
+							if (targets.get(i).getDx() > armies.get(i).get(j).getRectangle().getX())
+							{
+								armies.get(i).get(j).getRectangle().setX(armies.get(i).get(j).getRectangle().getX() + armies.get(i).get(j).getSpeed());
+								armies.get(i).get(j).getRectangle().setY(a * (armies.get(i).get(j).getRectangle().getX() + armies.get(i).get(j).getSpeed()) + b);
+							}
 							else
-								armies.get(i).get(j).getRectangle().relocate( armies.get(i).get(j).getRectangle().getX() - armies.get(i).get(j).getSpeed(), 
-										a * (armies.get(i).get(j).getRectangle().getX() - armies.get(i).get(j).getSpeed()) + b);
+							{
+								armies.get(i).get(j).getRectangle().setX(armies.get(i).get(j).getRectangle().getX() - armies.get(i).get(j).getSpeed());
+								armies.get(i).get(j).getRectangle().setY(a * (armies.get(i).get(j).getRectangle().getX() - armies.get(i).get(j).getSpeed()) + b);
+							}
 						}
 					}
 				}	

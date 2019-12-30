@@ -46,7 +46,7 @@ public class Castle extends Sprites{
         //army
         this.troops = new int[3];
         this.troops[0] = 1000; this.troops[1] = 1000; this.troops[2] = 100;
-        this.treasure = 50;
+        this.treasure = 0;
         this.level = 1;
         this.duc = duc;
         this.order = new Order(0, 0, 0, null);
