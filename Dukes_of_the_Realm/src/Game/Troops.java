@@ -11,6 +11,8 @@ public abstract class Troops {
 	protected int health;
 	protected int dammages;
 	protected Rectangle r;
+	protected double a;
+	protected double b;
 
 	
 	public Troops(Pane layer, int productionCost, int timeCost, int speed, int health, int dammages)

@@ -45,7 +45,7 @@ public class Order {
 	
 	public void sendOrder(Castle target, int nbPyk, int nbKni, int nbOna)
 	{
-		if (nbPyk != 0 && nbKni != 0 && nbOna != 0)
+		if (nbPyk != 0 || nbKni != 0 || nbOna != 0)
 		{
 			setNbPyk(nbPyk);
 			setNbKni(nbKni);

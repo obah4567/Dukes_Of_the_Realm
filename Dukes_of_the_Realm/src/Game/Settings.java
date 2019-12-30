@@ -11,9 +11,9 @@ public class Settings {
 	public static final int TIME_COST_KNIGHT = 20;
 	public static final int TIME_COST_ONAGER = 50;
 
-	public static final int SPEED_PIKEMAN = 2;
-	public static final int SPEED_KNIGHT = 6;
-	public static final int SPEED_ONAGER = 8;
+	public static final int SPEED_PIKEMAN = 8;
+	public static final int SPEED_KNIGHT = 10;
+	public static final int SPEED_ONAGER = 6;
 
 	public static final int HEALTH_PIKEMAN = 1;
 	public static final int HEALTH_KNIGHT = 3;
@@ -34,7 +34,7 @@ public class Settings {
 
 	// WINDOW
 	public static final int SCENE_WIDTH = 1800;
-    public static final int SCENE_HEIGHT = 700;
+    public static final int SCENE_HEIGHT = 900;
 	public static final int STATUS_BAR_HEIGHT = 45;
 	
 	public static final String BLANK = "                  ";
@@ -47,7 +47,7 @@ public class Settings {
 			"Salomon", "Blaise", "Romain", "Joffrey", "Stannis", "Tywin", "Salazar"};
 	
 	
-	public static final long TIME_TURN = 1000000 * 1000;
+	public static final long TIME_TURN = 1000000 * 10000;
 	
 	public static final int NB_NEUT_CASTLE = 5;
 	public static final int NB_ENN_CASTLE = 5;

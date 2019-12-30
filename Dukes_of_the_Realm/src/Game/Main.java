@@ -159,7 +159,7 @@ public class Main extends Application {
 				{
 					Castle intermediaire = world.get(i);
 					if (Settings.distance(intermediaire.getDx(), intermediaire.getDy(), 
-							e.getX(), e.getY()) < intermediaire.getWidth_Image())
+							e.getX(), e.getY()) < intermediaire.getWidth_Image()/2)
 						competition.add(intermediaire);
 				}
 				int index = handleCompetition(e.getX(), e.getY());
@@ -271,7 +271,7 @@ public class Main extends Application {
 				index2 = i;
 			}
 		}
-		if (min1 > min2)
+		if (3*min1 > min2)
 		{
 			comp = false;
 			return index2;
@@ -378,7 +378,6 @@ public class Main extends Application {
 
 	private void updateStatus(Castle castle)
 	{
-		
 			String ordres = new String();
 			if (castle.getOrder().getTarget() == null)
 				ordres = "Aucun";
@@ -397,9 +396,6 @@ public class Main extends Application {
 	}
 
 	
-	
-	
-	
 	private void attack(Castle source, Castle target)
 	{
 		armies.add(source.instanceTroops());
@@ -407,7 +403,6 @@ public class Main extends Application {
 		targets.add(target);
 		//defenders.add(target.defend());
 	}
-	
 	
 	
 	private void moveTroops()
@@ -458,7 +453,12 @@ public class Main extends Application {
 								(sources.get(i).getDx() - armies.get(i).get(j).getRectangle().getX());
 							double b = ((sources.get(i).getDy() + armies.get(i).get(j).getRectangle().getY() - 
 								a *(sources.get(i).getDx() + armies.get(i).get(j).getRectangle().getX()))/2);
-							armies.get(i).get(j).getRectangle().relocate( armies.get(i).get(j).getRectangle().getX(), a* armies.get(i).get(j).getRectangle().getX() + b);
+							if (armies.get(i).get(j).getRectangle().getX() > targets.get(i).getDx())
+								armies.get(i).get(j).getRectangle().relocate( armies.get(i).get(j).getRectangle().getX() + armies.get(i).get(j).getSpeed(), 
+										a * (armies.get(i).get(j).getRectangle().getX() + 2) + b);
+							else
+								armies.get(i).get(j).getRectangle().relocate( armies.get(i).get(j).getRectangle().getX() - armies.get(i).get(j).getSpeed(), 
+										a * (armies.get(i).get(j).getRectangle().getX() - armies.get(i).get(j).getSpeed()) + b);
 						}
 					}
 				}	
@@ -558,10 +558,10 @@ public class Main extends Application {
 		if (opt.getLabel().equals("Attaquer"))
 		{
 			z = new ZoneText(playfieldLayer, lastCastle, player.getListCastle().get(0), opt.getDx(), opt.getDy());
-			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -40, opt.getC(), 150, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -41, opt.getC(), 150, 40));
 			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + player.getListCastle().get(0).getTroops()[1], opt.getDx() + 160, opt.getDy(), opt.getC(), 170, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + player.getListCastle().get(0).getTroops()[2], opt.getDx() + 330, opt.getDy(), opt.getC(), 160, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + player.getListCastle().get(0).getTroops()[1], opt.getDx() + 161, opt.getDy(), opt.getC(), 170, 40));
+			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + player.getListCastle().get(0).getTroops()[2], opt.getDx() + 332, opt.getDy(), opt.getC(), 160, 40));
 			arrayOptions.add(new Options(playfieldLayer, "Clear", opt.getDx() + 110, opt.getDy() + 80));
 			arrayOptions.add(new Options(playfieldLayer, "Ok", opt.getDx() + 330, opt.getDy() + 80));
 		}

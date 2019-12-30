@@ -152,14 +152,17 @@ public class Castle extends Sprites{
 		for (int i = 0; i < this.order.getNbOna(); i++)
 		{
 			army.add(new Onager(layer));
+			army.get(i).getRectangle().relocate(this.getDx(), this.getDy());
 		}
 		for (int i = 0; i < this.order.getNbKni(); i++)
 		{
 			army.add(new Knights(layer));
+			army.get(i).getRectangle().relocate(this.getDx() + 2, this.getDy());
 		}
 		for (int i = 0; i < this.order.getNbPyk(); i++)
 		{
 			army.add(new Pikeman(layer));
+			army.get(i).getRectangle().relocate(this.getDx() + 1, this.getDy() + 3);
 		}
 		
 		this.troops[0] = this.troops[0] - getOrder().getNbPyk();

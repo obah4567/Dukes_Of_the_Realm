@@ -4,7 +4,6 @@ package Game;
 import javafx.scene.control.TextField;
 
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 
 import javafx.scene.shape.*;
 import javafx.scene.layout.Pane;
@@ -46,9 +45,9 @@ public class ZoneText {
 		this.knih = new HBox(kni);
 		this.onah = new HBox(ona);
 		
-		this.pyk.setPrefSize(150, 40);
-		this.kni.setPrefSize(150, 40);
-		this.ona.setPrefSize(150, 40);
+		this.pyk.setPrefSize(130, 40);
+		this.kni.setPrefSize(130, 40);
+		this.ona.setPrefSize(130, 40);
 		
 		this.pyk.setPromptText("Nombre de piquiers");
 		this.kni.setPromptText("Nombre de chevaliers");
