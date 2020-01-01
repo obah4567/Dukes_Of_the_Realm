@@ -18,7 +18,6 @@ public class ZoneText {
 	private TextField pyk;
 	private TextField kni;
 	private TextField ona;
-	private Castle target;
 	
 	private boolean gotCliked = false;
 	
@@ -32,18 +31,19 @@ public class ZoneText {
 	Circle c3;
 	
 	
-	public ZoneText(Pane layer, Castle target, Castle source, double dx, double dy)
+	public ZoneText(Pane layer, Castle target, double dx, double dy)
 	{
 		this.layer = layer;
-		
 		this.pyk = new TextField();
 		this.kni = new TextField();
 		this.ona = new TextField();
 		
-		
-		this.pykh = new HBox(pyk);	
+		/*this.pykh = new HBox(pyk);	
 		this.knih = new HBox(kni);
 		this.onah = new HBox(ona);
+		this.pykh.relocate(dx, dy + 20);
+		this.knih.relocate(dx + 160, dy + 20);
+		this.onah.relocate(dx + 320, dy + 20);*/
 		
 		this.pyk.setPrefSize(130, 40);
 		this.kni.setPrefSize(130, 40);
@@ -53,14 +53,18 @@ public class ZoneText {
 		this.kni.setPromptText("Nombre de chevaliers");
 		this.ona.setPromptText("Nombre d'onagres");
 		
-		this.pyk.relocate(dx, dy + 20);
-		this.kni.relocate(dx + 160, dy + 20);
-		this.ona.relocate(dx + 320, dy + 20);
-		
-		this.pykh.relocate(dx, dy + 20);
-		this.knih.relocate(dx + 160, dy + 20);
-		this.onah.relocate(dx + 320, dy + 20);
-		
+		if (target.getDx() > Settings.SCENE_WIDTH - 550)//The castle is near the edge. to get more visibility, the options shall be displayed on the left side of the castle
+		{
+			this.pyk.relocate(dx - target.getWidth_Image()/2 - 145, dy + 21);
+			this.kni.relocate(dx - target.getWidth_Image()/2 - 295, dy + 21);
+			this.ona.relocate(dx - target.getWidth_Image()/2 - 445, dy + 21);
+		}
+		else
+		{
+			this.pyk.relocate(dx + target.getWidth_Image()/2 + 15, dy + 21);
+			this.kni.relocate(dx + target.getWidth_Image()/2 + 165, dy + 21);
+			this.ona.relocate(dx + target.getWidth_Image()/2 + 315, dy + 21);
+		}
 		
 		this.layer.getChildren().addAll(pyk, kni, ona);
 		/*

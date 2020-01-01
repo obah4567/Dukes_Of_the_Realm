@@ -146,23 +146,28 @@ public class Castle extends Sprites{
 	public void setGate(String gate) {
 		this.gate = gate;
 	}
-	public ArrayList<Troops> instanceTroops()
+	public ArrayList<Troops> instanceTroops(Castle target)
 	{
 		ArrayList<Troops> army = new ArrayList<Troops>();
 		for (int i = 0; i < this.order.getNbOna(); i++)
 		{
-			army.add(new Onager(layer));
-			army.get(i).getRectangle().relocate(this.getDx(), this.getDy());
+			army.add(new Onager(layer, this, target));
+			army.get(i).getRectangle().setX(this.getDx());
+			army.get(i).getRectangle().setY(this.getDy());
 		}
+		int size = army.size();
 		for (int i = 0; i < this.order.getNbKni(); i++)
 		{
-			army.add(new Knights(layer));
-			army.get(i).getRectangle().relocate(this.getDx() + 2, this.getDy());
+			army.add(new Knights(layer, this, target));
+			army.get(i + size).getRectangle().setX(this.getDx() + 4);
+			army.get(i + size).getRectangle().setY(this.getDy());
 		}
+		size = army.size();
 		for (int i = 0; i < this.order.getNbPyk(); i++)
 		{
-			army.add(new Pikeman(layer));
-			army.get(i).getRectangle().relocate(this.getDx() + 1, this.getDy() + 3);
+			army.add(new Pikeman(layer, this, target));
+			army.get(i + size).getRectangle().setX(this.getDx() + 2);
+			army.get(i + size).getRectangle().setY(this.getDy() + 6);
 		}
 		
 		this.troops[0] = this.troops[0] - getOrder().getNbPyk();
@@ -220,5 +225,15 @@ public class Castle extends Sprites{
 			}
 		}
 		return def.isEmpty();
+	}
+	public void sendOrder(Castle target, int nbPyk, int nbKni, int nbOna)
+	{
+		if (nbPyk != 0 || nbKni != 0 || nbOna != 0)
+		{
+			this.order.setNbPyk(nbPyk);
+			this.order.setNbKni(nbKni);
+			this.order.setNbOna(nbOna);
+			this.order.setTarget(target);
+		}
 	}
 }

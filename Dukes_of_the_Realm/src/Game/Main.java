@@ -34,15 +34,12 @@ public class Main extends Application {
 
 	private Player player;
 	public Castle lastCastle = null;
-	//private NeutralCastle lastNeutral = null;
 	
 	private ArrayList<Castle> world = new ArrayList<Castle>();
 	private ArrayList<Castle> competition = new ArrayList<Castle>();
 	private ArrayList<Options> competition2 = new ArrayList<Options>();
 	
 	private ArrayList<ArrayList<Troops>> armies = new ArrayList<ArrayList<Troops>>();
-	private ArrayList<Castle> sources = new ArrayList<Castle>();
-	private ArrayList<Castle> targets = new ArrayList<Castle>();
 	
 	private ArrayList<Options> arrayOptions = new ArrayList<Options>();
 	
@@ -134,12 +131,12 @@ public class Main extends Application {
 			{
 				if (option2)
 				{
-					if (Settings.distance(e.getX(),e.getY(), arrayOptions.get(4).getDx(), 
-							arrayOptions.get(4).getDy()) < arrayOptions.get(4).getBackground().getHeight());
+					if (Settings.distance(e.getX(), e.getY(), arrayOptions.get(4).getDx(), 
+							arrayOptions.get(4).getDy()) < arrayOptions.get(4).getBackground().getHeight())
 						competition2.add(arrayOptions.get(4));
 						
-					if (Settings.distance(e.getX(),e.getY(), arrayOptions.get(5).getDx(), 
-							arrayOptions.get(5).getDy()) < arrayOptions.get(5).getBackground().getHeight());
+					if (Settings.distance(e.getX(), e.getY(), arrayOptions.get(5).getDx(), 
+							arrayOptions.get(5).getDy()) < arrayOptions.get(5).getBackground().getHeight())
 						competition2.add(arrayOptions.get(5));
 				}
 				if (option)
@@ -193,7 +190,7 @@ public class Main extends Application {
 									ona = 0;
 								else
 									ona = Integer.valueOf(z.getTextOna());									
-								player.getListCastle().get(0).getOrder().sendOrder(lastCastle, pyk, kni, ona);
+								player.getListCastle().get(0).sendOrder(lastCastle, pyk, kni, ona);
 								attack(player.getListCastle().get(0), lastCastle);
 								z.removeFromLayer();
 								for (int i = 0; i < arrayOptions.size(); i++)
@@ -241,7 +238,13 @@ public class Main extends Application {
 						}
 					}
 				}
+				try
+				{
 				updateStatus(lastCastle);
+				} catch(Game_Exception g)
+				{
+					
+				}
 				competition.removeAll(competition);
 				competition2.removeAll(competition2);
 				}});
@@ -272,7 +275,7 @@ public class Main extends Application {
 				index2 = i;
 			}
 		}
-		if (3*min1 > min2)
+		if (min1 > min2 + 10)
 		{
 			comp = false;
 			return index2;
@@ -280,12 +283,9 @@ public class Main extends Application {
 		comp = true;
 		return index;
 	}
-	
-	
 
 	//Creation structures
-	
-	
+		
 	public void createStatusBar() {
 		HBox statusBar = new HBox();
 		statusBar.getChildren().addAll(stats);
@@ -368,7 +368,16 @@ public class Main extends Application {
 			}
 			lastTurn = now;
 			if (lastCastle != null)
-				updateStatus(lastCastle);
+			{
+				try
+				{	
+					updateStatus(lastCastle);
+				}
+				catch(Game_Exception g)
+				{
+					
+				}
+			}
 			if (!armies.isEmpty())
 			{
 				moveTroops();
@@ -377,32 +386,31 @@ public class Main extends Application {
 		}
 	}
 
-	private void updateStatus(Castle castle)
+	private void updateStatus(Castle castle) throws Game_Exception
 	{
-			String ordres = new String();
-			if (castle.getOrder().getTarget() == null)
-				ordres = "Aucun";
-			else
-				ordres = castle.getOrder().getTarget().getDuc();
-			stats.setText("Chateau de : " + castle.getDuc() + Settings.SBLANK +
-					" Niveau : " + castle.getLevel() + Settings.SBLANK + 
-					" tresor : " + castle.getTreasure() + Settings.SBLANK + 
-					" Troupes : " + castle.getTroops()[0] +" piquiers | " +
-					castle.getTroops()[1] + " chevaliers | " + 
-					castle.getTroops()[2] + " onagres " + Settings.SBLANK + 
-					" Produit : " +	castle.getProduction().getProducts() + 
-					Settings.SBLANK + " Ordre : " + ordres
-					+ Settings.SBLANK + " Porte : " + castle.getGate());
+		if (castle == null)
+			throw new Game_Exception("Castle is null, updateStatus trying to show an order from a null castle");
+		String ordres = new String();
+		if (castle.getOrder().getTarget() == null)
+			ordres = "Aucun";
+		else
+			ordres = castle.getOrder().getTarget().getDuc();
+		stats.setText("Chateau de : " + castle.getDuc() + Settings.SBLANK +
+				" Niveau : " + castle.getLevel() + Settings.SBLANK + 
+				" tresor : " + castle.getTreasure() + Settings.SBLANK + 
+				" Troupes : " + castle.getTroops()[0] +" piquiers | " +
+				castle.getTroops()[1] + " chevaliers | " + 
+				castle.getTroops()[2] + " onagres " + Settings.SBLANK + 
+				" Produit : " +	castle.getProduction().getProducts() + 
+				Settings.SBLANK + " Ordre : " + ordres
+				+ Settings.SBLANK + " Porte : " + castle.getGate());
 		
 	}
 
 	
 	private void attack(Castle source, Castle target)
 	{
-		armies.add(source.instanceTroops());
-		sources.add(source);
-		targets.add(target);
-		//defenders.add(target.defend());
+		armies.add(source.instanceTroops(target));
 	}
 	
 	
@@ -419,58 +427,55 @@ public class Main extends Application {
 				if (armies.get(i).isEmpty())
 				{
 					armies.remove(i);
-					sources.remove(i);
-					targets.remove(i);
+					//sources.remove(i);
+					//targets.remove(i);
 				}
 				else
 				{
-					int nbInsideGate = 0;
+					int nbCrossingGate = 0;
 					for (int j = 0; j < armies.get(i).size(); j++)
 					{
 						//
-						if (armies.get(i).get(j).getRectangle().getX() - sources.get(i).getDx() < sources.get(i).getHeigth_Image()/4 && 
-							armies.get(i).get(j).getRectangle().getY() - sources.get(i).getDy() < sources.get(i).getHeigth_Image()/4)
+						Troops intermediate = armies.get(i).get(j);
+						if (Settings.distance(intermediate.getSrc().getDx(), intermediate.getSrc().getDy(), intermediate.getRectangle().getX(), intermediate.getRectangle().getY()) < intermediate.getSrc().getWidth_Image()/4)
 						{
-							if (nbInsideGate < Settings.SIZEGATE)
+							if (nbCrossingGate < Settings.SIZEGATE)
 							{
-								if (targets.get(i).getDx() > sources.get(i).getDx())
+								if (intermediate.getTarget().getDx() > intermediate.getSrc().getDx())
 								{
-									armies.get(i).get(j).getRectangle().setX(sources.get(i).getDx() +
-										sources.get(i).getWidth_Image()/2);
-									armies.get(i).get(j).getRectangle().setY(sources.get(i).getDy() + 
-										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
-									/*armies.get(i).get(j).getRectangle().relocate(sources.get(i).getDx() +
-										sources.get(i).getWidth_Image()/2, sources.get(i).getDy() + 
-										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
-									nbInsideGate++;*/
+									intermediate.getRectangle().setX(intermediate.getSrc().getDx() +
+											intermediate.getSrc().getWidth_Image()/2);
+									intermediate.getRectangle().setY(intermediate.getSrc().getDy() + 
+											intermediate.getSrc().getHeigth_Image()/2 - 3*nbCrossingGate);		
 								}
 								else
 								{
-									armies.get(i).get(j).getRectangle().setX(sources.get(i).getDx() -
-											sources.get(i).getWidth_Image()/2);
-										armies.get(i).get(j).getRectangle().setY(sources.get(i).getDy() + 
-											sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);
-									/*armies.get(i).get(j).getRectangle().relocate(sources.get(i).getDx() -
-										sources.get(i).getWidth_Image()/2, sources.get(i).getDy() + 
-										sources.get(i).getHeigth_Image()/2 - 2*nbInsideGate);*/
+									intermediate.getRectangle().setX(intermediate.getSrc().getDx() -
+											intermediate.getSrc().getWidth_Image()/2);
+									intermediate.getRectangle().setY(intermediate.getSrc().getDy() + 
+											intermediate.getSrc().getHeigth_Image()/2 - 3*nbCrossingGate);
 								}
+								nbCrossingGate++;
 							}
 						}
 						else
 						{
-							double a = (sources.get(i).getDy() - armies.get(i).get(j).getRectangle().getY())/
-								(sources.get(i).getDx() - armies.get(i).get(j).getRectangle().getX());
-							double b = sources.get(i).getDy() - a * sources.get(i).getDx();
+							intermediate.setA((intermediate.getSrc().getDy() - intermediate.getRectangle().getY())/
+								(intermediate.getSrc().getDx() - intermediate.getRectangle().getX())); 
+							/*double a= (intermediate.getSrc().getDy() - intermediate.getRectangle().getY())/
+								(intermediate.getSrc().getDx() - intermediate.getRectangle().getX());*/
+							intermediate.setB(intermediate.getSrc().getDy() - intermediate.getA() * intermediate.getSrc().getDx());
+							//double b = intermediate.getSrc().getDy() - a * intermediate.getSrc().getDx();
 							
-							if (targets.get(i).getDx() > armies.get(i).get(j).getRectangle().getX())
+							if (intermediate.getTarget().getDx() > intermediate.getRectangle().getX())
 							{
-								armies.get(i).get(j).getRectangle().setX(armies.get(i).get(j).getRectangle().getX() + armies.get(i).get(j).getSpeed());
-								armies.get(i).get(j).getRectangle().setY(a * (armies.get(i).get(j).getRectangle().getX() + armies.get(i).get(j).getSpeed()) + b);
+								intermediate.getRectangle().setX(intermediate.getRectangle().getX() + intermediate.getSpeed());
+								intermediate.getRectangle().setY(intermediate.getA() * (intermediate.getRectangle().getX() + intermediate.getSpeed()) + intermediate.getB());
 							}
 							else
 							{
-								armies.get(i).get(j).getRectangle().setX(armies.get(i).get(j).getRectangle().getX() - armies.get(i).get(j).getSpeed());
-								armies.get(i).get(j).getRectangle().setY(a * (armies.get(i).get(j).getRectangle().getX() - armies.get(i).get(j).getSpeed()) + b);
+								intermediate.getRectangle().setX(intermediate.getRectangle().getX() - intermediate.getSpeed());
+								intermediate.getRectangle().setY(intermediate.getA() * (intermediate.getRectangle().getX() - intermediate.getSpeed()) + intermediate.getB());
 							}
 						}
 					}
@@ -478,6 +483,8 @@ public class Main extends Application {
 			}
 		}
 	}
+	
+	
 	private void clash()
 	{
 		for (int i = 0; i < armies.size(); i++)
@@ -486,42 +493,42 @@ public class Main extends Application {
 			{
 				Troops intermediate = armies.get(i).get(j);
 				if (Settings.distance(intermediate.getRectangle().getX(), intermediate.getRectangle().getY(), 
-						targets.get(i).getDx(), targets.get(i).getDy()) < targets.get(i).getWidth_Image()/3)
+						intermediate.getTarget().getDx(), intermediate.getTarget().getDy()) <intermediate.getTarget().getWidth_Image()/3)
 				{
-					if (sources.get(i).getDuc().equals(targets.get(i).getDuc()))
+					if (intermediate.getSrc().getDuc().equals(intermediate.getTarget().getDuc()))
 					{
-						if (armies.get(i).get(j).getClass() == Pikeman.class)
+						if (intermediate.getClass() == Pikeman.class)
 						{
-							targets.get(i).setTroops0(targets.get(i).getTroops()[0] + 1);
-							armies.get(i).get(j).removeFromLayer();
+							intermediate.getTarget().setTroops0(intermediate.getTarget().getTroops()[0] + 1);
+							intermediate.removeFromLayer();
 							armies.get(i).remove(j);
 						}
 						if (armies.get(i).get(j).getClass() == Knights.class)
 						{
-							targets.get(i).setTroops1(targets.get(i).getTroops()[1] + 1);
+							intermediate.getTarget().setTroops1(intermediate.getTarget().getTroops()[1] + 1);
 							armies.get(i).remove(j);
 						}
-						if (armies.get(i).get(j).getClass() == Onager.class)
+						if (intermediate.getClass() == Onager.class)
 						{
-							targets.get(i).setTroops2(targets.get(i).getTroops()[2] + 1);
+							intermediate.getTarget().setTroops2(intermediate.getTarget().getTroops()[2] + 1);
 							armies.get(i).remove(j);
 						}		
 					}
 					else
 					{
-						if (targets.get(i).getDef() == null)
+						if (intermediate.getTarget().getDef() == null)
 						{
-							if (targets.get(i).defend())
+							if (intermediate.getTarget().defend())
 							{
-								targets.get(i).setDuc(sources.get(i).getDuc());
+								intermediate.getTarget().setDuc(intermediate.getSrc().getDuc());
 								return;
 							}
 						}
-						if (dammage(intermediate.getDammages(), i))//ligne de défense vide
+						if (dammage(intermediate.getDammages(), intermediate.getTarget()))//ligne de défense vide
 						{
-							if (targets.get(i).defend())
+							if (intermediate.getTarget().defend())
 							{
-								targets.get(i).setDuc(sources.get(i).getDuc());
+								intermediate.getTarget().setDuc(intermediate.getSrc().getDuc());
 								return;
 							}
 						}
@@ -531,9 +538,9 @@ public class Main extends Application {
 		}
 	}
 	
-	private boolean dammage(int dammages, int index)
+	private boolean dammage(int dammages, Castle target)
 	{
-		ArrayList<Troops> def = targets.get(index).getDef();
+		ArrayList<Troops> def = target.getDef();
 		if (def.isEmpty())
 			return true;
 		int unit = r.nextInt(def.size());
@@ -541,7 +548,6 @@ public class Main extends Application {
 		if (def.get(unit).getHealth() < 1)
 			def.remove(unit);
 		return false;
-		
 	}
 
 	//Options 
@@ -549,43 +555,49 @@ public class Main extends Application {
 	{
 		if (opt1 != null)
 			opt1.removeFromLayer();
-		if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image())
-			opt1 = new Options(playfieldLayer, "Attaquer", c.getDx() - c.getWidth_Image(), c.getDy()  , lastCastle);
-		else
-			opt1 = new Options(playfieldLayer, "Attaquer", c.getDx() + c.getWidth_Image(), c.getDy()  , lastCastle);
+		opt1 = new Options(playfieldLayer, "Attaquer", c.getDx(), c.getDy()  , lastCastle);
 		
 		if (c.getDuc() == "Joueur")
 		{
 			if (opt2 != null)
 				opt2.removeFromLayer();
-			if (c.getDx() > Settings.SCENE_WIDTH - 2*c.getWidth_Image())
-				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() - c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
-			else
-				opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx() + c.getWidth_Image(), c.getDy() + c.getHeigth_Image()/2 - 20, lastCastle);
+			opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx(), c.getDy() + 41, lastCastle);
 			opt1.setLabel("Envoyer des troupes");
 		}
 	}
 	
 	public void optionMenu(Options opt)
 	{
-		if (opt.getLabel().equals("Attaquer"))
+		if (opt.getLabel().equals("Attaquer") || opt.getLabel().equals("Envoyer des troupes"))
 		{
-			z = new ZoneText(playfieldLayer, lastCastle, player.getListCastle().get(0), opt.getDx(), opt.getDy());
-			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -41, opt.getC(), 150, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + player.getListCastle().get(0).getTroops()[1], opt.getDx() + 161, opt.getDy(), opt.getC(), 170, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + player.getListCastle().get(0).getTroops()[2], opt.getDx() + 332, opt.getDy(), opt.getC(), 160, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Clear", opt.getDx() + 110, opt.getDy() + 80));
-			arrayOptions.add(new Options(playfieldLayer, "Ok", opt.getDx() + 330, opt.getDy() + 80));
+			if (lastCastle.getDx() > Settings.SCENE_WIDTH - 550) //The castle is near the edge. to get more visibility, the options shall be displayed on the left side of the castle
+			{
+				arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 90 , opt.getC().getDy() -41, opt.getC(), 150, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 75, opt.getC().getDy(), opt.getC(), 150, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + player.getListCastle().get(0).getTroops()[1], opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 227, opt.getC().getDy(), opt.getC(), 150, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + player.getListCastle().get(0).getTroops()[2], opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 379, opt.getC().getDy(), opt.getC(), 150, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Clear", opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 300, opt.getC().getDy() + 82));
+				arrayOptions.add(new Options(playfieldLayer, "Ok", opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 60, opt.getDy() + 82));
+			}
+			else
+			{
+				arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getC().getDx() + opt.getC().getWidth_Image() + 75, opt.getC().getDy() -41, lastCastle, 150, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 75, opt.getC().getDy(), opt.getC(), 150, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + player.getListCastle().get(0).getTroops()[1], opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 227, opt.getDy(), opt.getC(), 150, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + player.getListCastle().get(0).getTroops()[2], opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 379, opt.getDy(), opt.getC(), 150, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Clear", opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 300, opt.getC().getDy() + 82));
+				arrayOptions.add(new Options(playfieldLayer, "Ok", opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 60, opt.getC().getDy() + 82));
+			}
+			z = new ZoneText(playfieldLayer, opt.getC(), opt.getC().getDx(), opt.getC().getDy());
 		}
-		if (opt.getLabel().equals("Envoyer des troupes"))
+		/*if (opt.getLabel().equals("Envoyer des troupes"))
 		{
 			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -40, opt.getC(), 150, 40));
 			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
 			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + opt.getC().getTroops()[1], opt.getDx() + 160, opt.getDy(), opt.getC(), 170, 40));
 			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + opt.getC().getTroops()[2], opt.getDx() + 330, opt.getDy(), opt.getC(), 160, 40));
 			z = new ZoneText(playfieldLayer, lastCastle, player.getListCastle().get(0), opt.getDx(), opt.getDy());
-		}
+		}*/
 		if (opt.getLabel().equals("Produire des unités"))
 		{
 			arrayOptions.add(new Options(playfieldLayer, "Vous souhaitez produire ", opt.getDx() + 15, opt.getDy() - 40, opt.getC(), 200, 40));

@@ -11,11 +11,11 @@ public abstract class Troops {
 	protected int health;
 	protected int dammages;
 	protected Rectangle r;
-	protected double a;
-	protected double b;
-
+	protected double a = 0, b = 0;
+	protected Castle target, src;
 	
-	public Troops(Pane layer, int productionCost, int timeCost, int speed, int health, int dammages)
+	
+	public Troops(Pane layer, int productionCost, int timeCost, int speed, int health, int dammages, Castle src , Castle target)
 	{
 		this.layer = layer;
 		this.productionCost = productionCost;
@@ -25,6 +25,8 @@ public abstract class Troops {
 		this.dammages = dammages;
 		this.r = new Rectangle(4, 4, Color.BLACK);
 		layer.getChildren().add(r);
+		this.src = src;
+		this.target = target;
 	}
 	
 	public Troops( int productionCost, int timeCost, int speed, int health, int dammages)
@@ -70,5 +72,37 @@ public abstract class Troops {
 	public void removeFromLayer()
 	{
 		this.layer.getChildren().remove(this.r);
+	}
+	public double getA()
+	{
+		return this.a;
+	}
+	public double getB()
+	{
+		return this.b;
+	}
+	public void setA(double n)
+	{
+		a = n;
+	}
+	public void setB(double n)
+	{
+		b = n;
+	}
+	public Castle getTarget()
+	{
+		return this.target;
+	}
+	public void setTarget(Castle target)
+	{
+		this.target = target;
+	}
+	public Castle getSrc()
+	{
+		return this.src;
+	}
+	public void setSrc(Castle c)
+	{
+		this.src = c;
 	}
 }

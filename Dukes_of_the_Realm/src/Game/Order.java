@@ -1,14 +1,12 @@
 package Game;
 
-import java.util.ArrayList;
-import javafx.scene.layout.Pane;
 
 public class Order {
 	private int nbPyk;
 	private int nbKni;
 	private int nbOna;
 	private Castle target;
-	private ArrayList<Troops> army;
+
 	
 	public Order(int nb1, int nb2, int nb3, Castle target)
 	{
@@ -41,16 +39,5 @@ public class Order {
 	}
 	public void setTarget(Castle target) {
 		this.target = target;
-	}
-	
-	public void sendOrder(Castle target, int nbPyk, int nbKni, int nbOna)
-	{
-		if (nbPyk != 0 || nbKni != 0 || nbOna != 0)
-		{
-			setNbPyk(nbPyk);
-			setNbKni(nbKni);
-			setNbOna(nbOna);
-			setTarget(target);
-		}
 	}
 }
