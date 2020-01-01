@@ -7,21 +7,38 @@ import java.util.ArrayList;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.shape.*;
 import java.util.Random;
 
 public class Main extends Application {
+	
+	HBox hbox = new HBox();
 	
 	//javafx structures
 	private Pane playfieldLayer;
@@ -32,8 +49,10 @@ public class Main extends Application {
 	private Image castlePlayerImg;
 	private Image castleImg;
 	private Image neutCastleImg;
-	private Image tresorImg, chevalierImg, royaumImg, onagreImg, piqImg;
+	private Image tresorImg, chevalierImg, royaumImg, onagreImg, piqImg, pauseImg;
 
+	ImageView imageViewPause;
+	
 	private Player player;
 	public Castle lastCastle = null;
 	//private NeutralCastle lastNeutral = null;
@@ -63,6 +82,8 @@ public class Main extends Application {
 
 	private Options opt1;
 	private Options opt2;
+	
+	//private void hpause = null ;
 
 	public Random r = new Random();
 	
@@ -79,43 +100,72 @@ public class Main extends Application {
 		primaryStage.setTitle("Dukes of the Realm");
 		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT + Settings.STATUS_BAR_HEIGHT);
 		scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
+		///
+		
+		VBox vbox = new VBox (13);
+		
+		Button bouton1 = new Button("Nouvelle Partie");
+		Button bouton2 = new Button("Reprendre une Session");
+		Button bouton3 = new Button("A propos");
+		
+		vbox.setPadding(new Insets(30, 50, 30, 50));
+		vbox.setAlignment(Pos.CENTER);
+		
+		Border borderMenu = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
+		vbox.setBorder(borderMenu);
+		vbox.getChildren().addAll(bouton1, bouton2, bouton3);
+		
+		bouton1.setOnAction(e ->{
+			
+			root.getChildren().clear();
+			playfieldLayer = new Pane();
+			root.getChildren().addAll(playfieldLayer);
+			
+			loadGame();
+
+			gameLoop = new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+					processInput(input, now);
+					if (pause == true)
+					{
+						pauseGame();
+					}
+					else
+					{
+						pause = false;
+						hbox.getChildren().clear();
+						//opt1.removeFromLayer();
+						
+						update(now);
+					}
+				}
+
+				private void processInput(Input input, long now) {
+					if (input.isPause())
+					{
+						pause(now);
+					}
+					if (input.isExit()) {
+						Platform.exit();
+						System.exit(0);
+					}
+
+				};
+			};gameLoop.start();
+		});
+		
+		///
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
 
 		// create layers
-		playfieldLayer = new Pane();
-		root.getChildren().add(playfieldLayer);
+		
+		root.getChildren().addAll(vbox);
 
 
-		loadGame();
-
-		gameLoop = new AnimationTimer() {
-			@Override
-			public void handle(long now) {
-				processInput(input, now);
-				if (pause == true)
-				{
-
-				}
-				else
-				{
-					update(now);
-				}
-			}
-
-			private void processInput(Input input, long now) {
-				if (input.isPause())
-				{
-					pause(now);
-				}
-				if (input.isExit()) {
-					Platform.exit();
-					System.exit(0);
-				}
-
-			};
-		};gameLoop.start();
+		
 	}
 
 	private void loadGame() {
@@ -124,9 +174,10 @@ public class Main extends Application {
 		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 100, 100, true, true);
 		tresorImg = new Image(getClass().getResource("/images/tresor.png").toExternalForm(), 35, 35, true, true);
 		chevalierImg = new Image(getClass().getResource("/images/chevalier.jpg").toExternalForm(), 35, 35, true, true);
-		royaumImg = new Image(getClass().getResource("/images/royaume.jpg").toExternalForm(), 35, 35, true, true);
+		royaumImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 30, 35, true, true);
 		onagreImg = new Image(getClass().getResource("/images/onagre.png").toExternalForm(), 35, 35, true, true);
 		piqImg = new Image(getClass().getResource("/images/piquier.png").toExternalForm(), 35, 35, true, true);
+		pauseImg = new Image(getClass().getResource("/images/pause.jpg").toExternalForm(), 180, 150, true, true);
 		
 		input = new Input(scene);
 		input.addListeners();
@@ -293,8 +344,6 @@ public class Main extends Application {
 		return index;
 	}
 	
-	
-
 	//Creation structures
 	
 	private void createPlayer() {
@@ -349,6 +398,25 @@ public class Main extends Application {
 		gameLoop.stop();
 	}
 	*/
+	
+	private void pauseGame() {
+		
+		//hbox.setPrefSize(Pos.CENTER);
+		hbox.setPadding(new Insets(Settings.SCENE_WIDTH/3 + 35));
+		//hbox.setAlignment(Pos.CENTER);
+		hbox.getStyleClass().add("imageViewPause");
+		imageViewPause = new ImageView(pauseImg);
+		
+		/*
+		 * Text message = new Text(); message.getStyleClass().add("message");
+		 * message.setText("Vous êtes en Pause !");
+		 */
+		hbox.getChildren().add(imageViewPause);
+		root.getChildren().add(hbox);
+		gameLoop.stop();
+	}
+	
+	
 	private void update(long now) {
 		if (now - lastTurn > Settings.TIME_TURN)
 		{
