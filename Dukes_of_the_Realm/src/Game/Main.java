@@ -453,19 +453,17 @@ public class Main extends Application {
 									intermediate.getRectangle().setX(intermediate.getSrc().getDx() -
 											intermediate.getSrc().getWidth_Image()/2);
 									intermediate.getRectangle().setY(intermediate.getSrc().getDy() + 
-											intermediate.getSrc().getHeigth_Image()/2 - 3*nbCrossingGate);
+											intermediate.getSrc().getHeigth_Image()/2 - 5*nbCrossingGate);
 								}
 								nbCrossingGate++;
 							}
 						}
 						else
 						{
-							intermediate.setA((intermediate.getSrc().getDy() - intermediate.getRectangle().getY())/
+							/*intermediate.setA((intermediate.getSrc().getDy() - intermediate.getRectangle().getY())/
 								(intermediate.getSrc().getDx() - intermediate.getRectangle().getX())); 
-							/*double a= (intermediate.getSrc().getDy() - intermediate.getRectangle().getY())/
-								(intermediate.getSrc().getDx() - intermediate.getRectangle().getX());*/
+							
 							intermediate.setB(intermediate.getSrc().getDy() - intermediate.getA() * intermediate.getSrc().getDx());
-							//double b = intermediate.getSrc().getDy() - a * intermediate.getSrc().getDx();
 							
 							if (intermediate.getTarget().getDx() > intermediate.getRectangle().getX())
 							{
@@ -476,6 +474,30 @@ public class Main extends Application {
 							{
 								intermediate.getRectangle().setX(intermediate.getRectangle().getX() - intermediate.getSpeed());
 								intermediate.getRectangle().setY(intermediate.getA() * (intermediate.getRectangle().getX() - intermediate.getSpeed()) + intermediate.getB());
+							}*/
+							if (intermediate.getTarget().getDx() > intermediate.getRectangle().getX())
+							{
+								intermediate.getRectangle().setX(intermediate.getRectangle().getX() + intermediate.getSpeed());
+								if (intermediate.getTarget().getDy() > intermediate.getRectangle().getY())
+								{
+									intermediate.getRectangle().setY(intermediate.getRectangle().getY() + intermediate.getSpeed());
+								}
+								else
+								{
+									intermediate.getRectangle().setY(intermediate.getRectangle().getY() - intermediate.getSpeed());
+								}
+							}
+							else
+							{
+								intermediate.getRectangle().setX(intermediate.getRectangle().getX() - intermediate.getSpeed());
+								if (intermediate.getTarget().getDy() > intermediate.getRectangle().getY())
+								{
+									intermediate.getRectangle().setY(intermediate.getRectangle().getY() + intermediate.getSpeed());
+								}
+								else
+								{
+									intermediate.getRectangle().setY(intermediate.getRectangle().getY() - intermediate.getSpeed());
+								}
 							}
 						}
 					}
