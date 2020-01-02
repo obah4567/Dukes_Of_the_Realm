@@ -453,7 +453,7 @@ public class Main extends Application {
 									intermediate.getRectangle().setX(intermediate.getSrc().getDx() -
 											intermediate.getSrc().getWidth_Image()/2);
 									intermediate.getRectangle().setY(intermediate.getSrc().getDy() + 
-											intermediate.getSrc().getHeigth_Image()/2 - 5*nbCrossingGate);
+											intermediate.getSrc().getHeigth_Image()/2 - 10*nbCrossingGate);
 								}
 								nbCrossingGate++;
 							}
@@ -515,7 +515,7 @@ public class Main extends Application {
 			{
 				Troops intermediate = armies.get(i).get(j);
 				if (Settings.distance(intermediate.getRectangle().getX(), intermediate.getRectangle().getY(), 
-						intermediate.getTarget().getDx(), intermediate.getTarget().getDy()) <intermediate.getTarget().getWidth_Image()/3)
+						intermediate.getTarget().getDx(), intermediate.getTarget().getDy()) <intermediate.getTarget().getWidth_Image()/2)
 				{
 					if (intermediate.getSrc().getDuc().equals(intermediate.getTarget().getDuc()))
 					{
@@ -528,17 +528,31 @@ public class Main extends Application {
 						if (armies.get(i).get(j).getClass() == Knights.class)
 						{
 							intermediate.getTarget().setTroops1(intermediate.getTarget().getTroops()[1] + 1);
+							intermediate.removeFromLayer();
 							armies.get(i).remove(j);
 						}
 						if (intermediate.getClass() == Onager.class)
 						{
 							intermediate.getTarget().setTroops2(intermediate.getTarget().getTroops()[2] + 1);
+							intermediate.removeFromLayer();
 							armies.get(i).remove(j);
-						}		
+						}
+						if (intermediate.getClass() == Herald.class)
+						{
+							intermediate.removeFromLayer();
+							armies.get(i).remove(j);
+						}
 					}
 					else
 					{
-						if (intermediate.getTarget().getDef() == null)
+						
+						if (intermediate.getClass() == Herald.class)
+						{
+							intermediate.getTarget().clearDefense();
+							intermediate.removeFromLayer();
+							armies.get(i).clear();
+						}
+						if (intermediate.getTarget().getDef().isEmpty())
 						{
 							if (intermediate.getTarget().defend())
 							{
@@ -554,6 +568,8 @@ public class Main extends Application {
 								return;
 							}
 						}
+						intermediate.removeFromLayer();
+						armies.get(i).remove(j);
 					}
 				}
 			}

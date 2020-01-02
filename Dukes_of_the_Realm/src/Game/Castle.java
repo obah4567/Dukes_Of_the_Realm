@@ -173,7 +173,9 @@ public class Castle extends Sprites{
 		this.troops[0] = this.troops[0] - getOrder().getNbPyk();
 		this.troops[1] = this.troops[1] - getOrder().getNbKni();
 		this.troops[2] = this.troops[2] - getOrder().getNbOna();
-
+		
+		army.add(new Herald(layer, this, target, army.get(0).getSpeed()));
+		
 		return army;
 		
 	}
@@ -189,7 +191,7 @@ public class Castle extends Sprites{
 			def.add(new Knights());
 			this.troops[1]--;
 		}
-		for (int i = 0; i < troops[2] && i < 1; i++)
+		if (troops[2] > 0)
 		{
 			def.add(new Onager());
 			this.troops[2]--;
@@ -235,5 +237,18 @@ public class Castle extends Sprites{
 			this.order.setNbOna(nbOna);
 			this.order.setTarget(target);
 		}
+	}
+	public void clearDefense()
+	{
+		for (int i = 0; i < def.size(); i ++)
+		{
+			if (def.get(i).getClass() == Pikeman.class)
+				troops[0]++;
+			if (def.get(i).getClass() == Knights.class)
+				troops[1]++;
+			if (def.get(i).getClass() == Onager.class)
+				troops[2]++;
+		}
+		def.clear();
 	}
 }

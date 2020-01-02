@@ -14,7 +14,7 @@ public abstract class Troops {
 	protected double a = 0, b = 0;
 	protected Castle target, src;
 	
-	
+	//Constructor for attacking troops
 	public Troops(Pane layer, int productionCost, int timeCost, int speed, int health, int dammages, Castle src , Castle target)
 	{
 		this.layer = layer;
@@ -28,7 +28,7 @@ public abstract class Troops {
 		this.src = src;
 		this.target = target;
 	}
-	
+	//Constructor for defending troops
 	public Troops( int productionCost, int timeCost, int speed, int health, int dammages)
 	{
 		this.productionCost = productionCost;
@@ -37,7 +37,6 @@ public abstract class Troops {
 		this.health = health;
 		this.dammages = dammages;
 	}
-	
 	public int getProductionCost()
 	{
 		return this.productionCost;

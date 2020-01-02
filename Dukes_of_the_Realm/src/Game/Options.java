@@ -15,7 +15,6 @@ public class Options {
     private double dx = 0;
     private double dy = 0;
     private Castle c = null;
-    private Circle ci;
     
     private Rectangle background;
     private Text labelOption;
@@ -78,12 +77,8 @@ public class Options {
        	labelOption.setFill(Color.WHITE);        
         this.layer.getChildren().add(labelOption);
         labelOption.relocate(dx - wRectangle/2 + 5, dy - hRectangle/2 + 10);
-        /*this.ci = new Circle(dx, dy, 2);
-        this.ci.setFill(Color.RED);
-        this.ci.relocate(dx, dy);
-        this.layer.getChildren().add(ci);*/
-        
-    }
+   }
+    
     //Constructors for button Ok and Clear
     public Options(Pane layer, String l, double x, double y){
         this.layer = layer;
@@ -105,12 +100,7 @@ public class Options {
         
         this.layer.getChildren().add(labelOption);
         labelOption.relocate(dx - size/2 + 15, dy - 10);
-        
-        this.ci = new Circle(dx, dy, 2);
-        this.ci.setFill(Color.RED);
-        this.ci.relocate(dx, dy);
-        this.layer.getChildren().add(ci);
-      	
+
         labelOption.setOnMouseEntered(new EventHandler<MouseEvent>(){
             public void handle(MouseEvent me){
                 background.setFill(Color.LIGHTGREY);
