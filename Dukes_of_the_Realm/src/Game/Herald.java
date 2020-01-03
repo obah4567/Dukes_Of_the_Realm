@@ -7,7 +7,7 @@ public class Herald extends Troops{
 	
 	public Herald(Pane layer, Castle src, Castle target, int speed)
 	{
-		super(layer, 0, 0, speed, 1, 0, src, target);
-		r.setFill(Color.BEIGE);
+		super(layer, 0, 0, speed - 1, 1, 0, src, target);
+		r.setFill(Color.AQUA);
 	}
 }

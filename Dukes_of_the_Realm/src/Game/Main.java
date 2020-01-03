@@ -1,23 +1,29 @@
 package Game;
 
-import java.util.ArrayList;
-//import java.util.List;
-
+import java.util.*;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.shape.*;
 import java.util.Random;
 
 public class Main extends Application {
@@ -31,6 +37,7 @@ public class Main extends Application {
 	private Image castlePlayerImg;
 	private Image castleImg;
 	private Image neutCastleImg;
+	private Image pauseImg;
 
 	private Player player;
 	public Castle lastCastle = null;
@@ -44,6 +51,7 @@ public class Main extends Application {
 	private ArrayList<Options> arrayOptions = new ArrayList<Options>();
 	
 	private Text stats = new Text();
+	private HBox hPause = new HBox();
 	
 	private ZoneText z;
 	
@@ -67,15 +75,31 @@ public class Main extends Application {
 
 		root = new Group();
 		primaryStage.setTitle("Dukes of the Realm");
-		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT + Settings.STATUS_BAR_HEIGHT);
+		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT + Settings.STATUS_BAR_HEIGHT, Color.BISQUE);
 		scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
-
+		
+		VBox vbox = new VBox (13);
+		
+		Button bouton1 = new Button("Nouvelle Partie");
+		Button bouton2 = new Button("Reprendre une Session");
+		Button bouton3 = new Button("A propos");
+				
+		vbox.setPadding(new Insets(30, 50, 30, 50));
+		vbox.setAlignment(Pos.CENTER);
+				
+		Border borderMenu = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
+		vbox.setBorder(borderMenu);
+		vbox.getChildren().addAll(bouton1, bouton2, bouton3);
+				
+		bouton1.setOnAction(e ->{
+			
+		root.getChildren().clear();
 		// create layers
 		playfieldLayer = new Pane();
-		root.getChildren().add(playfieldLayer);
+		root.getChildren().addAll(playfieldLayer);
 
 
 		loadGame();
@@ -106,12 +130,18 @@ public class Main extends Application {
 
 			};
 		};gameLoop.start();
+		});
+		playfieldLayer = new Pane();
+		root.getChildren().add(playfieldLayer);
+		
+		root.getChildren().addAll(vbox);
 	}
 
 	private void loadGame() {
 		castlePlayerImg = new Image(getClass().getResource("/images/castlePlayer.png").toExternalForm(), 200, 200, true, true);
 		castleImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 100, 100, true, true);
 		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 100, 100, true, true);
+		pauseImg = new Image(getClass().getResource("/images/pause.jpg").toExternalForm(), 100, 80, true, true);
 
 		input = new Input(scene);
 		input.addListeners();
@@ -334,12 +364,33 @@ public class Main extends Application {
 		{
 			lastPause = now;
 			if (pause)
+			{
 				pause = false;
+				playfieldLayer.getChildren().remove(hPause);
+			}
 			else
+			{
 				pause = true;
+				pauseGame();
+			}
 		}
 	}
 	
+private void pauseGame() {
+		
+		//hbox.setPrefSize(Pos.CENTER);
+		hPause.setPadding(new Insets(Settings.SCENE_WIDTH/3 + 35));
+		//hbox.setAlignment(Pos.CENTER);
+		hPause.getStyleClass().add("imageViewPause");
+		ImageView imageViewPause = new ImageView(pauseImg);
+		
+		/*
+		 * Text message = new Text(); message.getStyleClass().add("message");
+		 * message.setText("Vous Ãªtes en Pause !");
+		 */
+		hPause.getChildren().add(imageViewPause);
+		playfieldLayer.getChildren().add(hPause);
+	}
 
 	/*
 	private void gameOver() {
@@ -433,11 +484,11 @@ public class Main extends Application {
 				else
 				{
 					int nbCrossingGate = 0;
-					for (int j = 0; j < armies.get(i).size(); j++)
+					for (Iterator<Troops> it = armies.get(i).iterator(); it.hasNext();)
 					{
 						//
-						Troops intermediate = armies.get(i).get(j);
-						if (Settings.distance(intermediate.getSrc().getDx(), intermediate.getSrc().getDy(), intermediate.getRectangle().getX(), intermediate.getRectangle().getY()) < intermediate.getSrc().getWidth_Image()/4)
+						Troops intermediate = it.next();
+						if (Settings.distance(intermediate.getSrc().getDx(), intermediate.getSrc().getDy(), intermediate.getRectangle().getX(), intermediate.getRectangle().getY()) < intermediate.getSrc().getWidth_Image()/8)
 						{
 							if (nbCrossingGate < Settings.SIZEGATE)
 							{
@@ -446,7 +497,7 @@ public class Main extends Application {
 									intermediate.getRectangle().setX(intermediate.getSrc().getDx() +
 											intermediate.getSrc().getWidth_Image()/2);
 									intermediate.getRectangle().setY(intermediate.getSrc().getDy() + 
-											intermediate.getSrc().getHeigth_Image()/2 - 3*nbCrossingGate);		
+											intermediate.getSrc().getHeigth_Image()/2 - 10 - 3*nbCrossingGate);		
 								}
 								else
 								{
@@ -460,21 +511,6 @@ public class Main extends Application {
 						}
 						else
 						{
-							/*intermediate.setA((intermediate.getSrc().getDy() - intermediate.getRectangle().getY())/
-								(intermediate.getSrc().getDx() - intermediate.getRectangle().getX())); 
-							
-							intermediate.setB(intermediate.getSrc().getDy() - intermediate.getA() * intermediate.getSrc().getDx());
-							
-							if (intermediate.getTarget().getDx() > intermediate.getRectangle().getX())
-							{
-								intermediate.getRectangle().setX(intermediate.getRectangle().getX() + intermediate.getSpeed());
-								intermediate.getRectangle().setY(intermediate.getA() * (intermediate.getRectangle().getX() + intermediate.getSpeed()) + intermediate.getB());
-							}
-							else
-							{
-								intermediate.getRectangle().setX(intermediate.getRectangle().getX() - intermediate.getSpeed());
-								intermediate.getRectangle().setY(intermediate.getA() * (intermediate.getRectangle().getX() - intermediate.getSpeed()) + intermediate.getB());
-							}*/
 							if (intermediate.getTarget().getDx() > intermediate.getRectangle().getX())
 							{
 								intermediate.getRectangle().setX(intermediate.getRectangle().getX() + intermediate.getSpeed());
@@ -511,11 +547,11 @@ public class Main extends Application {
 	{
 		for (int i = 0; i < armies.size(); i++)
 		{
-			for (int j = 0; j < armies.get(i).size(); j++)
+			for (Iterator<Troops> it = armies.get(i).iterator(); it.hasNext();)
 			{
-				Troops intermediate = armies.get(i).get(j);
+				Troops intermediate = it.next();
 				if (Settings.distance(intermediate.getRectangle().getX(), intermediate.getRectangle().getY(), 
-						intermediate.getTarget().getDx(), intermediate.getTarget().getDy()) <intermediate.getTarget().getWidth_Image()/2)
+						intermediate.getTarget().getDx(), intermediate.getTarget().getDy()) < intermediate.getTarget().getWidth_Image()* 0.55)
 				{
 					if (intermediate.getSrc().getDuc().equals(intermediate.getTarget().getDuc()))
 					{
@@ -523,24 +559,24 @@ public class Main extends Application {
 						{
 							intermediate.getTarget().setTroops0(intermediate.getTarget().getTroops()[0] + 1);
 							intermediate.removeFromLayer();
-							armies.get(i).remove(j);
+							it.remove();
 						}
-						if (armies.get(i).get(j).getClass() == Knights.class)
+						if (intermediate.getClass() == Knights.class)
 						{
 							intermediate.getTarget().setTroops1(intermediate.getTarget().getTroops()[1] + 1);
 							intermediate.removeFromLayer();
-							armies.get(i).remove(j);
+							it.remove();
 						}
 						if (intermediate.getClass() == Onager.class)
 						{
 							intermediate.getTarget().setTroops2(intermediate.getTarget().getTroops()[2] + 1);
 							intermediate.removeFromLayer();
-							armies.get(i).remove(j);
+							it.remove();
 						}
 						if (intermediate.getClass() == Herald.class)
 						{
 							intermediate.removeFromLayer();
-							armies.get(i).remove(j);
+							it.remove();
 						}
 					}
 					else
@@ -551,25 +587,31 @@ public class Main extends Application {
 							intermediate.getTarget().clearDefense();
 							intermediate.removeFromLayer();
 							armies.get(i).clear();
+							intermediate.getSrc().getOrder().clear();
+							return;
 						}
-						if (intermediate.getTarget().getDef().isEmpty())
+						else
 						{
-							if (intermediate.getTarget().defend())
+							if (intermediate.getTarget().getDef().isEmpty())
 							{
-								intermediate.getTarget().setDuc(intermediate.getSrc().getDuc());
-								return;
+								if (intermediate.getTarget().defend())
+								{
+									intermediate.getTarget().setDuc(intermediate.getSrc().getDuc());
+									return;
+								}
 							}
-						}
-						if (dammage(intermediate.getDammages(), intermediate.getTarget()))//ligne de défense vide
-						{
-							if (intermediate.getTarget().defend())
+							if (dammage(intermediate.getDammages(), intermediate.getTarget()))//ligne de défense vide
 							{
-								intermediate.getTarget().setDuc(intermediate.getSrc().getDuc());
-								return;
+								if (intermediate.getTarget().defend())
+								{
+									intermediate.getTarget().setDuc(intermediate.getSrc().getDuc());
+									return;
+								}
 							}
+							intermediate.removeFromLayer();
+							it.remove();
 						}
-						intermediate.removeFromLayer();
-						armies.get(i).remove(j);
+						
 					}
 				}
 			}
@@ -628,14 +670,6 @@ public class Main extends Application {
 			}
 			z = new ZoneText(playfieldLayer, opt.getC(), opt.getC().getDx(), opt.getC().getDy());
 		}
-		/*if (opt.getLabel().equals("Envoyer des troupes"))
-		{
-			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -40, opt.getC(), 150, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + opt.getC().getTroops()[1], opt.getDx() + 160, opt.getDy(), opt.getC(), 170, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + opt.getC().getTroops()[2], opt.getDx() + 330, opt.getDy(), opt.getC(), 160, 40));
-			z = new ZoneText(playfieldLayer, lastCastle, player.getListCastle().get(0), opt.getDx(), opt.getDy());
-		}*/
 		if (opt.getLabel().equals("Produire des unités"))
 		{
 			arrayOptions.add(new Options(playfieldLayer, "Vous souhaitez produire ", opt.getDx() + 15, opt.getDy() - 40, opt.getC(), 200, 40));

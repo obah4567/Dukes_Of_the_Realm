@@ -146,13 +146,17 @@ public class Castle extends Sprites{
 	public void setGate(String gate) {
 		this.gate = gate;
 	}
+	public int totalTroops()
+	{
+		return troops[0] + troops[1] + troops[2];
+	}
 	public ArrayList<Troops> instanceTroops(Castle target)
 	{
 		ArrayList<Troops> army = new ArrayList<Troops>();
 		for (int i = 0; i < this.order.getNbOna(); i++)
 		{
 			army.add(new Onager(layer, this, target));
-			army.get(i).getRectangle().setX(this.getDx());
+			army.get(i).getRectangle().setX(this.getDx() - 4);
 			army.get(i).getRectangle().setY(this.getDy());
 		}
 		int size = army.size();
@@ -166,8 +170,8 @@ public class Castle extends Sprites{
 		for (int i = 0; i < this.order.getNbPyk(); i++)
 		{
 			army.add(new Pikeman(layer, this, target));
-			army.get(i + size).getRectangle().setX(this.getDx() + 2);
-			army.get(i + size).getRectangle().setY(this.getDy() + 6);
+			army.get(i + size).getRectangle().setX(this.getDx());
+			army.get(i + size).getRectangle().setY(this.getDy() + 4);
 		}
 		
 		this.troops[0] = this.troops[0] - getOrder().getNbPyk();
@@ -175,6 +179,8 @@ public class Castle extends Sprites{
 		this.troops[2] = this.troops[2] - getOrder().getNbOna();
 		
 		army.add(new Herald(layer, this, target, army.get(0).getSpeed()));
+		army.get(army.size() - 1).getRectangle().setX(this.getDx());
+		army.get(army.size() - 1).getRectangle().setY(this.getDy() - 4);
 		
 		return army;
 		

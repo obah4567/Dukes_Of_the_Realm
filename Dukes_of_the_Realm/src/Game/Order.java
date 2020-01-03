@@ -40,4 +40,11 @@ public class Order {
 	public void setTarget(Castle target) {
 		this.target = target;
 	}
+	public void clear()
+	{
+		this.nbKni = 0;
+		this.nbOna = 0;
+		this.nbPyk = 0;
+		this.target = null;
+	}
 }

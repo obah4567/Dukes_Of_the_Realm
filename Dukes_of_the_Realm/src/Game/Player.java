@@ -5,12 +5,14 @@ import java.util.ArrayList;
 public class Player {
 
 	private ArrayList<Castle> listCastle;
+	private Castle base;
 
 	public Player(Castle castle)
 	{
         this.listCastle = new ArrayList<Castle>();
-        this.listCastle.clear();
-        this.listCastle.add(castle);
+        base = castle;
+        this.listCastle.add(base);
+        
 	}
 	
 	public ArrayList<Castle> getListCastle()
