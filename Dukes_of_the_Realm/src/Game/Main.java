@@ -25,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import java.util.Random;
 
@@ -251,18 +252,6 @@ public class Main extends Application {
 										option = false;
 									}
 								}
-								else
-								{
-									if (pyk * Settings.COST_PRODUCTION_PIKEMAN + kni * Settings.COST_PRODUCTION_KNIGHT + ona * Settings.COST_PRODUCTION_ONAGER > lastCastle.getTreasure())
-									{
-										arrayOptions.add(new Options(playfieldLayer, "Veuillez saisir un nombre correcte", 
-												lastCastle.getDx() - lastCastle.getWidth_Image()/2, lastCastle.getDy() + lastCastle.getHeigth_Image(), lastCastle, 250, 40));
-									}
-									else
-									{
-										
-									}
-								}
 							}
 						}
 					}
@@ -287,6 +276,11 @@ public class Main extends Application {
 								for (int i = 0; i < arrayOptions.size(); i++)
 									arrayOptions.get(i).removeFromLayer();
 								arrayOptions.clear();
+							}
+							if (!arrayButtons.isEmpty())
+							{
+								playfieldLayer.getChildren().removeAll(arrayButtons.get(0), arrayButtons.get(1), arrayButtons.get(2));
+								arrayButtons.clear();
 							}
 							z = null;
 							option = false;
@@ -786,15 +780,17 @@ private void pauseGame() {
 		
 		for (int i = 0; i < 3; i ++)
 		{
-			arrayButtons.get(i).relocate(arrayOptions.get(i).getDx() + 10 + 101*i, lastCastle.getDy() + 82);
-			arrayButtons.get(i).resize(150, 40);
+			arrayButtons.get(i).relocate(arrayOptions.get(0).getDx() + 10 + 101*i, lastCastle.getDy() + 62);
+			arrayButtons.get(i).setPrefWidth(90);
+			arrayButtons.get(i).setPrefHeight(50);
+			arrayButtons.get(i).setFont(new Font(15));
 			playfieldLayer.getChildren().add(arrayButtons.get(i));
 		}
 		arrayButtons.get(0).setOnAction(e -> {
 			if (!lastCastle.product("Piquier", Settings.TIME_COST_PIKEMAN))
 			{
-				arrayOptions.add(new Options(playfieldLayer, "Une unite est deja en cours de production", 
-						lastCastle.getDx() - lastCastle.getWidth_Image()/2, lastCastle.getDy() + lastCastle.getHeigth_Image(), lastCastle, 400, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Vous ne pouvez produire cette unité pour le moment", 
+						lastCastle.getDx() + lastCastle.getWidth_Image()/2, lastCastle.getDy() - lastCastle.getHeigth_Image()/2 - 10, lastCastle, 400, 40));
 			}
 			else
 			{
@@ -808,13 +804,14 @@ private void pauseGame() {
 				}
 				arrayButtons.clear();
 				arrayOptions.clear();
+				option2 = false;
 			}
 		});
 		arrayButtons.get(1).setOnAction(e -> {
 			if (!lastCastle.product("Chevalier", Settings.TIME_COST_PIKEMAN))
 			{
-				arrayOptions.add(new Options(playfieldLayer, "Une unite est deja en cours de production", 
-						lastCastle.getDx() - lastCastle.getWidth_Image()/2, lastCastle.getDy() + lastCastle.getHeigth_Image(), lastCastle, 400, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Vous ne pouvez produire cette unité pour le moment", 
+						lastCastle.getDx() + lastCastle.getWidth_Image()/2, lastCastle.getDy() - lastCastle.getHeigth_Image()/2 - 10, lastCastle, 400, 40));
 			}
 			else
 			{
@@ -828,13 +825,14 @@ private void pauseGame() {
 				}
 				arrayButtons.clear();
 				arrayOptions.clear();
+				option2 = false;
 			}
 		});
 		arrayButtons.get(2).setOnAction(e -> {
 			if (!lastCastle.product("Onagre", Settings.TIME_COST_PIKEMAN))
 			{
-				arrayOptions.add(new Options(playfieldLayer, "Une unite est deja en cours de production", 
-						lastCastle.getDx() - lastCastle.getWidth_Image()/2, lastCastle.getDy() + lastCastle.getHeigth_Image(), lastCastle, 400, 40));
+				arrayOptions.add(new Options(playfieldLayer, "Vous ne pouvez produire cette unité pour le moment", 
+						lastCastle.getDx() + lastCastle.getWidth_Image()/2, lastCastle.getDy() - lastCastle.getHeigth_Image()/2 - 10, lastCastle, 400, 40));
 			}
 			else
 			{
@@ -848,6 +846,7 @@ private void pauseGame() {
 				}
 				arrayButtons.clear();
 				arrayOptions.clear();
+				option2 = false;
 			}
 		});
 	}

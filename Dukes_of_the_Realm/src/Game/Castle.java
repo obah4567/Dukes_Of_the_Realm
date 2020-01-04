@@ -259,11 +259,31 @@ public class Castle extends Sprites{
 	}
 	public boolean product(String unit, int timeLeft)
 	{
-		if (getProduction().getProducts() == "rien")
+		if (production.getProducts().equals("rien"))
 		{
+			switch (unit)
+			{
+			case "Piquier" :
+					if (treasure < Settings.COST_PRODUCTION_PIKEMAN)
+						return false;
+					treasure = treasure - Settings.COST_PRODUCTION_PIKEMAN;
+					break;
+			case "Chevalier" :
+					if (treasure < Settings.COST_PRODUCTION_KNIGHT)
+						return false;
+					treasure = treasure - Settings.COST_PRODUCTION_KNIGHT;
+					break;
+			case "Onagre" :
+					if (treasure < Settings.COST_PRODUCTION_ONAGER)
+						return false;
+					treasure = treasure - Settings.COST_PRODUCTION_ONAGER;
+					break;
+			default :
+				return false;
+			}
 			getProduction().setProducts(unit);
 			getProduction().setTimeLeft(timeLeft);
-			return true;
+			return true;	
 		}
 		else
 			return false;
