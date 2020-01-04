@@ -3,7 +3,7 @@ package Game;
 public class Production {
 
 	private String products = "rien";
-	private long timeLeft;
+	private int timeLeft;
 	
 	public Production(String prod, int time)
 	{
@@ -16,7 +16,7 @@ public class Production {
 		return this.products;
 	}
 	
-	public long getTimeLeft()
+	public int getTimeLeft()
 	{
 		return this.timeLeft;
 	}
@@ -25,7 +25,7 @@ public class Production {
 		this.products = products;
 	}
 
-	public void setTimeLeft(long timeLeft) {
+	public void setTimeLeft(int timeLeft) {
 		this.timeLeft = timeLeft;
 	}
 	

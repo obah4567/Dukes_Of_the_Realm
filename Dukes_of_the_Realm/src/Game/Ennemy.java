@@ -1,36 +1,22 @@
 package Game;
 import java.util.*;
-public class Ennemy {
-	private ArrayList<Castle> listCastle;
+public class Ennemy extends Player{
+	
 	int strategie = 5;
 	boolean strong;
-	Castle base;
 	Castle focus = null;
 	Random r = new Random();
 	
-	public Ennemy(Castle c)
+	public Ennemy(Castle c, String name)
 	{
-		this.listCastle = new ArrayList<Castle>();
-		base = c;
-		this.listCastle.add(base);
+		super(c);
+		setName(name);
 		int strength  = r.nextInt(22);
 		if (strength == 10 || strength == 20)
 			strong = true;
 		else
 			strong = false;
 	}
-	public ArrayList<Castle> getListCastle()
-	{
-		return this.listCastle;
-	}
-	public int totalTroops()
-	{
-		int s = 0;
-		for (int i = 0; i < listCastle.size(); i++)
-			s = s + listCastle.get(i).totalTroops();
-		return s;
-	}
-	
 	
 	public void think()
 	{
@@ -42,7 +28,7 @@ public class Ennemy {
 		{
 			if (this.strategie > 28)
 			{
-				if (focus.getDuc().equals(this.listCastle.get(0).getDuc()))
+				if (focus.getDuc().equals(this.getListCastle().get(0).getDuc()))
 				{
 					strategie = 10;
 					focus = null;
@@ -74,7 +60,7 @@ public class Ennemy {
 				while (!go)
 				{
 					int i = r.nextInt(world.size());
-					if (!world.get(i).getDuc().equals(listCastle.get(0).getDuc()))
+					if (!world.get(i).getDuc().equals(getListCastle().get(0).getDuc()))
 					{
 						focus = world.get(i);
 						go = true;

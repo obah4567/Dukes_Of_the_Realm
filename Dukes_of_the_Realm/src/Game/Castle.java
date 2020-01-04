@@ -45,7 +45,7 @@ public class Castle extends Sprites{
         this.gate = Settings.GATES[r.nextInt(4)];
         //army
         this.troops = new int[3];
-        this.troops[0] = 1000; this.troops[1] = 1000; this.troops[2] = 100;
+        this.troops[0] = 50; this.troops[1] = 100; this.troops[2] = 15;
         this.treasure = 0;
         this.level = 1;
         this.duc = duc;
@@ -256,5 +256,16 @@ public class Castle extends Sprites{
 				troops[2]++;
 		}
 		def.clear();
+	}
+	public boolean product(String unit, int timeLeft)
+	{
+		if (getProduction().getProducts() == "rien")
+		{
+			getProduction().setProducts(unit);
+			getProduction().setTimeLeft(timeLeft);
+			return true;
+		}
+		else
+			return false;
 	}
 }
