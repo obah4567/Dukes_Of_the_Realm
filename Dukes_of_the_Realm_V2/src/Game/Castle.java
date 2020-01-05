@@ -53,7 +53,14 @@ public class Castle extends Sprites{
         this.production = new Production("rien", 0);
 	}
 
-
+    public int genSoldat () {
+    	Random alea = new Random();
+    	int soldat = alea.nextInt(100);
+    	System.out.println(soldat);
+		return soldat;
+    	
+    }
+    
 	//Mutators
 	public ImageView getImgView() {
 		return imgView;
@@ -177,7 +184,7 @@ public class Castle extends Sprites{
 		return army;
 		
 	}
-	public boolean defend() // Mise en place de l'unité de défense : 6/3/2
+	public boolean defend() // Mise en place de l'unitï¿½ de dï¿½fense : 6/3/2
 	{
 		for (int i = 0; i < troops[0] && i < 6; i++)
 		{

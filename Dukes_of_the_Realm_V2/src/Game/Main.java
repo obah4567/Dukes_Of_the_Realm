@@ -1,5 +1,6 @@
 package Game;
 
+import java.io.File;
 import java.util.ArrayList;
 //import java.util.List;
 
@@ -28,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.shape.*;
 import java.util.Random;
+
 
 public class Main extends Application {
 	
@@ -64,6 +66,7 @@ public class Main extends Application {
 	
 	private ZoneText z;
 	HBox hbox = new HBox();
+	HBox hbox1 = new HBox();
 	
 	private boolean option = false;
 	private boolean option2 = false;
@@ -78,6 +81,7 @@ public class Main extends Application {
 	private long lastPause = 0;
 	private long lastTurn = 0;
 
+	File file = new File("saveGameFile.txt");
 	Group root;
 
 	@Override
@@ -105,6 +109,15 @@ public class Main extends Application {
 		vbox.setBorder(borderMenu);
 		vbox.getChildren().addAll(bouton1, bouton2, bouton3);
 				
+		bouton2.setOnAction(e ->{
+			try {
+				input.ouvrirGame(file);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		
 		bouton1.setOnAction(e ->{
 					
 		root.getChildren().clear();
@@ -119,7 +132,7 @@ public class Main extends Application {
 				processInput(input, now);
 				if (pause == true)
 					{
-						pauseGame();
+						
 					}
 				else
 				{
@@ -131,25 +144,24 @@ public class Main extends Application {
 							}
 						}
 
-						private void processInput(Input input, long now) {
-							if (input.isPause())
-							{
-								pause(now);
-							}
-							if (input.isExit()) {
-								Platform.exit();
-								System.exit(0);
-							}
+			private void processInput(Input input, long now) {
+				if (input.isPause())
+					{
+						pause(now);
+					}
+					if (input.isExit()) {
+						Platform.exit();
+						System.exit(0);
+						}
 
-						};
-					};gameLoop.start();
-				});
+					};
+				};gameLoop.start();
+			});
 		
 		///
 		// create layers
-		playfieldLayer = new Pane();
-		root.getChildren().add(playfieldLayer);
-		
+		//Border borderGame = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
+		//vbox.setBorder(borderGame);
 		root.getChildren().addAll(vbox);
 	}
 
@@ -374,9 +386,16 @@ public class Main extends Application {
 		{
 			lastPause = now;
 			if (pause)
+			{
 				pause = false;
+				root.getChildren().remove(hbox);
+			}
 			else
+			{
 				pause = true;
+				//pauseGame();
+				pauseActionGame();
+			}
 		}
 	}
 	
@@ -402,15 +421,67 @@ public class Main extends Application {
 		//hbox.setAlignment(Pos.CENTER);
 		hbox.getStyleClass().add("imageViewPause");
 		imageViewPause = new ImageView(pauseImg);
-		
-		/*
-		 * Text message = new Text(); message.getStyleClass().add("message");
-		 * message.setText("Vous êtes en Pause !");
-		 */
 		hbox.getChildren().add(imageViewPause);
 		root.getChildren().add(hbox);
-		gameLoop.stop();
+		//gameLoop.stop();
 	}
+	
+	private void pauseActionGame() {
+		
+		VBox vboxPause = new VBox(15);
+		
+		Button bottonCont = new Button("Continuer la Partie");
+		Button bottonSauveg = new Button("Sauvergarder la Partie");
+		Button bottonQuit = new Button("Quittez la Partie");
+		
+		vboxPause.setPadding(new Insets(30, 50, 30, 50));
+		vboxPause.setAlignment(Pos.CENTER);
+				
+		Border borderMenu = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
+		vboxPause.setBorder(borderMenu);
+		vboxPause.getChildren().addAll(bottonCont, bottonSauveg, bottonQuit);
+		root.getChildren().addAll(vboxPause);
+		
+		bottonCont.setOnAction(e ->{
+			/*
+			 * HBox hbox = new HBox(); hbox.setPrefSize(Settings.SCENE_WIDTH,
+			 * Settings.SCENE_HEIGHT); hbox.getStyleClass().add("message"); Text message =
+			 * new Text(); message.getStyleClass().add("message");
+			 * message.setText("Vous êtes en Pause !");
+			 */
+			if (pause)
+			{
+				pause = false;
+				root.getChildren().removeAll(vboxPause, hbox);
+			}
+			else
+			{
+				pause = true;
+				/*
+				 * hbox.getChildren().add(message);
+				 * root.getChildren().add(hbox);
+				 */
+				//pauseGame();
+			}
+		});
+		
+		bottonSauveg.setOnAction(e ->{
+			try {
+				input.sauvegardeGame();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		
+		bottonQuit.setOnAction(e ->{
+			
+			Platform.exit();
+			System.exit(0);
+			});
+	}
+			
+
 	
 	private void update(long now) {
 		if (now - lastTurn > Settings.TIME_TURN)

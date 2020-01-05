@@ -1,9 +1,18 @@
 package Game;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.BitSet;
 
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 import static javafx.scene.input.KeyCode.*;
 
 import javafx.scene.input.KeyCode;
@@ -66,6 +75,96 @@ public class Input {
 	// direction isn't handled.
 	// -------------------------------------------------
 
+	public void sauvegardeGame() throws Exception{
+		
+		File fichierGame = new File("saveGameFile.txt");
+		if (fichierGame == null){
+			System.out.println("The file was Exist or Empty");
+		}
+		if (fichierGame.exists()){
+			fichierGame.delete();
+		}
+		String str = "Teste";
+		
+		FileOutputStream fileOutputStream = null;
+		ObjectOutputStream outputStream = null;
+		
+		try {
+			fileOutputStream = new FileOutputStream(fichierGame);
+			outputStream = new ObjectOutputStream(fileOutputStream);
+			
+			outputStream.writeUTF(str);
+			outputStream.close();
+			//byte[] strToBytes = str.getBytes();
+		    //outputStream.write(strToBytes);
+			//outputStream.writeInt(1500);;
+			
+			//Ici possedé aux enregistrement des chateaux
+		}
+		catch (IOException exeception) {
+			exeception.printStackTrace();
+		}
+		finally {
+			try {
+					if (fileOutputStream != null) {
+						fileOutputStream.close();
+					}
+					if (outputStream != null) {
+						outputStream.close();
+					}
+			}
+			catch (IOException e) {
+				//plus tard utiliser Game_Exception pour géré les putains d'exceptions
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ouvrirGame(File file) throws Exception {
+		
+		if ((file == null) || (file.length() == 0) || !(file.exists())) {
+				//throw new Game_Exception("The file was Exist or Empty");
+				//System.out.println("The file was Exist or Empty");
+				//Afficher une fenetre pour le message
+			Alert dialogW = new Alert(AlertType.WARNING);
+			dialogW.setTitle("Upload Game");
+			dialogW.setHeaderText(null); // No header
+			dialogW.setContentText("The file was Exist or Empty !");
+			dialogW.showAndWait();
+		}
+		
+		FileInputStream fileInputStream = null;
+		ObjectInputStream objectInputStream = null;
+		
+		try {
+			fileInputStream = new FileInputStream(file);
+			objectInputStream = new ObjectInputStream(fileInputStream);
+			
+			//lire
+			Object chene = objectInputStream.readObject();
+			System.out.println(chene);
+			
+			
+			
+		}catch (IOException e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}finally {
+			try {
+				if (fileInputStream != null) {
+					fileInputStream.close();
+				}
+				if (objectInputStream != null) {
+					objectInputStream.close();
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
 
 	public boolean isExit() {
 		return is(ESCAPE);
