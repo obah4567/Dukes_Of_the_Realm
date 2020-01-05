@@ -46,7 +46,7 @@ public class Main extends Application {
 	public Castle lastCastle = null;
 	
 	private ArrayList<Castle> world = new ArrayList<Castle>();
-	private ArrayList<Player> people = new ArrayList<Player>();
+	private ArrayList<Ennemy> ennemies = new ArrayList<Ennemy>();
 	
 	private ArrayList<Castle> competition = new ArrayList<Castle>();
 	private ArrayList<Options> competition2 = new ArrayList<Options>();
@@ -363,7 +363,6 @@ public class Main extends Application {
 		Castle c = new Castle(castlePlayerImg, playfieldLayer, "Joueur");
 		player = new Player(c);
 		world.add(c);
-		people.add(player);
 
 	}
 	private void generateEnnemies()
@@ -372,12 +371,19 @@ public class Main extends Application {
 		{
 			Castle c = new Castle(castleImg, playfieldLayer, world);
 			world.add(c);
-			for (int j = 0; j < people.size(); j++)
+			if (ennemies.size() > 0)
 			{
-				if (people.get(j).getBase().getDuc().equals(c.getDuc()))
-					people.get(j).getListCastle().add(c);
-				else
-					people.add(new Ennemy(c, c.getDuc()));
+				for (int j = 0; j < ennemies.size(); j++)
+				{
+					if (ennemies.get(j).getBase().getDuc().equals(c.getDuc()))
+						ennemies.get(j).getListCastle().add(c);
+					else
+						ennemies.add(new Ennemy(c, c.getDuc()));
+				}
+			}
+			else
+			{
+				ennemies.add(new Ennemy(c, c.getDuc()));
 			}
 		}
 	}
@@ -467,6 +473,11 @@ private void pauseGame() {
 				{
 					
 				}
+			}
+			for (int i = 1; i < ennemies.size(); i++)
+			{
+				ennemies.get(i).think();
+				ennemies.get(i).act(world, armies);
 			}
 			if (!armies.isEmpty())
 			{
@@ -669,11 +680,11 @@ private void pauseGame() {
 		return false;
 	}
 
-	public void seizeCastle(Castle src, Castle target)
+	/*public void seizeCastle(Castle src, Castle target)
 	{
-		for (int i = 0; i < people.size(); i++)
+		for (int i = 0; i < world.size(); i++)
 		{
-			for (int j = 0; j < people.get(i).getListCastle().size(); j++)
+			for (int j = 0; j < world.get(i).getListCastle().size(); j++)
 			{
 				if (src.getDuc().equals(people.get(i).getListCastle().get(j).getDuc()))
 					people.get(i).getListCastle().add(target);
@@ -681,7 +692,7 @@ private void pauseGame() {
 					people.get(i).getListCastle().remove(j);
 			}
 		}
-	}
+	}*/
 	//Options 
 	public void options(Castle c)
 	{
