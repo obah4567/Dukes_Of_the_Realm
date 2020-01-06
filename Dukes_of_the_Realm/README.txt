@@ -69,7 +69,8 @@ Montée de niveau
 Production d'unité Piquier/Chevalier/Onagre
 Attaque d'un chateau ennemi
 Envoi de troupes sur un château que vous possédez
-
+Défaite
+Victoire
 
 
 
@@ -92,7 +93,8 @@ Selon le propriétaire du chateau, des options spécifiques sont affichés et prése
 Si le joueur clique sur un autre chateau ces options disparaissent, le boolen option et remis à faux, et lastCastle change.
 
 Si le joueur clique sur ces options le booleen option2 prend la valeur vrai, les options qui étaient présentées sont effacées, et de nouvelles sont affichées.
-Si le joueur avait cliqué sur [Attaquer/envoyer des troupes], option2 prend vrai et la fonction optionMenu(optionCliqué) est appelé. Elle appelle le deuxième jeu d'options composé de fenêtres affichant les troupes dont dispose la base du joueur, de champs de textes pour les troupes qu'il désire envoyer, et de "boutons" Ok et "Clear. Ok 
+Si le joueur avait cliqué sur [Attaquer/envoyer des troupes], option2 prend vrai et la fonction optionMenu(optionCliqué) est appelé. Elle appelle le deuxième jeu d'options composé de fenêtres affichant les troupes dont dispose la base du joueur, de champs de textes pour les troupes qu'il désire envoyer, et de "boutons" Ok et "Clear. Ok donne l'ordre envoie les troupes si les champs de textes ont reçus des valeurs valides.
+Clear aurait vidé les champs de texte.
 
 
 Liste Bugs : 
@@ -107,7 +109,7 @@ Il arrive que le jeu.. Plante. Simplement et royalement. Des fois il ne fait que
 Fonctions dont l'implémentation fut un échec : 
 
 
-sauvegarde / chargement de partie
+chargement de partie
 Les troupes contournent les chateaux qui ne sont pas leurs cibles.
 
 
