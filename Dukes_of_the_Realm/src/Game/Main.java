@@ -1,7 +1,7 @@
 package Game;
 
 import java.util.*;
-
+import java.io.File;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -77,11 +77,6 @@ public class Main extends Application {
 	private Image neutCastleImg;
 	
 	/*
-	 * Image of pause
-	 */
-	private Image pauseImg = new Image(getClass().getResource("/images/pause.jpg").toExternalForm(), 100, 80, true, true);                          
-	
-	/*
 	 * variable of the player
 	 */
 	private Player player;
@@ -139,7 +134,7 @@ public class Main extends Application {
 	/*
 	 * contains the pause image
 	 */
-	private HBox hPause = new HBox(new ImageView(pauseImg));
+	private HBox hPause ;
 	
 	/*
 	 * instantiate the TextField
@@ -181,6 +176,9 @@ public class Main extends Application {
 	 */
 	private long lastTurn = 0;
 
+	//Open file, if game was save previously
+	File file = new File("saveGameFile.txt");
+	
 	/*
 	 * root of game's structure
 	 */
@@ -209,19 +207,18 @@ public class Main extends Application {
 		
 		Button bouton1 = new Button("Nouvelle Partie");
 		Button bouton2 = new Button("Reprendre une Session");
-		Button bouton3 = new Button("A propos");
-				
+						
 		vbox.setPadding(new Insets(30, 50, 30, 50));
 		vbox.setAlignment(Pos.CENTER);
-				
+						
 		Border borderMenu = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
 		vbox.setBorder(borderMenu);
-		vbox.getChildren().addAll(bouton1, bouton2, bouton3);
-				
+		vbox.getChildren().addAll(bouton1, bouton2);
+						
+		//Buttom for loadgame, start a new game	
 		bouton1.setOnAction(e ->{
-			
+							
 		root.getChildren().clear();
-		// create layers
 		playfieldLayer = new Pane();
 		root.getChildren().addAll(playfieldLayer);
 
@@ -255,8 +252,14 @@ public class Main extends Application {
 			};
 		};gameLoop.start();
 		});
-		playfieldLayer = new Pane();
-		root.getChildren().add(playfieldLayer);
+		//Button for open game was save previously
+		bouton2.setOnAction(e ->{
+			try {
+				input.ouvrirGame(file);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
 		
 		root.getChildren().addAll(vbox);
 	}
@@ -600,6 +603,7 @@ public class Main extends Application {
 			if (pause)
 			{
 				pause = false;
+				hPause.getChildren().clear();
 				playfieldLayer.getChildren().remove(hPause);
 			}
 			else
@@ -615,18 +619,44 @@ public class Main extends Application {
 	 */
 	private void pauseGame() {
 		
-		//hbox.setPrefSize(Pos.CENTER);
-		hPause.setPadding(new Insets(Settings.SCENE_WIDTH/3 + 35));
-		//hbox.setAlignment(Pos.CENTER);
-		hPause.getStyleClass().add("imageViewPause");
-		//ImageView imageViewPause = new ImageView(pauseImg);
+VBox vboxPause = new VBox(15);
 		
-		/*
-		 * Text message = new Text(); message.getStyleClass().add("message");
-		 * message.setText("Vous Ãªtes en Pause !");
-		 */
-		//hPause.getChildren().add(new ImageView(pauseImg));
-		playfieldLayer.getChildren().add(hPause);
+		Button bottonCont = new Button("Continuer la Partie");
+		Button bottonSauveg = new Button("Sauvergarder la Partie");
+		Button bottonQuit = new Button("Quittez la Partie");
+		vboxPause.setPadding(new Insets(30, 50, 30, 50));
+		vboxPause.setAlignment(Pos.CENTER);
+				
+		Border borderMenu = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
+		vboxPause.setBorder(borderMenu);
+		vboxPause.getChildren().addAll(bottonCont, bottonSauveg, bottonQuit);
+		root.getChildren().addAll(vboxPause);
+		//Buttom for continue game
+		bottonCont.setOnAction(e ->{
+			if (pause)
+			{
+				pause = false;
+				root.getChildren().removeAll(vboxPause, hPause);
+			}
+			else
+			{
+				pause = true;
+			}
+		});
+		//Button for save game
+		bottonSauveg.setOnAction(e ->{
+			try {
+				input.sauvegardeGame();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
+		//Button for quit game
+		bottonQuit.setOnAction(e ->{
+			
+			Platform.exit();
+			System.exit(0);
+			});
 	}
 
 	/*
