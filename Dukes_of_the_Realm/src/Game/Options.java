@@ -1,5 +1,8 @@
 package Game;
-
+/*
+ * This file is part of Dukes_Of_the_Realm.
+ * this class is responsable for every options displayed on the layer. 
+ */
 import javafx.event.EventHandler;
 
 import javafx.scene.paint.Color;
@@ -10,16 +13,55 @@ import javafx.scene.layout.Pane;
 import javafx.scene.input.MouseEvent;
 
 public class Options {
+	
+	/*
+	 * layer is the pane of the game
+	 */
 	private Pane layer;
+	
+	/*
+	 * label is the label of the Options, or its name
+	 */
 	private String label;
+	
+
+	/*
+	 * dx is the x coordinate of the Options
+	 */
     private double dx = 0;
+    
+    /*
+     * dy is the y coordinate of the Options
+     */
     private double dy = 0;
+    
+    /*
+     * c is the castle concerned by the Options
+     */
     private Castle c = null;
     
+    /*
+     * background is the background of the Options, its shape is a rectangle
+     */
     private Rectangle background;
+    
+    /*
+     * labelOption is a Text, that shall be displayed on the layer. 
+     */
     private Text labelOption;
     
     //Constructor for buttons Attack and produce units
+    /*
+     * Construct an Options from the first set of Options that is displayed on the screen
+     * the player can click on it. 
+     * it is added to the arraylist arrayOptions
+     * this option is set at the right position according the edge of the scene
+     * @param layer is the Pane which is exposed on the Options
+     * @param l is the String that describes the Options
+     * @param x is the double x coordinate of the Options
+     * @param y is the double y coordinate of the Options
+     * @param c is the castle concerned by the option
+     */
     public Options(Pane layer, String l, double x, double y, Castle c){
         this.layer = layer;
         this.c = c;
@@ -59,6 +101,17 @@ public class Options {
         });
     }
     //Constructors for windows Your troops, pikeman, knights, onagers
+    /*
+     * Construct an Options displayed on the Pane
+     * these Options can not get clicked, these are just windows showing informations. 
+     * @param layer is the Pane which is exposed on the Options
+     * @param l is the String that describes the Options
+     * @param x is the double x coordinate of the Options
+     * @param y is the double y coordinate of the Options
+     * @param c is the castle concerned by the option
+     * @param wRectangle is a double, the width of the background of the option
+     * @param hRectangle is a double, the height of the background of the option
+     */
     public Options(Pane layer, String l, double x, double y, Castle c,double wRectangle, double hRectangle)
     {
         this.layer = layer;
@@ -80,6 +133,15 @@ public class Options {
    }
     
     //Constructors for button Ok and Clear
+    /*
+     * Construct an Options from the second set of Options displayed on the Pane
+     * these Options can get clicked. 
+     * it is added to the arraylist arrayOptions2
+     * @param layer is the Pane which is exposed on the Options
+     * @param l is the String that describes the Options
+     * @param x is the double x coordinate of the Options
+     * @param y is the double y coordinate of the Options
+     */
     public Options(Pane layer, String l, double x, double y){
         this.layer = layer;
     	label =  l;
@@ -134,7 +196,11 @@ public class Options {
 	public Rectangle getBackground() {
 		return background;
 	}
-
+	
+	/*
+	 * Change label and labelOption with the parameter.
+	 * @param label is a String that shall change the current label and labelOption
+	 */
 	public void setLabel(String label) {
 		this.label = label;
 		this.labelOption.setText(label);
@@ -151,11 +217,10 @@ public class Options {
 	public void setC(Castle c) {
 		this.c = c;
 	}
-
-	public void setBackground(Rectangle background) {
-		this.background = background;
-	}
     
+	/*
+	 * removes from the Pane all structures of this Options : background and labelOption
+	 */
 	public void removeFromLayer()
 	{
 		this.layer.getChildren().remove(this.background);

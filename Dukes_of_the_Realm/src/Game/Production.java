@@ -1,5 +1,7 @@
 package Game;
-
+/*
+ * This file is part of Dukes_Of_the_Realm.
+ */
 import java.io.Serializable;
 
 public class Production {

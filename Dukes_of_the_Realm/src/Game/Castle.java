@@ -1,5 +1,7 @@
 package Game;
-
+/*
+ * This file is part of Dukes_Of_the_Realm.
+ */
 import java.io.Serializable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -8,22 +10,56 @@ import java.util.*;
 public class Castle extends Sprites{
 
 	//game structures
+	/*
+	 * String that contains the name of the duc
+	 */
 	protected String duc;
+	
+	/*
+	 * int that contains the treasure or gold in the castle
+	 */
 	private int treasure;
+	
+	/*
+	 * int that contains the level of the castle
+	 */
 	private int level;
+	
+	/*
+	 * array of int, that content the number of troops in the castle
+	 */
 	private int troops[] = new int[3];
+	
+	/*
+	 * Production contains the production produced in the castle
+	 */
 	private Production production;
+	
+	/*
+	 * Order contains the order sent by the castle
+	 */
 	private Order order;
+	
+	/*
+	 * String contains where the gate is
+	 */
 	private String gate;
+	
+	/*
+	 * this ArrayList is instantiated in case of attacks against the castle.
+	 * it contains the line of defense of the castle
+	 */
 	private ArrayList<Troops> def = new ArrayList<Troops>();
 
 	//Constructors
 	/*
-	 * Castle constructor for every castle
+	 * Construct a new Castle and display its image on the layer
+	 * constructor available for enemies and neutrals
+	 * it gives a random name to the castle and instantiate production and order
 	 * @param img is the image that shall be exposed
-	 * @param layer is the layer that is exposed on the image
+	 * @param layer is the layer which is exposed on the image
+	 * @param world is an arrayList that contains every castle
 	 * 
-	 * return a
 	 */
 	public Castle(Image img, Pane layer, ArrayList<Castle> world)
 	{
@@ -44,6 +80,14 @@ public class Castle extends Sprites{
         this.production = new Production("rien", 0);
 	}
 
+	/*
+	 * Construct a new Castle and display its image on the layer
+	 * constructor available for the player
+	 * it gives a random name to the castle and instantiate production and order
+	 * @param img is the image that shall be exposed
+	 * @param layer is the layer that is exposed on the image
+	 * @param world is an arrayList that contains every castle
+	 */
     public Castle(Image img, Pane layer, String duc)
 	{
 		super(layer, img);
@@ -62,10 +106,7 @@ public class Castle extends Sprites{
 	}
 
 
-	//Mutators
-	public ImageView getImgView() {
-		return imgView;
-	}
+	//getters and setters
 
 	public Pane getLayer() {
 		return layer;
@@ -102,9 +143,6 @@ public class Castle extends Sprites{
 	{
 		return this.def;
 	}
-	public void setImgView(ImageView imgView) {
-		this.imgView = imgView;
-	}
 
 	public void setLayer(Pane layer) {
 		this.layer = layer;
@@ -128,36 +166,51 @@ public class Castle extends Sprites{
 		this.troops[2] = ona;
 	}
 	
+	/*
+	 * increments the number of pikemen or troops[0] by nb
+	 * @param nb that increments troops[0]
+	 */
 	public void setTroops0(int nb)
 	{
 		this.troops[0] = this.troops[0] + nb;
 	}
 	
+	/*
+	 * increments the number of knights or troops[1] by nb
+	 * @param nb that increments troops[1]
+	 */
 	public void setTroops1(int nb)
 	{
 		this.troops[1] = this.troops[1] + nb;
 	}
 	
+	/*
+	 * increments the number of onagers or troops[2] by nb
+	 * @param nb that increments troops[2]
+	 */
 	public void setTroops2(int nb)
 	{
 		this.troops[2] = this.troops[2] + nb;
 	}
 	
-	public void setProduction(Production production) {
-		this.production = production;
-	}
-
-	public void setOrder(Order order) {
-		this.order = order;
-	}
-
-	public void setGate(String gate) {
-		this.gate = gate;
-	}
+	/*
+	 * calculate the number total of troops inside the castle
+	 * @return the total number of troops inside the castle
+	 */
 	public int totalTroops()
 	{
 		return troops[0] + troops[1] + troops[2];
 	}
+	
+	/*
+	 * instantiate an ArrayList<Troops> , it is an army that is summoned by the order, 
+	 * it reduces the amount of troops in the castle by the numbers of the order
+	 * it is displayed on the castle
+	 * the last troop instantiated is always a Herald, it is a flag, that witness the end of the army, 
+	 * that witness the order has been fulfilled
+	 * @param target is the Castle troops' target
+	 * @return an ArrayList<Troops> that contains the troops sent by the order to their target
+	 */
 	public ArrayList<Troops> instanceTroops(Castle target)
 	{
 		ArrayList<Troops> army = new ArrayList<Troops>();
@@ -193,6 +246,15 @@ public class Castle extends Sprites{
 		return army;
 		
 	}
+	
+	/*
+	 * this forms a line of defense in case the castle is under attack, 
+	 * its size is if possible and max 10
+	 * it decreases the number of troops from the castle by the number of units 
+	 * forming the line of defense and adds corresponding troops in def
+	 * @return true if the ArrayList def is empty, if
+	 * @return false if def is not empty
+	 */
 	public boolean defend() // Mise en place de l'unité de défense : 6/3/2
 	{
 		for (int i = 0; i < troops[0] && i < 6; i++)
@@ -242,6 +304,14 @@ public class Castle extends Sprites{
 		}
 		return def.isEmpty();
 	}
+	
+	/*
+	 * an order is sent if the values are correct
+	 * @param target is the target of the castle
+	 * @param nbPyk is the number of pikemen sent in the order
+	 * @param nbKni is the number of knights sent in the order
+	 * @param nbOna is the number of onagers sent in the order
+	 */
 	public void sendOrder(Castle target, int nbPyk, int nbKni, int nbOna)
 	{
 		if (nbPyk != 0 || nbKni != 0 || nbOna != 0)
@@ -252,6 +322,12 @@ public class Castle extends Sprites{
 			this.order.setTarget(target);
 		}
 	}
+	
+	/*
+	 *  add the remaining troops from def to the array of int troops[]
+	 *  clear the ArrayList def
+	 *  used when an attack is over
+	 */
 	public void clearDefense()
 	{
 		for (int i = 0; i < def.size(); i ++)
@@ -265,6 +341,16 @@ public class Castle extends Sprites{
 		}
 		def.clear();
 	}
+	
+	/*
+	 * updates production. If the castle is producing nothing, it changes
+	 * its production from "rien" to the right thing, then it sets the 
+	 * number of time left right.
+	 * @param unit is the unit that shall be produced at the end of the production
+	 * @param timeLeft is the time left before the unit is formed
+	 * @return false if the unit can't be produced
+	 * @return true if the unit can be produced
+	 */
 	public boolean product(String unit, int timeLeft)
 	{
 		if (production.getProducts().equals("rien"))

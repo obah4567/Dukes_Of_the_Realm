@@ -1,5 +1,7 @@
 package Game;
-
+/*
+ * This file is part of Dukes_Of_the_Realm.
+ */
 
 import javafx.scene.control.TextField;
 

@@ -29,8 +29,16 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import java.util.Random;
 
+/*
+ * This file is part of Dukes_Of_the_Realm.
+ */
+
 public class Main extends Application {
 	
+	/*
+	 * this is the main part of Dukes_of_the_Realm
+	 * it orchestrates every components and bouds between each other
+	 */
 	//javafx structures
 	
 	/*
@@ -569,7 +577,8 @@ public class Main extends Application {
 	/*
 	 * Check if it is possible to use function pause
 	 * @param now is the time right now.
-	 * @return return true if the game can pause, if not false
+	 * @return true if the game can pause,
+	 * @return false if the game can not pause
 	 */
 	public boolean canPause(long now)
 	{
@@ -666,7 +675,7 @@ public class Main extends Application {
 				}
 				catch(Game_Exception g)
 				{
-					
+					g.printStackTrace();
 				}
 			}
 			for (int i = 0; i < ennemies.size(); i++)
@@ -888,7 +897,13 @@ public class Main extends Application {
 	}
 	
 	/*
-	 * 
+	 * damages are dealt to the target's defense line
+	 * if a unit from the defense line loses all its health, it is removed 
+	 * from defense line. 
+	 * @param dammages is the number of damaged dealt
+	 * @param target is the target of the damages.
+	 * @return true if the defense line is empty
+	 * @return false if the defense line is not empty
 	 */
 	private boolean dammage(int dammages, Castle target)
 	{
@@ -901,7 +916,14 @@ public class Main extends Application {
 			def.remove(unit);
 		return false;
 	}
-
+	
+	/*
+	 * the owner of src owns now target. it removes from the list of castle of target's duc target
+	 * and it adds to list of castle of src's duc target.
+	 * it also change the name of the duc from the castle. 
+	 * @param src is the castle that seized the castle target from battle
+	 * @param target is the castle seized by castle src
+	 */
 	public void seizeCastle(Castle src, Castle target)
 	{
 		if (src.getDuc().equals("Joueur"))
@@ -963,7 +985,16 @@ public class Main extends Application {
 			
 		}
 	}
+	
 	//Options 
+	
+	/*
+	 * this displays the first set of options available for the lastCastle which are
+	 * "attaquer"/"envoyer des troupes", "produire des unités", "level UP" !, and "nouvelle base".
+	 * transform attaquer into envoyer des troupes if the castle is one from the player
+	 * if there are already other options displayed they are removed
+	 * @param c is the castle that gets the options displayed
+	 */
 	public void options(Castle c)
 	{
 		if (!arrayOptions.isEmpty())
@@ -986,6 +1017,17 @@ public class Main extends Application {
 		}
 	}
 	
+	/*
+	 * this displays the second set of options according to the options clicked.
+	 * if it was "attaquer"/"Envoyer des troupes" then it shows how many troops the player has
+	 * in base, instantiate z, that shall displays TextFields and display 2 "buttons" which are "Clear"
+	 * that clear the TextFields and "Ok" that confirms the order is sent and the army is also sent.
+	 * if the numbers in TextFields are incorrect values a window show up and notify the player.
+	 * if it was "produire des unités" then it shows the statistics of each units and calls createButtons()
+	 * if it was "nouvelle base" then the function switch the castle base from the player
+	 * the function also removes the precedent set of options
+	 * @param opt is the Options that got clicked by the player.
+	 */
 	public void optionMenu(Options opt)
 	{
 		if (opt.getLabel().equals("Attaquer") || opt.getLabel().equals("Envoyer des troupes"))
@@ -1044,7 +1086,7 @@ public class Main extends Application {
 		}		
 		if (opt.getLabel().equals("Nouvelle base"))
 		{
-			
+			player.setBase(opt.getC());
 		}
 		for (int i = 0; i < arrayOptions.size(); i++)
 		{
@@ -1053,7 +1095,16 @@ public class Main extends Application {
 		arrayOptions.clear();
 		option2 = true;
 	}
-
+	
+	/*
+	 * happens when the user clicked "Produire des unités", 3 buttons are displayed
+	 * the user has to click on these buttons if he wish to produces a unit, but if he has
+	 * not enough gold to produce that unit, then a window pops up and tells him he can't.
+	 * This window also pops up if he is already producing something
+	 * if he can produces a unit, it changes the Production from the lastCastle and it puts
+	 * the right unit and the right time left before production is over
+	 * it also removes the second set of Options and the buttons
+	 */
 	public void createButtons()
 	{
 		arrayButtons.add(new Button("Piquier"));
@@ -1133,6 +1184,12 @@ public class Main extends Application {
 		});
 	}
 	
+	/*
+	 * this function reduces by 1 the time left from the productions of every castle if it was
+	 * producing something. 
+	 * if the time left reaches 0, and there was something that was produced, then the unit,
+	 * or the level is incremented.
+	 */
 	public void updateProductions()
 	{
 		for (int i = 0; i < world.size(); i++)
@@ -1158,6 +1215,10 @@ public class Main extends Application {
 			}
 		}
 	}
+	/*
+	 * launch the game
+	 * @param args no arguments
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
