@@ -1,6 +1,7 @@
 package Game;
 /*
  * This file is part of Dukes_Of_the_Realm.
+ * this describes the unit Knight
  */
 import java.io.Serializable;
 import javafx.scene.layout.Pane;

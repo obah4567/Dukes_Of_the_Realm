@@ -1,6 +1,7 @@
 package Game;
 /*
  * This file is part of Dukes_Of_the_Realm.
+ * this class describes the TextFields needed to sent orders.
  */
 
 import javafx.scene.control.TextField;
@@ -11,28 +12,36 @@ import javafx.scene.shape.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-
-
 public class ZoneText {
-	private Pane layer;
-	private String value;	
 	
+	/*
+	 * layer is the Pane of the game
+	 */
+	private Pane layer;
+	
+	/*
+	 * pyk is a TextField that will be filled by the player 
+	 */
 	private TextField pyk;
+	
+	/*
+	 * kni is a TextField that will be filled by the player 
+	 */
 	private TextField kni;
+	
+	/*
+	 * ona is a TextField that will be filled by the player 
+	 */
 	private TextField ona;
 	
-	private boolean gotCliked = false;
-	
-	private HBox pykh;
-	private HBox knih;
-	private HBox onah;
-	
-	Circle c;
-	Circle c1;
-	Circle c2;
-	Circle c3;
-	
-	
+	/*
+	 * Construct a ZoneText at the right position according the position of the target
+	 * it sets the size and a prompt text in the TextFields, then displays the TextFields on layer
+	 * @param layer is the Pane of the game
+	 * @target is a Castle which depends the ZoneText
+	 * @param dx is a double which is the x coordinate of the ZoneText
+	 * @param dy is a double which is the y coordinate of the ZoneText
+	 */
 	public ZoneText(Pane layer, Castle target, double dx, double dy)
 	{
 		this.layer = layer;
@@ -40,12 +49,6 @@ public class ZoneText {
 		this.kni = new TextField();
 		this.ona = new TextField();
 		
-		/*this.pykh = new HBox(pyk);	
-		this.knih = new HBox(kni);
-		this.onah = new HBox(ona);
-		this.pykh.relocate(dx, dy + 20);
-		this.knih.relocate(dx + 160, dy + 20);
-		this.onah.relocate(dx + 320, dy + 20);*/
 		
 		this.pyk.setPrefSize(130, 40);
 		this.kni.setPrefSize(130, 40);
@@ -69,22 +72,11 @@ public class ZoneText {
 		}
 		
 		this.layer.getChildren().addAll(pyk, kni, ona);
-		/*
-		c = new Circle(dx, dy, 2);
-		c1 = new Circle(dx, dy + 20, 2);
-		c2 = new Circle(dx + 160, dy + 20, 2);
-		c3 = new Circle(dx + 320, dy + 20, 2);
-		
-		c.setFill(Color.GREEN);
-		c1.setFill(Color.RED);
-		c2.setFill(Color.RED);
-		c3.setFill(Color.RED);
-		this.layer.getChildren().add(c);
-		this.layer.getChildren().add(c1);
-		this.layer.getChildren().add(c2);
-		this.layer.getChildren().add(c3);
-		*/
 	}
+	
+	/*
+	 * remove all the TextField from the layer
+	 */
 	public void removeFromLayer()
 	{
 		layer.getChildren().removeAll(pyk, kni, ona);
@@ -102,22 +94,30 @@ public class ZoneText {
 	{
 		return this.ona;
 	}
+	
+	/*
+	 * @return a String that was written in the TextFields
+	 */
 	public String getTextPyk()
 	{
 		return pyk.getText();
 	}
+	
+	/*
+	 * @return a String that was written in the TextFields
+	 */
 	public String getTextKni()
 	{
 		return kni.getText();
 	}
+	
+	/*
+	 * @return a String that was written in the TextFields
+	 */
 	public String getTextOna()
 	{
 		return ona.getText();
 	}
-	public void resetTextField()
-	{
-		this.removeFromLayer();
-		layer.getChildren().removeAll(pyk, kni, ona, pykh, knih, onah);
-	}
+
 	
 }

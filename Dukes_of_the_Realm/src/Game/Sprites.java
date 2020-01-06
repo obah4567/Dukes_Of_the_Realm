@@ -10,18 +10,44 @@ import javafx.scene.shape.*;
 import java.util.*;
 
 public class Sprites {
+	/*
+	 * imgView is an ImageView that describes and is displayed on the Pane
+	 */
     protected ImageView imgView;
+    
+    /*
+     * layer is the Pane of the game
+     */
     protected Pane layer;
     
+    /*
+     * width_image is an double that describes the width of the image of the Sprites
+     */
     protected double width_image;
-    protected double heigth_image;
-    private Circle bg;
     
+    /*
+     * heigth_image is a double that describe the height of the image of the Sprites
+     */
+    protected double heigth_image;
+    
+    /*
+     * dx is a double that describes the x coordinates of the Sprites
+     */
     private double dx;
+    
+    /*
+     * dy is a double that describes the y coordinates of the Sprites
+     */
 	private double dy;
-	private boolean removable = false;
 
-
+	/*
+	 * Construct a Sprites. Constructor for enemy castle and neutral castle
+	 * generate random coordinates, check if there's no collision with other castle
+	 * from the collection world or with the edge, and display the Sprites on the layer.
+	 * @param layer is the Pane which is exposed on the Sprites
+	 * @param image is the Image that is displayed on the layer
+	 * @param world is the ArrayList<Castle> that contains every castle in the game
+	 */
     public Sprites(Pane layer, Image image, ArrayList<Castle> world)
     {
         this.layer = layer;
@@ -41,12 +67,16 @@ public class Sprites {
 		this.imgView.relocate(dx - this.width_image/2, dy - this.heigth_image/2);
 	
         addToLayer();
-        //Circle is the position of the image
-        /*this.bg = new Circle(dx, dy, 5);
-		this.bg.setFill(Color.RED); 
-        this.layer.getChildren().add(bg); 
-        this.bg.relocate(dx, dy);*/
     }
+    
+    /*
+     * Construct a Sprites. Constructor the player
+	 * generate random coordinates, 
+	 * from the collection world, check if there is no collisions with the edge, 
+	 * and display the Sprites on the layer. 
+	 * @param layer is the Pane which is exposed on the Sprites
+	 * @param image is the Image that is displayed on the layer
+     */
     public Sprites(Pane layer, Image image) //Constructor for player
     {
         this.layer = layer;
@@ -65,12 +95,6 @@ public class Sprites {
 		this.imgView.relocate(dx - this.width_image/2, dy - this.heigth_image/2);
 		
         addToLayer();
-        //Circle is the position of the image
-        /*
-        this.bg = new Circle(dx, dy, 5);
-		this.bg.setFill(Color.RED); 
-        this.layer.getChildren().add(bg); 
-        this.bg.relocate(dx, dy);*/
     }
     public double getDx()
     {
@@ -97,12 +121,6 @@ public class Sprites {
     	return this.layer;
     }
     
-    public boolean isRemovable() {
-        return removable;
-    }
-    public void remove() {
-        this.removable = true;
-    }
     public void setImgView(ImageView imgView) {
 		this.imgView = imgView;
 	}
@@ -122,14 +140,19 @@ public class Sprites {
 		this.dy = dy;
 	}
 	
+	/*
+	 * display this.ImgView on the layer
+	 */
 	public void addToLayer() {
         this.layer.getChildren().add(this.imgView);
     }
-	 public void removeFromLayer() {
-	        this.layer.getChildren().remove(this.imgView);
-	}
-    
-    public boolean collision (ArrayList<Castle> world)
+	
+	/*
+	 * @param world is an arrayList that contains every castle in the game
+	 * @return false if this does not collide with any castle of the world
+	 * @return true if this does collide with a castle from the world
+	 */
+	 public boolean collision (ArrayList<Castle> world)
     {
     	for (int i = 0; i < world.size(); i++)
     	{
@@ -138,6 +161,11 @@ public class Sprites {
     	}
     	return false;
     }
+	 
+	 /*
+	  * @return true if this collide with the edge of the scene
+	  * @return false if this does not collide with the edge of the scene
+	  */
     public boolean collisionWithEdge()
     {
     	return (this.dx - this.getWidth_Image()/2 < 0 || this.dy - this.getHeigth_Image()/2 < 0);

@@ -1,6 +1,7 @@
 package Game;
 /*
  * This file is part of Dukes_Of_the_Realm.
+ * this is an abstract class that describes a military unit
  */
 import javafx.scene.shape.*;
 import javafx.scene.layout.Pane;

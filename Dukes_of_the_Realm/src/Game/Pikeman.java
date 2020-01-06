@@ -3,6 +3,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 /*
  * This file is part of Dukes_Of_the_Realm.
+ * this describes the unit Pikeman
  */
 public class Pikeman extends Troops{
 	

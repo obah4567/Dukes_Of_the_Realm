@@ -1,6 +1,7 @@
 package Game;
 /*
  * This file is part of Dukes_Of_the_Realm.
+ * This describes an enemy and how he behaves
  */
 import java.io.Serializable;
 

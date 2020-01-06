@@ -20,16 +20,26 @@ public class Input {
 	private BitSet keyboardBitSet = new BitSet();
 
 	private Scene scene = null;
-
+	
+	/*
+	 * Construct an Input
+	 * @param scene is the scene the Input interacts with
+	 */
 	public Input(Scene scene) {
 		this.scene = scene;
 	}
-
+	
+	/*
+	 * add the events Key pressed and Key released
+	 */
 	public void addListeners() {
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, keyPressedEventHandler);
 		scene.addEventFilter(KeyEvent.KEY_RELEASED, keyReleasedEventHandler);
 	}
-
+	
+	/*
+	 * remove the events key Key pressed and Key released
+	 */
 	public void removeListeners() {
 		scene.removeEventFilter(KeyEvent.KEY_PRESSED, keyPressedEventHandler);
 		scene.removeEventFilter(KeyEvent.KEY_RELEASED, keyReleasedEventHandler);
@@ -57,7 +67,10 @@ public class Input {
 			event.consume();
 		}
 	};
-
+	
+	/*
+	 * check which key is pressed
+	 */
 	private boolean is(KeyCode key) {
 		return keyboardBitSet.get(key.ordinal());
 	}
@@ -68,10 +81,15 @@ public class Input {
 	// direction isn't handled.
 	// -------------------------------------------------
 
-
+	/*
+	 * check is the key for exit has been pressed
+	 */
 	public boolean isExit() {
 		return is(ESCAPE);
 	}
+	/*
+	 * check if the key for pause has been pressed
+	 */
 	public boolean isPause()
 	{
 		return is(SPACE);

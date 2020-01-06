@@ -7,10 +7,28 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Player {
+	
+	/*
+	 * name is a String that describes the player. It is "Joueur"
+	 */
 	private String name;
+	
+	/*
+	 * listCastle is an ArrayList<Castle> that contains every castle owned by the player
+	 */
 	private ArrayList<Castle> listCastle;
+	
+	/*
+	 * base is a Castle that describes the main base of operation of the player.
+	 * this variables means something when player has more than one castle
+	 */
 	private Castle base;
 
+	/*
+	 * Construct a player. add his castle to his collection listCastle, and make his castle
+	 * his base. sets the name of the castle "Joueur".
+	 * @param castle is the Castle that describes the player
+	 */
 	public Player(Castle castle)
 	{
         this.listCastle = new ArrayList<Castle>();
@@ -43,6 +61,10 @@ public class Player {
 	{
 		return this.name;
 	}
+	
+	/*
+	 * @return the total of troops from every castle the player owns
+	 */
 	public int totalTroops()
 	{
 		int s = 0;
