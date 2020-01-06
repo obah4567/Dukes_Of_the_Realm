@@ -1,5 +1,6 @@
 package Game;
 
+import java.io.Serializable;
 
 public class Order {
 	private int nbPyk;

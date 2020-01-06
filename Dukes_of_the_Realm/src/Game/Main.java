@@ -32,47 +32,160 @@ import java.util.Random;
 public class Main extends Application {
 	
 	//javafx structures
+	
+	/*
+	 * Pane of the game
+	 */
 	private Pane playfieldLayer;
+	
+	/*
+	 * Scene of the game
+	 */
 	private Scene scene;
+	
+	/*
+	 * input of the game
+	 */
 	private Input input;
+	
+	/*
+	 * loop of the game
+	 */
 	private AnimationTimer gameLoop;
 	
+	/*
+	 * image of player's castle
+	 */
 	private Image castlePlayerImg;
+	
+	/*
+	 * image of ennemy' castle
+	 */
 	private Image castleImg;
+	
+	/*
+	 * Images of neutral baron's castle
+	 */
 	private Image neutCastleImg;
-	private Image pauseImg;                          
-
+	
+	/*
+	 * Image of pause
+	 */
+	private Image pauseImg = new Image(getClass().getResource("/images/pause.jpg").toExternalForm(), 100, 80, true, true);                          
+	
+	/*
+	 * variable of the player
+	 */
 	private Player player;
+	
+	/*
+	 * this variable contains the last Castle clicked
+	 */
 	public Castle lastCastle = null;
 	
+	/*
+	 * contains every Castle 
+	 */
 	private ArrayList<Castle> world = new ArrayList<Castle>();
+	
+	/*
+	 * contains every enemies
+	 */
 	private ArrayList<Ennemy> ennemies = new ArrayList<Ennemy>();
 	
+	/*
+	 * contains every possible clicked Castle
+	 */
 	private ArrayList<Castle> competition = new ArrayList<Castle>();
+	
+	/*
+	 * contains every possible clicked Options
+	 */
 	private ArrayList<Options> competition2 = new ArrayList<Options>();
 	
+	/*
+	 * contains every armies. an army is a collection of troops
+	 */
 	private ArrayList<ArrayList<Troops>> armies = new ArrayList<ArrayList<Troops>>();
+	
+	/*
+	 * Contains the first set of Options
+	 */
 	private ArrayList<Options> arrayOptions = new ArrayList<Options>();
+	
+	/*
+	 * contains the second set of Options
+	 */
 	private ArrayList<Options> arrayOptions2 = new ArrayList<Options>();
+	
+	/*
+	 * contains a set of Button
+	 */
 	private ArrayList<Button> arrayButtons = new ArrayList<Button>();
 	
+	/*
+	 * contains a message that display the stats of lastCastle
+	 */
 	private Text stats = new Text();
-	private HBox hPause = new HBox();
 	
+	/*
+	 * contains the pause image
+	 */
+	private HBox hPause = new HBox(new ImageView(pauseImg));
+	
+	/*
+	 * instantiate the TextField
+	 */
 	private ZoneText z;
 	
+	/*
+	 * witness of the first set of Options
+	 */
 	private boolean option = false;
+	
+	/*
+	 * witness of the second set of Options
+	 */
 	private boolean option2 = false;
+	
+	/*
+	 * indicates what was closer to the cliq, a Castle or an Options
+	 */
 	private boolean comp = false;
 
+	/*
+	 * a tool to generate random numbers
+	 */
 	public Random r = new Random();
 	
+	/*
+	 * witness of pause state
+	 */
 	private boolean pause = false;
+	
+	/*
+	 * witness of last pause
+	 */
 	private long lastPause = 0;
+	
+	/*
+	 * witness of last turn
+	 */
 	private long lastTurn = 0;
 
+	/*
+	 * root of game's structure
+	 */
 	Group root;
 
+	/*
+	 * Instantiate all the games structures. starts the gameLoop
+	 * @param main stage of the game
+	 * In pause if boolean pause is true, not in pause if pause is false
+	 * 
+	 * (non-Javadoc)
+	 * @see javafx.application.Application#start(javafx.stage.Stage)
+	 */
 	@Override
 	public void start(Stage primaryStage) {
 
@@ -140,11 +253,16 @@ public class Main extends Application {
 		root.getChildren().addAll(vbox);
 	}
 
+	/*
+	 * load the images, generate the player, enemies, neutral barons and display them on playfieldLayer
+	 * Create a statusBar
+	 * scene is analyzed, check which object is the closest from the click then
+	 * take appropriate actions.
+	 */
 	private void loadGame() {
 		castlePlayerImg = new Image(getClass().getResource("/images/castlePlayer.png").toExternalForm(), 200, 200, true, true);
 		castleImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 100, 100, true, true);
 		neutCastleImg = new Image(getClass().getResource("/images/neutCastle2.png").toExternalForm(), 100, 100, true, true);
-		pauseImg = new Image(getClass().getResource("/images/pause.jpg").toExternalForm(), 100, 80, true, true);
 
 		input = new Input(scene);
 		input.addListeners();
@@ -287,6 +405,17 @@ public class Main extends Application {
 						Castle intermediate = competition.get(index);
 						if (lastCastle == intermediate)
 						{
+							if (option2)
+							{
+								for (int i = 0; i < arrayOptions2.size(); i++)
+									arrayOptions2.get(i).removeFromLayer();
+								arrayOptions2.clear();
+								if (!arrayButtons.isEmpty())
+								{
+									for (int i = 0; i < arrayButtons.size(); i++)
+										playfieldLayer.getChildren().remove(arrayButtons.get(i));
+								}
+							}
 							option = true; option2 = false;
 							options(intermediate);
 						}
@@ -330,12 +459,18 @@ public class Main extends Application {
 				competition2.removeAll(competition2);
 				}});
 		}
-	
-	public void clear()
-	{
-		stats.setText("");
-	}
 
+	
+	/*
+	 * Compare every objects close from the click in the ArrayList competition and competition2,
+	 * and select the most probable one.
+	 * 
+	 * @param dx is the abscissa coordinate of the click.
+	 * @param dy is the ordinate coordinate of the click.
+	 * @return the index of the object, and use the boolean comp to tell in which collection he is. 
+	 * 
+	 * if comp is true, then it is an Options, if not it is a Castle
+	 */
 	public int handleCompetition(double dx, double dy)
 	{
 		double min1 = 10000000, min2 = 10000000;
@@ -367,6 +502,9 @@ public class Main extends Application {
 
 	//Creation structures
 		
+	/*
+	 * Generate the status Bar that shall display informations about lastCastle
+	 */
 	public void createStatusBar() {
 		HBox statusBar = new HBox();
 		statusBar.getChildren().addAll(stats);
@@ -378,14 +516,22 @@ public class Main extends Application {
 		this.playfieldLayer.getChildren().add(statusBar);
 	}
 
-	
+	/*
+	 * Generate the player, and add his castle in the ArrayList world
+	 */
 	private void createPlayer() {
 	
 		Castle c = new Castle(castlePlayerImg, playfieldLayer, "Joueur");
 		player = new Player(c);
 		world.add(c);
-
 	}
+	
+	/*
+	 * generate NB_ENN_CASTLE enemies. Add each castle to the world.
+	 * If 2 castle have the same duc, the second castle is added to the list of castle 
+	 * to the enemy.
+	 * The enemy is added to the list of enemies if it's not in there already
+	 */
 	private void generateEnnemies()
 	{
 		for (int i = 0; i < Settings.NB_ENN_CASTLE; i++)
@@ -408,7 +554,9 @@ public class Main extends Application {
 			}
 		}
 	}
-	
+	/*
+	 * generate the castle of neutrals barons. Add each castle to the world
+	 */
 	private void generateNeutrals()
 	{
 		for (int i = 0; i < Settings.NB_NEUT_CASTLE; i++)
@@ -418,11 +566,23 @@ public class Main extends Application {
 		}
 	}
 	
-
+	/*
+	 * Check if it is possible to use function pause
+	 * @param now is the time right now.
+	 * @return return true if the game can pause, if not false
+	 */
 	public boolean canPause(long now)
 	{
 		return (now - lastPause > 10000 * 10000);
 	}
+	
+	/*
+	 * pause or unpause the game.
+	 * if pause is true, then it unpauses the game, if not it pauses it
+	 * remove the pause image if it unpauses
+	 * call pauseGame if it pauses
+	 * @param now is the time right now
+	 */
 	public void pause(long now)
 	{
 		if (canPause(now))
@@ -441,23 +601,29 @@ public class Main extends Application {
 		}
 	}
 	
-private void pauseGame() {
+	/*
+	 * display the pause image
+	 */
+	private void pauseGame() {
 		
 		//hbox.setPrefSize(Pos.CENTER);
 		hPause.setPadding(new Insets(Settings.SCENE_WIDTH/3 + 35));
 		//hbox.setAlignment(Pos.CENTER);
 		hPause.getStyleClass().add("imageViewPause");
-		ImageView imageViewPause = new ImageView(pauseImg);
+		//ImageView imageViewPause = new ImageView(pauseImg);
 		
 		/*
 		 * Text message = new Text(); message.getStyleClass().add("message");
 		 * message.setText("Vous Ãªtes en Pause !");
 		 */
-		hPause.getChildren().add(imageViewPause);
+		//hPause.getChildren().add(new ImageView(pauseImg));
 		playfieldLayer.getChildren().add(hPause);
 	}
 
-	
+	/*
+	 * Display a message telling the player lost and game is over.
+	 * stops gameLoop and everything
+	 */
 	private void gameOver() {
 		HBox hbox = new HBox();
 		hbox.setPrefSize(Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
@@ -470,6 +636,14 @@ private void pauseGame() {
 		gameLoop.stop();
 	}
 	
+	/*
+	 * this function update everything at every turn.
+	 * if the time is right : a turn just happened, then it increased the gold in every Castle
+	 * by the right amount, it updates the production, the position of troops, the strategy of enemies, and their
+	 * actions. It also makes the troops fight if they're close enough form theirs targets.
+	 * @param now is the time right now
+	 * @Exception catch a Game_Exception if a click happens and lastCastle is still null 
+	 */
 	private void update(long now) {
 		if (now - lastTurn > Settings.TIME_TURN)
 		{
@@ -507,7 +681,12 @@ private void pauseGame() {
 			}
 		}
 	}
-
+	
+	/*
+	 * displays in statusBar the informations about lastCastle
+	 * @param castle is the lastCastle clicked
+	 * throws a Game_Exception if castle is null
+	 */
 	private void updateStatus(Castle castle) throws Game_Exception
 	{
 		if (castle == null)
@@ -530,13 +709,23 @@ private void pauseGame() {
 		
 	}
 
-	
+	/*
+	 * this add the army to armies sent from source to target.
+	 * @param source is the castle from where the army comes from
+	 * @param target is the castle where the army goes
+	 */
 	private void attack(Castle source, Castle target)
 	{
 		armies.add(source.instanceTroops(target));
 	}
 	
-	
+	/*
+	 * this function makes troops move.
+	 * If they're inside the castle, a specific number (gate size) come out
+	 * and is placed on the side on the castle that faces the target (right or left side)
+	 * if they got out of the castle, their position will change to be closer to the target 
+	 * until they reach it
+	 */
 	private void moveTroops()
 	{
 		if (armies.isEmpty())
@@ -550,8 +739,6 @@ private void pauseGame() {
 				if (armies.get(i).isEmpty())
 				{
 					armies.remove(i);
-					//sources.remove(i);
-					//targets.remove(i);
 				}
 				else
 				{
@@ -615,6 +802,14 @@ private void pauseGame() {
 	}
 	
 	
+	/*
+	 * if troops are close enough to their targets, then they attack the castle.
+	 * if the duc of the target and the duc of the troop are the same, then the troop is added to the troops of the castle
+	 * if the target has a defense line, it deals its damages to one unit from the defense line, then die.
+	 * if the target it calls defend(), if it still has no defense line, then the troops seize the castle.
+	 * if a Herald happens to clash with castle, then he signs the end of the army, the end of the attack and the order from
+	 * the source castle becomes null again.
+	 */
 	private void clash()
 	{
 		for (int i = 0; i < armies.size(); i++)
@@ -692,6 +887,9 @@ private void pauseGame() {
 		}
 	}
 	
+	/*
+	 * 
+	 */
 	private boolean dammage(int dammages, Castle target)
 	{
 		ArrayList<Troops> def = target.getDef();

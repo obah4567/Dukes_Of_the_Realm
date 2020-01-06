@@ -1,4 +1,7 @@
 package Game;
+
+import java.io.Serializable;
+
 import java.util.*;
 public class Ennemy extends Player{
 	

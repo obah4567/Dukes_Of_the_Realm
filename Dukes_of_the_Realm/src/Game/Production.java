@@ -1,5 +1,7 @@
 package Game;
 
+import java.io.Serializable;
+
 public class Production {
 
 	private String products = "rien";
