@@ -2,11 +2,10 @@
 Dukes_Of_the_Realm
 
 
-Dukes of the Realm est un jeu de stratégie au tour par tour. Vous arrivez dans un royaume à une époque moyenâgeuse dans une période de grande instabilité politique où le roi vient juste de mourir. Vous vous appelez Joueur. Vous êtes un duc, et comme tous les ducs, votre but est de prendre le pouvoir. Ainsi, vous le but du jeu est de s'emparer de tous les châteaux du royaume.
-Mais attention, si vous perdez tous vos chateaux, vous perdez la partie. 
+Dukes of the Realm est un jeu de stratégie au tour par tour. Vous arrivez dans un royaume à une époque moyenâgeuse dans une période de grande instabilité politique où le roi vient juste de mourir. Vous vous appelez Joueur. Vous êtes un duc, et comme tous les ducs, votre but est de prendre le pouvoir. Ainsi, le but du jeu est de s'emparer de tous les châteaux (ennemis) du royaume, c'est à dire le chateau des autres ducs.
 
 
-Instructions
+Instructions :
 
 
 Pour lancer le jeu vous n'avez qu'à compiler et lancer le programme. (ou utiliser la touche Run Main d'Eclipse).
@@ -19,7 +18,8 @@ Règles :
 
 Règle de victoire : s'emparer de tous les chateaux des ducs : vaincre tous les ennemis.
 
-Défaite : si vous venez à perdre tous vos chateaux.
+Défaite : si vous venez à perdre tous vos chateaux, Game Over.
+
 
 Pour vos emparer de chateaux, vous recruterez des troupes et les lancerez à l'attaque de vos ennemis. 
 Sachez que vos ennemis peuvent aussi vous attaquer, nous vous recommandons donc de toujours garder quelques troupes en garnison.
@@ -58,9 +58,18 @@ Vous pouvez également appuyer sur la barre d'espace du clavier pour mettre le je
 
 Les ennemis ont des actions aléatoires. Cependant il est possible que certains ennemis aient plus de chances que d'autres avec l'aléatoire. 
 
-Implémentation : 
+
+fonctionnalités implémentées : 
+
 
 barre d'information décrivant les statistiques des chateaux. 
+Chateaux ayant des comportements aléatoires. 
+Pause en appuyant sur espace
+Montée de niveau
+Production d'unité Piquier/Chevalier/Onagre
+Attaque d'un chateau ennemi
+Envoi de troupes sur un château que vous possédez
+
 
 
 
@@ -83,4 +92,30 @@ Selon le propriétaire du chateau, des options spécifiques sont affichés et prése
 Si le joueur clique sur un autre chateau ces options disparaissent, le boolen option et remis à faux, et lastCastle change.
 
 Si le joueur clique sur ces options le booleen option2 prend la valeur vrai, les options qui étaient présentées sont effacées, et de nouvelles sont affichées.
-Si le joueur avait cliqué sur [Attaquer/envoyer des troupes], option2 prend vrai et la fonction optionMenu(optionCliqué) est appelé. Elle va afficher les 
+Si le joueur avait cliqué sur [Attaquer/envoyer des troupes], option2 prend vrai et la fonction optionMenu(optionCliqué) est appelé. Elle appelle le deuxième jeu d'options composé de fenêtres affichant les troupes dont dispose la base du joueur, de champs de textes pour les troupes qu'il désire envoyer, et de "boutons" Ok et "Clear. Ok 
+
+
+Liste Bugs : 
+
+
+lorsque vous décidez d'attaquer un chateau, et que vous tapez des valeurs non valides puis cliquer sur Ok, une fenetre pop up informe que la valeur est non-valide, puis le bouton clear ne fonctionne plus. Nous vous recommandons de cliquer sur un autre château puis de recliquer sur le château que vous vouliez...
+Lors de l'attaque d'un chateau, lorsque l'attaquant s'empare du château, les troupes suivantes de l'attaquant sont censés remplir la garnison. Et bien ce nombre est souvent étrangement haut et non représentatif de ce que devrait $etre la réalité. 
+Lorsque le joueur prends un chateau, l'ordinateur garde le contrôle du chateau... Bug plus embêtant.
+Il arrive que le jeu.. Plante. Simplement et royalement. Des fois il ne fait que geler et s'arrête un instant puis reprends, mais il arrive qu'il plante, et attendre ne sert à rien, je vous conseille de ne pas perdre de temps et de ne pas attendre la fin de ces plantages.
+
+
+Fonctions dont l'implémentation fut un échec : 
+
+
+sauvegarde / chargement de partie
+Les troupes contournent les chateaux qui ne sont pas leurs cibles.
+
+
+Conseils pour le jeu : 
+
+
+Nous vous recommandons fortement de ne recruter que des piquiers, au début sans être trop pressé, et en essayant en même de monter de niveau. Garder vos troupes et attendez que vos adversaires s'entretuent et s'affaiblissent mutuellement, puis frappez. 
+Réservez vos piquiers pour l'attaque, et les autres troupes pour la défense.
+Il n'y a pas besoin de monter de niveau très haut, au délà du niveau 5, vous aurez beaucoup de mal à dépenser tout l'argent que votre château produira.
+
+Bon jeu
