@@ -127,6 +127,8 @@ public class Sprites {
 	        this.layer.getChildren().remove(this.imgView);
 	}
     
+	 //This method return boolean and test if distance beetween castles was respect, to avoid the collision
+	 
     public boolean collision (ArrayList<Castle> world)
     {
     	for (int i = 0; i < world.size(); i++)
@@ -136,6 +138,8 @@ public class Sprites {
     	}
     	return false;
     }
+    
+    //This method test if the castle don't touch Width or height edge
     public boolean collisionWithEdge()
     {
     	return (this.dx - this.getWidth_Image()/2 < 0 || this.dy - this.getHeigth_Image()/2 < 0);

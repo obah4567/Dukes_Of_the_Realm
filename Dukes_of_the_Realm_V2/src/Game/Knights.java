@@ -1,4 +1,6 @@
 package Game;
+
+import java.io.Serializable;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 public class Knights extends Troops{

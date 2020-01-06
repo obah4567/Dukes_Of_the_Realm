@@ -7,7 +7,7 @@ public class Settings {
 	public static final int COST_PRODUCTION_KNIGHT = 500;
 	public static final int COST_PRODUCTION_ONAGER = 1000;
 
-	public static final int TIME_COST_PIKEMAN = 5;
+	public static final int TIME_COST_PIKEMAN = 7;
 	public static final int TIME_COST_KNIGHT = 20;
 	public static final int TIME_COST_ONAGER = 50;
 
@@ -23,18 +23,18 @@ public class Settings {
 	public static final int DAMMAGES_KNIGHT = 5;
 	public static final int DAMMAGES_ONAGER = 10;
 	
-	public static final int NB_PIK_DUC = 300;
-	public static final int NB_KNI_DUC = 100;
-	public static final int NB_ONA_DUC = 20;
-	public static final int NB_PIK_NEUT = 30;
-	public static final int NB_KNI_NEUT = 100;
+	public static final int NB_PIK_DUC = 30;
+	public static final int NB_KNI_DUC = 20;
+	public static final int NB_ONA_DUC = 5;
+	public static final int NB_PIK_NEUT = 10;
+	public static final int NB_KNI_NEUT = 20;
 	public static final int NB_ONA_NEUT = 2;
 
-	public static final int SIZEGATE = 10;
+	public static final int SIZEGATE = 4;
 
 	// WINDOW
 	public static final int SCENE_WIDTH = 1200;
-    public static final int SCENE_HEIGHT = 650;
+    public static final int SCENE_HEIGHT = 600;
 	public static final int STATUS_BAR_HEIGHT = 45;
 	
 	public static final String BLANK = "                  ";
@@ -47,7 +47,7 @@ public class Settings {
 			"Salomon", "Blaise", "Romain", "Joffrey", "Stannis", "Tywin", "Salazar"};
 	
 	
-	public static final long TIME_TURN = 100000 * 10000 ;
+	public static final long TIME_TURN = 10000 * 10000 * 2 ;
 	
 	public static final int NB_NEUT_CASTLE = 5;
 	public static final int NB_ENN_CASTLE = 5;
@@ -59,8 +59,5 @@ public class Settings {
 	    {
 	    	return Math.sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
 	    }
-
-	
-	
 	
 }

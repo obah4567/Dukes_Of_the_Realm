@@ -1,13 +1,13 @@
 package Game;
 
 import java.io.File;
-import java.util.ArrayList;
-//import java.util.List;
-
+import java.util.*;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
@@ -26,146 +26,199 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.shape.*;
 import java.util.Random;
-
 
 public class Main extends Application {
 	
 	//javafx structures
+	
+	//Pane of the game
 	private Pane playfieldLayer;
+	
+	//Scene of the game
 	private Scene scene;
+	
+	//input of the game
 	private Input input;
+	
+	//loop of the game
 	private AnimationTimer gameLoop;
 	
+	//image of player's castle
 	private Image castlePlayerImg;
-	private Image castleImg;
-	private Image neutCastleImg;
-	private Image tresorImg, chevalierImg, royaumImg, onagreImg, piqImg, pauseImg;
-
-	ImageView imageViewPause;
 	
+	//image of ennemy' castle
+	private Image castleImg;
+	
+	//Images of neutral baron's castle
+	private Image neutCastleImg;
+	
+	//Images for bars status
+	private Image tresorImg, chevalierImg, royaumImg, onagreImg, piqImg;
+	
+	//Image of pause
+	private Image pauseImg = new Image(getClass().getResource("/images/pause.jpg").toExternalForm(), 100, 80, true, true);                          
+	
+	//variable of the player
 	private Player player;
+	
+	//this variable contains the last Castle clicked
 	public Castle lastCastle = null;
 	
+	//contains every Castle 
 	private ArrayList<Castle> world = new ArrayList<Castle>();
+	
+	//contains every enemies
+	private ArrayList<Ennemy> ennemies = new ArrayList<Ennemy>();
+	
+	//contains every possible clicked Castle
 	private ArrayList<Castle> competition = new ArrayList<Castle>();
+	
+	//contains every possible clicked Options
 	private ArrayList<Options> competition2 = new ArrayList<Options>();
 	
+	//contains every armies. an army is a collection of troops
 	private ArrayList<ArrayList<Troops>> armies = new ArrayList<ArrayList<Troops>>();
 	
+	//Contains the first set of Options
 	private ArrayList<Options> arrayOptions = new ArrayList<Options>();
 	
+	//contains the second set of Options
+	private ArrayList<Options> arrayOptions2 = new ArrayList<Options>();
+	
+	//contains a set of Button
+	private ArrayList<Button> arrayButtons = new ArrayList<Button>();
+	
+	//contains a message that display the stats of lastCastle
 	private Text stats = new Text();
-	//private Text stats1 = new Text();
 	private Text stats2 = new Text();
 	private Text stats3 = new Text();
 	private Text stats4 = new Text();
 	private Text stats5 = new Text();
 	
+	//contains the pause image
+	private HBox hPause = new HBox(new ImageView(pauseImg));
+	//instantiate the TextField
 	private ZoneText z;
+	
+	//Contains the pause hbox 
 	HBox hbox = new HBox();
-	HBox hbox1 = new HBox();
-	
+	//witness of the first set of Options
 	private boolean option = false;
+	//witness of the second set of Options
 	private boolean option2 = false;
+	//indicates what was closer to the cliq, a Castle or an Options
 	private boolean comp = false;
-
-	private Options opt1;
-	private Options opt2;
-
+	//a tool to generate random numbers
 	public Random r = new Random();
-	
+	//witness of pause state
 	private boolean pause = false;
+	//witness of last pause
 	private long lastPause = 0;
+	//witness of last turn
 	private long lastTurn = 0;
-
+	
+	//Open file, if game was save previously
 	File file = new File("saveGameFile.txt");
+	/*
+	 * root of game's structure
+	 */
 	Group root;
 
+	/*
+	 * Instantiate all the games structures. starts the gameLoop
+	 * @param main stage of the game
+	 * In pause if boolean pause is true, not in pause if pause is false
+	 * 
+	 * (non-Javadoc)
+	 * @see javafx.application.Application#start(javafx.stage.Stage)
+	 */
 	@Override
 	public void start(Stage primaryStage) {
 
 		root = new Group();
 		primaryStage.setTitle("Dukes of the Realm");
-		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT + Settings.STATUS_BAR_HEIGHT);
+		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT + Settings.STATUS_BAR_HEIGHT, Color.BISQUE);
 		scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
-
+		
 		///Pour menu principal du jeu
 		VBox vbox = new VBox (13);
-				
+						
 		Button bouton1 = new Button("Nouvelle Partie");
 		Button bouton2 = new Button("Reprendre une Session");
-		Button bouton3 = new Button("A propos");
-				
-		vbox.setPadding(new Insets(30, 50, 30, 50));
-		vbox.setAlignment(Pos.CENTER);
-				
-		Border borderMenu = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
-		vbox.setBorder(borderMenu);
-		vbox.getChildren().addAll(bouton1, bouton2, bouton3);
-				
-		bouton2.setOnAction(e ->{
-			try {
-				input.ouvrirGame(file);
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		});
-		
-		bouton1.setOnAction(e ->{
-					
-		root.getChildren().clear();
-		playfieldLayer = new Pane();
-		root.getChildren().addAll(playfieldLayer);
-					
-		loadGame();
-
-		gameLoop = new AnimationTimer() {
-			@Override
-			public void handle(long now) {
-				processInput(input, now);
-				if (pause == true)
-					{
 						
-					}
-				else
-				{
-					pause = false;
-					hbox.getChildren().clear();
-								//opt1.removeFromLayer();
+				vbox.setPadding(new Insets(30, 50, 30, 50));
+				vbox.setAlignment(Pos.CENTER);
+						
+				Border borderMenu = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
+				vbox.setBorder(borderMenu);
+				vbox.getChildren().addAll(bouton1, bouton2);
+						
+				//Buttom for loadgame, start a new game	
+				bouton1.setOnAction(e ->{
+							
+				root.getChildren().clear();
+				playfieldLayer = new Pane();
+				root.getChildren().addAll(playfieldLayer);
+							
+				loadGame();
+
+				gameLoop = new AnimationTimer() {
+					@Override
+					public void handle(long now) {
+						processInput(input, now);
+						if (pause == true)
+							{
 								
-					update(now);
 							}
-						}
+						else
+						{
+							pause = false;
+							hbox.getChildren().clear();
+										//opt1.removeFromLayer();
+										
+							update(now);
+									}
+								}
 
-			private void processInput(Input input, long now) {
-				if (input.isPause())
-					{
-						pause(now);
+					private void processInput(Input input, long now) {
+						if (input.isPause())
+							{
+								pause(now);
+							}
+							if (input.isExit()) {
+								Platform.exit();
+								System.exit(0);
+								}
+
+							};
+						};gameLoop.start();
+					});
+				
+				//Button for open game was save previously
+				bouton2.setOnAction(e ->{
+					try {
+						input.ouvrirGame(file);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
-					if (input.isExit()) {
-						Platform.exit();
-						System.exit(0);
-						}
-
-					};
-				};gameLoop.start();
-			});
-		
-		///
-		// create layers
-		//Border borderGame = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
-		//vbox.setBorder(borderGame);
+				});
+				
 		root.getChildren().addAll(vbox);
 	}
 
-	
+	/*
+	 * load the images, generate the player, enemies, neutral barons and display them on playfieldLayer
+	 * Create a statusBar
+	 * scene is analyzed, check which object is the closest from the click then
+	 * take appropriate actions.
+	 */
 	private void loadGame() {
 		castlePlayerImg = new Image(getClass().getResource("/images/castlePlayer.png").toExternalForm(), 200, 200, true, true);
 		castleImg = new Image(getClass().getResource("/images/castle1.png").toExternalForm(), 100, 100, true, true);
@@ -185,7 +238,6 @@ public class Main extends Application {
 		generateNeutrals();
 		createStatusBar();
 
-
 		scene.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.SECONDARY)
 			{
@@ -195,25 +247,23 @@ public class Main extends Application {
 			{
 				if (option2)
 				{
-					if (Settings.distance(e.getX(), e.getY(), arrayOptions.get(4).getDx(), 
-							arrayOptions.get(4).getDy()) < arrayOptions.get(4).getBackground().getHeight())
-						competition2.add(arrayOptions.get(4));
+					if (Settings.distance(e.getX(), e.getY(), arrayOptions2.get(arrayOptions2.size()-2).getDx(), 
+							arrayOptions2.get(arrayOptions2.size()-2).getDy()) < arrayOptions2.get(arrayOptions2.size()-2).getBackground().getHeight())
+						competition2.add(arrayOptions2.get(arrayOptions2.size()-2));
 						
-					if (Settings.distance(e.getX(), e.getY(), arrayOptions.get(5).getDx(), 
-							arrayOptions.get(5).getDy()) < arrayOptions.get(5).getBackground().getHeight())
-						competition2.add(arrayOptions.get(5));
+					if (Settings.distance(e.getX(), e.getY(), arrayOptions2.get(arrayOptions2.size()-1).getDx(), 
+							arrayOptions2.get(arrayOptions2.size()-1).getDy()) < arrayOptions2.get(arrayOptions2.size()-1).getBackground().getHeight())
+						competition2.add(arrayOptions2.get(arrayOptions2.size()-1));
 				}
 				if (option)
 				{
-					if (opt1 != null)
+					if (!arrayOptions.isEmpty())
 					{
-						if (Settings.distance(e.getX(), e.getY(), opt1.getDx(), opt1.getDy()) < opt1.getBackground().getHeight())
-							competition2.add(opt1);
-					}
-					if (opt2 != null)
-					{
-						if (Settings.distance(e.getX(), e.getY(), opt2.getDx(), opt2.getDy()) < opt2.getBackground().getHeight())
-							competition2.add(opt2);
+						for (int i = 0; i < arrayOptions.size(); i++)
+						{
+							if (Settings.distance(e.getX(), e.getY(), arrayOptions.get(i).getDx(), arrayOptions.get(i).getDy()) < arrayOptions.get(i).getBackground().getHeight())
+								competition2.add(arrayOptions.get(i));
+						}
 					}
 				}
 			
@@ -230,7 +280,39 @@ public class Main extends Application {
 					if (!competition2.isEmpty())
 					{
 						if (competition2.get(index).getC() != null)
-								optionMenu(competition2.get(index));
+						{
+							if (competition2.get(index).getLabel().equals("Level UP !"))
+							{
+								if (!lastCastle.product("level", lastCastle.getLevel()*10))
+									arrayOptions.add(new Options(playfieldLayer, "Vous ne pouvez pas pour l'instant", lastCastle.getDx() + lastCastle.getWidth_Image(), lastCastle.getDy() + 122, lastCastle, 300, 40));
+								else
+								{
+									for (int i = 0; i < arrayOptions.size(); i++)
+									{
+										arrayOptions.get(i).removeFromLayer();
+									}
+									arrayOptions.clear();
+									option = false;
+									option2 = false;
+								}
+							}
+							else
+							{
+								if (competition2.get(index).getLabel().equals("Nouvelle base"))
+								{
+									player.setBase(lastCastle);
+									option = false; option2 = false;
+									for (int i = 0; i < arrayOptions.size(); i++)
+										arrayOptions.get(i).removeFromLayer();
+									arrayOptions.clear();
+								}
+								else
+								{
+									optionMenu(competition2.get(index));
+								}
+							}
+								
+						}
 						else
 						{
 							if (competition2.get(index).getLabel().equals("Clear"))
@@ -253,17 +335,30 @@ public class Main extends Application {
 								if (z.getTextOna().equals(""))
 									ona = 0;
 								else
-									ona = Integer.valueOf(z.getTextOna());									
-								player.getListCastle().get(0).sendOrder(lastCastle, pyk, kni, ona);
-								attack(player.getListCastle().get(0), lastCastle);
-								z.removeFromLayer();
-								for (int i = 0; i < arrayOptions.size(); i++)
-									arrayOptions.get(i).removeFromLayer();
-								arrayOptions.clear();
-								z = null;
-								option2 = false;
-								option = false;
-								
+									ona = Integer.valueOf(z.getTextOna());
+								if (!lastCastle.getDuc().equals("Joueur"))
+								{
+									if (pyk > player.getBase().getTroops()[0] || kni > player.getBase().getTroops()[1] || ona > player.getBase().getTroops()[2])
+									{
+										arrayOptions2.add(new Options(playfieldLayer, "Veuillez saisir un nombre correcte", 
+												lastCastle.getDx() - lastCastle.getWidth_Image()/2, lastCastle.getDy() + lastCastle.getHeigth_Image(), lastCastle, 250, 40));
+									}
+									else
+									{
+										if (player.getBase().getOrder().getTarget() == null)
+										{
+											player.getBase().sendOrder(lastCastle, pyk, kni, ona);
+											attack(player.getBase(), lastCastle);
+										}
+										z.removeFromLayer();
+										for (int i = 0; i < arrayOptions2.size(); i++)
+											arrayOptions2.get(i).removeFromLayer();
+										arrayOptions2.clear();
+										z = null;
+										option2 = false;
+										option = false;
+									}
+								}
 							}
 						}
 					}
@@ -275,9 +370,19 @@ public class Main extends Application {
 						Castle intermediate = competition.get(index);
 						if (lastCastle == intermediate)
 						{
-							option = true;
+							if (option2)
+							{
+								for (int i = 0; i < arrayOptions2.size(); i++)
+									arrayOptions2.get(i).removeFromLayer();
+								arrayOptions2.clear();
+								if (!arrayButtons.isEmpty())
+								{
+									for (int i = 0; i < arrayButtons.size(); i++)
+										playfieldLayer.getChildren().remove(arrayButtons.get(i));
+								}
+							}
+							option = true; option2 = false;
 							options(intermediate);
-							option2 = false;
 						}
 						else
 						{
@@ -285,20 +390,26 @@ public class Main extends Application {
 							{
 								if (z!= null)
 									z.removeFromLayer();
-								for (int i = 0; i < arrayOptions.size(); i++)
-									arrayOptions.get(i).removeFromLayer();
-								arrayOptions.clear();
+								z = null;
+								for (int i = 0; i < arrayOptions2.size(); i++)
+									arrayOptions2.get(i).removeFromLayer();
+								arrayOptions2.clear();
+							}
+							if (!arrayButtons.isEmpty())
+							{
+								playfieldLayer.getChildren().removeAll(arrayButtons.get(0), arrayButtons.get(1), arrayButtons.get(2));
+								arrayButtons.clear();
 							}
 							z = null;
 							option = false;
 							option2 = false;
 							lastCastle = intermediate;							
-							if (opt1 != null )
-								opt1.removeFromLayer();
-							if (opt2 != null)
-								opt2.removeFromLayer();
-							opt1 = null;
-							opt2 = null;
+							if (!arrayOptions.isEmpty())
+							{
+								for (int i = 0; i < arrayOptions.size(); i++)
+									arrayOptions.get(i).removeFromLayer();
+								arrayOptions.clear();
+							}
 						}
 					}
 				}
@@ -313,12 +424,18 @@ public class Main extends Application {
 				competition2.removeAll(competition2);
 				}});
 		}
-	
-	public void clear()
-	{
-		stats.setText("");
-	}
 
+	
+	/*
+	 * Compare every objects close from the click in the ArrayList competition and competition2,
+	 * and select the most probable one.
+	 * 
+	 * @param dx is the abscissa coordinate of the click.
+	 * @param dy is the ordinate coordinate of the click.
+	 * @return the index of the object, and use the boolean comp to tell in which collection he is. 
+	 * 
+	 * if comp is true, then it is an Options, if not it is a Castle
+	 */
 	public int handleCompetition(double dx, double dy)
 	{
 		double min1 = 10000000, min2 = 10000000;
@@ -349,178 +466,18 @@ public class Main extends Application {
 	}
 
 	//Creation structures
-			
-	private void createPlayer() {
-	
-		Castle c = new Castle(castlePlayerImg, playfieldLayer, "Joueur");
-		player = new Player(c);
-		world.add(c);
-
-	}
-	private void generateEnnemies()
-	{
-		for (int i = 0; i < Settings.NB_ENN_CASTLE; i++)
-		{
-			Castle c = new Castle(castleImg, playfieldLayer, world);
-			world.add(c);
-			}
-	}
-	
-	private void generateNeutrals()
-	{
-		for (int i = 0; i < Settings.NB_NEUT_CASTLE; i++)
-		{
-			NeutralCastle n = new NeutralCastle(neutCastleImg, playfieldLayer, world);
-			world.add(n);
-		}
-	}
-	
-
-	public boolean canPause(long now)
-	{
-		return (now - lastPause > 10000 * 10000);
-	}
-	public void pause(long now)
-	{
-		if (canPause(now))
-		{
-			lastPause = now;
-			if (pause)
-			{
-				pause = false;
-				root.getChildren().remove(hbox);
-			}
-			else
-			{
-				pause = true;
-				//pauseGame();
-				pauseActionGame();
-			}
-		}
-	}
-	
-
+		
 	/*
-	private void gameOver() {
-		HBox hbox = new HBox();
-		hbox.setPrefSize(Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
-		hbox.getStyleClass().add("message");
-		Text message = new Text();
-		message.getStyleClass().add("message");
-		message.setText("Game over");
-		hbox.getChildren().add(message);
-		root.getChildren().add(hbox);
-		gameLoop.stop();
-	}
-	*/
-	
-	private void pauseGame() {
-		
-		//hbox.setPrefSize(Pos.CENTER);
-		hbox.setPadding(new Insets(Settings.SCENE_WIDTH/3 + 35));
-		//hbox.setAlignment(Pos.CENTER);
-		hbox.getStyleClass().add("imageViewPause");
-		imageViewPause = new ImageView(pauseImg);
-		hbox.getChildren().add(imageViewPause);
-		root.getChildren().add(hbox);
-		//gameLoop.stop();
-	}
-	
-	private void pauseActionGame() {
-		
-		VBox vboxPause = new VBox(15);
-		
-		Button bottonCont = new Button("Continuer la Partie");
-		Button bottonSauveg = new Button("Sauvergarder la Partie");
-		Button bottonQuit = new Button("Quittez la Partie");
-		
-		vboxPause.setPadding(new Insets(30, 50, 30, 50));
-		vboxPause.setAlignment(Pos.CENTER);
-				
-		Border borderMenu = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
-		vboxPause.setBorder(borderMenu);
-		vboxPause.getChildren().addAll(bottonCont, bottonSauveg, bottonQuit);
-		root.getChildren().addAll(vboxPause);
-		
-		bottonCont.setOnAction(e ->{
-			/*
-			 * HBox hbox = new HBox(); hbox.setPrefSize(Settings.SCENE_WIDTH,
-			 * Settings.SCENE_HEIGHT); hbox.getStyleClass().add("message"); Text message =
-			 * new Text(); message.getStyleClass().add("message");
-			 * message.setText("Vous êtes en Pause !");
-			 */
-			if (pause)
-			{
-				pause = false;
-				root.getChildren().removeAll(vboxPause, hbox);
-			}
-			else
-			{
-				pause = true;
-				/*
-				 * hbox.getChildren().add(message);
-				 * root.getChildren().add(hbox);
-				 */
-				//pauseGame();
-			}
-		});
-		
-		bottonSauveg.setOnAction(e ->{
-			try {
-				input.sauvegardeGame();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		});
-		
-		bottonQuit.setOnAction(e ->{
-			
-			Platform.exit();
-			System.exit(0);
-			});
-	}
-			
-
-	
-	private void update(long now) {
-		if (now - lastTurn > Settings.TIME_TURN)
-		{
-			for (int i = 0; i < world.size(); i++)
-			{
-				if (world.get(i).getClass() == NeutralCastle.class)
-				{
-					world.get(i).setTreasure(world.get(i).getTreasure() + 4*world.get(i).getLevel());
-				}
-				if (world.get(i).getClass() == Castle.class)
-					world.get(i).setTreasure(world.get(i).getTreasure() + 10*world.get(i).getLevel());
-			}
-			lastTurn = now;
-			if (lastCastle != null)
-			{
-				try
-				{	
-					updateStatus(lastCastle);
-				}
-				catch(Game_Exception g)
-				{
-					
-				}
-			}
-			if (!armies.isEmpty())
-			{
-				moveTroops();
-				clash();
-			}
-		}
-	}
-
+	 * Generate the status Bar that shall display informations about lastCastle
+	 */
 	public void createStatusBar() {
 		HBox statusBar = new HBox();
 		
 		statusBar.getChildren().addAll(royaumView ,stats, tresorView, stats2, chevaView, piqView, stats5, stats3, onagView, stats4);
 		//statusBar.getChildren().addAll(stats);
-		stats.setText("									Welcome !");
+		stats.setText("					"
+				+ "		"
+				+ "Rejoignez Dukes of the Realm et Devenez une légende, Jouez Maintenant !");
 		stats.resize(0, 0);
 		stats.setTranslateY(10);
 		stats.translateYProperty();
@@ -536,7 +493,204 @@ public class Main extends Application {
 	ImageView chevaView = new ImageView(); 
 	ImageView piqView = new ImageView();
 	
+	/*
+	 * Generate the player, and add his castle in the ArrayList world
+	 */
+	private void createPlayer() {
 	
+		Castle c = new Castle(castlePlayerImg, playfieldLayer, "Joueur");
+		player = new Player(c);
+		world.add(c);
+	}
+	
+	/*
+	 * generate NB_ENN_CASTLE enemies. Add each castle to the world.
+	 * If 2 castle have the same duc, the second castle is added to the list of castle 
+	 * to the enemy.
+	 * The enemy is added to the list of enemies if it's not in there already
+	 */
+	private void generateEnnemies()
+	{
+		for (int i = 0; i < Settings.NB_ENN_CASTLE; i++)
+		{
+			Castle c = new Castle(castleImg, playfieldLayer, world);
+			world.add(c);
+			if (ennemies.size() > 0)
+			{
+				for (int j = 0; j < ennemies.size(); j++)
+				{
+					if (ennemies.get(j).getListCastle().get(0).getDuc().equals(c.getDuc()))
+						ennemies.get(j).getListCastle().add(c);
+					else
+						ennemies.add(new Ennemy(c, c.getDuc()));
+				}
+			}
+			else
+			{
+				ennemies.add(new Ennemy(c, c.getDuc()));
+			}
+		}
+	}
+	/*
+	 * generate the castle of neutrals barons. Add each castle to the world
+	 */
+	private void generateNeutrals()
+	{
+		for (int i = 0; i < Settings.NB_NEUT_CASTLE; i++)
+		{
+			NeutralCastle n = new NeutralCastle(neutCastleImg, playfieldLayer, world);
+			world.add(n);
+		}
+	}
+	
+	/*
+	 * Check if it is possible to use function pause
+	 * @param now is the time right now.
+	 * @return return true if the game can pause, if not false
+	 */
+	public boolean canPause(long now)
+	{
+		return (now - lastPause > 10000 * 10000);
+	}
+	
+	/*
+	 * pause or unpause the game.
+	 * if pause is true, then it unpauses the game, if not it pauses it
+	 * remove the pause image if it unpauses
+	 * call pauseGame if it pauses
+	 * @param now is the time right now
+	 */
+	public void pause(long now)
+	{
+		if (canPause(now))
+		{
+			lastPause = now;
+			if (pause)
+			{
+				pause = false;
+				playfieldLayer.getChildren().remove(hPause);
+			}
+			else
+			{
+				pause = true;
+				pauseActionGame();
+			}
+		}
+	}
+	
+	/*display the pause with a menu, if you want 
+	continu, save, or quit	*/
+
+	private void pauseActionGame() {
+		
+		VBox vboxPause = new VBox(15);
+		
+		Button bottonCont = new Button("Continuer la Partie");
+		Button bottonSauveg = new Button("Sauvergarder la Partie");
+		Button bottonQuit = new Button("Quittez la Partie");
+		vboxPause.setPadding(new Insets(30, 50, 30, 50));
+		vboxPause.setAlignment(Pos.CENTER);
+				
+		Border borderMenu = new Border (new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4), new Insets(Settings.SCENE_WIDTH /3)));
+		vboxPause.setBorder(borderMenu);
+		vboxPause.getChildren().addAll(bottonCont, bottonSauveg, bottonQuit);
+		root.getChildren().addAll(vboxPause);
+		//Buttom for continue game
+		bottonCont.setOnAction(e ->{
+			if (pause)
+			{
+				pause = false;
+				root.getChildren().removeAll(vboxPause, hbox);
+			}
+			else
+			{
+				pause = true;
+			}
+		});
+		//Buttom for save game
+		bottonSauveg.setOnAction(e ->{
+			try {
+				input.sauvegardeGame();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		//Buttom for quit game
+		bottonQuit.setOnAction(e ->{
+			
+			Platform.exit();
+			System.exit(0);
+			});
+	}
+	
+	/*
+	 * Display a message telling the player lost and game is over.
+	 * stops gameLoop and everything
+	 */
+	private void gameOver() {
+		HBox hbox = new HBox();
+		hbox.setPrefSize(Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
+		hbox.getStyleClass().add("message");
+		Text message = new Text();
+		message.getStyleClass().add("message");
+		message.setText("Game over");
+		hbox.getChildren().add(message);
+		root.getChildren().add(hbox);
+		gameLoop.stop();
+	}
+	
+	/*
+	 * this function update everything at every turn.
+	 * if the time is right : a turn just happened, then it increased the gold in every Castle
+	 * by the right amount, it updates the production, the position of troops, the strategy of enemies, and their
+	 * actions. It also makes the troops fight if they're close enough form theirs targets.
+	 * @param now is the time right now
+	 * @Exception catch a Game_Exception if a click happens and lastCastle is still null 
+	 */
+	private void update(long now) {
+		if (now - lastTurn > Settings.TIME_TURN)
+		{
+			for (int i = 0; i < world.size(); i++)
+			{
+				if (world.get(i).getClass() == NeutralCastle.class)
+				{
+					world.get(i).setTreasure(world.get(i).getTreasure() + 4*world.get(i).getLevel());
+				}
+				if (world.get(i).getClass() == Castle.class)
+					world.get(i).setTreasure(world.get(i).getTreasure() + 10*world.get(i).getLevel());
+			}
+			updateProductions();
+			lastTurn = now;
+			if (lastCastle != null)
+			{
+				try
+				{	
+					updateStatus(lastCastle);
+				}
+				catch(Game_Exception g)
+				{
+					
+				}
+			}
+			for (int i = 0; i < ennemies.size(); i++)
+			{
+				ennemies.get(i).think();
+				ennemies.get(i).act(world, armies);
+			}
+			if (!armies.isEmpty())
+			{
+				moveTroops();
+				clash();
+			}
+		}
+	}
+	
+	/*
+	 * displays in statusBar the informations about lastCastle
+	 * @param castle is the lastCastle clicked
+	 * throws a Game_Exception if castle is null
+	 */
 	private void updateStatus(Castle castle) throws Game_Exception
 	{
 		if (castle == null)
@@ -564,13 +718,23 @@ public class Main extends Application {
 		 
 	}
 
-	
+	/*
+	 * this add the army to armies sent from source to target.
+	 * @param source is the castle from where the army comes from
+	 * @param target is the castle where the army goes
+	 */
 	private void attack(Castle source, Castle target)
 	{
 		armies.add(source.instanceTroops(target));
 	}
 	
-	
+	/*
+	 * this function makes troops move.
+	 * If they're inside the castle, a specific number (gate size) come out
+	 * and is placed on the side on the castle that faces the target (right or left side)
+	 * if they got out of the castle, their position will change to be closer to the target 
+	 * until they reach it
+	 */
 	private void moveTroops()
 	{
 		if (armies.isEmpty())
@@ -584,17 +748,15 @@ public class Main extends Application {
 				if (armies.get(i).isEmpty())
 				{
 					armies.remove(i);
-					//sources.remove(i);
-					//targets.remove(i);
 				}
 				else
 				{
 					int nbCrossingGate = 0;
-					for (int j = 0; j < armies.get(i).size(); j++)
+					for (Iterator<Troops> it = armies.get(i).iterator(); it.hasNext();)
 					{
 						//
-						Troops intermediate = armies.get(i).get(j);
-						if (Settings.distance(intermediate.getSrc().getDx(), intermediate.getSrc().getDy(), intermediate.getRectangle().getX(), intermediate.getRectangle().getY()) < intermediate.getSrc().getWidth_Image()/4)
+						Troops intermediate = it.next();
+						if (Settings.distance(intermediate.getSrc().getDx(), intermediate.getSrc().getDy(), intermediate.getRectangle().getX(), intermediate.getRectangle().getY()) < intermediate.getSrc().getWidth_Image()/8)
 						{
 							if (nbCrossingGate < Settings.SIZEGATE)
 							{
@@ -603,35 +765,20 @@ public class Main extends Application {
 									intermediate.getRectangle().setX(intermediate.getSrc().getDx() +
 											intermediate.getSrc().getWidth_Image()/2);
 									intermediate.getRectangle().setY(intermediate.getSrc().getDy() + 
-											intermediate.getSrc().getHeigth_Image()/2 - 3*nbCrossingGate);		
+											intermediate.getSrc().getHeigth_Image()/2 - 10 - 10*nbCrossingGate);		
 								}
 								else
 								{
 									intermediate.getRectangle().setX(intermediate.getSrc().getDx() -
 											intermediate.getSrc().getWidth_Image()/2);
 									intermediate.getRectangle().setY(intermediate.getSrc().getDy() + 
-											intermediate.getSrc().getHeigth_Image()/2 - 5*nbCrossingGate);
+											intermediate.getSrc().getHeigth_Image()/2 - 10*nbCrossingGate);
 								}
 								nbCrossingGate++;
 							}
 						}
 						else
 						{
-							/*intermediate.setA((intermediate.getSrc().getDy() - intermediate.getRectangle().getY())/
-								(intermediate.getSrc().getDx() - intermediate.getRectangle().getX())); 
-							
-							intermediate.setB(intermediate.getSrc().getDy() - intermediate.getA() * intermediate.getSrc().getDx());
-							
-							if (intermediate.getTarget().getDx() > intermediate.getRectangle().getX())
-							{
-								intermediate.getRectangle().setX(intermediate.getRectangle().getX() + intermediate.getSpeed());
-								intermediate.getRectangle().setY(intermediate.getA() * (intermediate.getRectangle().getX() + intermediate.getSpeed()) + intermediate.getB());
-							}
-							else
-							{
-								intermediate.getRectangle().setX(intermediate.getRectangle().getX() - intermediate.getSpeed());
-								intermediate.getRectangle().setY(intermediate.getA() * (intermediate.getRectangle().getX() - intermediate.getSpeed()) + intermediate.getB());
-							}*/
 							if (intermediate.getTarget().getDx() > intermediate.getRectangle().getX())
 							{
 								intermediate.getRectangle().setX(intermediate.getRectangle().getX() + intermediate.getSpeed());
@@ -664,15 +811,23 @@ public class Main extends Application {
 	}
 	
 	
+	/*
+	 * if troops are close enough to their targets, then they attack the castle.
+	 * if the duc of the target and the duc of the troop are the same, then the troop is added to the troops of the castle
+	 * if the target has a defense line, it deals its damages to one unit from the defense line, then die.
+	 * if the target it calls defend(), if it still has no defense line, then the troops seize the castle.
+	 * if a Herald happens to clash with castle, then he signs the end of the army, the end of the attack and the order from
+	 * the source castle becomes null again.
+	 */
 	private void clash()
 	{
 		for (int i = 0; i < armies.size(); i++)
 		{
-			for (int j = 0; j < armies.get(i).size(); j++)
+			for (Iterator<Troops> it = armies.get(i).iterator(); it.hasNext();)
 			{
-				Troops intermediate = armies.get(i).get(j);
+				Troops intermediate = it.next();
 				if (Settings.distance(intermediate.getRectangle().getX(), intermediate.getRectangle().getY(), 
-						intermediate.getTarget().getDx(), intermediate.getTarget().getDy()) <intermediate.getTarget().getWidth_Image()/3)
+						intermediate.getTarget().getDx(), intermediate.getTarget().getDy()) < intermediate.getTarget().getWidth_Image()* 0.55)
 				{
 					if (intermediate.getSrc().getDuc().equals(intermediate.getTarget().getDuc()))
 					{
@@ -680,43 +835,70 @@ public class Main extends Application {
 						{
 							intermediate.getTarget().setTroops0(intermediate.getTarget().getTroops()[0] + 1);
 							intermediate.removeFromLayer();
-							armies.get(i).remove(j);
+							it.remove();
 						}
-						if (armies.get(i).get(j).getClass() == Knights.class)
+						if (intermediate.getClass() == Knights.class)
 						{
 							intermediate.getTarget().setTroops1(intermediate.getTarget().getTroops()[1] + 1);
-							armies.get(i).remove(j);
+							intermediate.removeFromLayer();
+							it.remove();
 						}
 						if (intermediate.getClass() == Onager.class)
 						{
 							intermediate.getTarget().setTroops2(intermediate.getTarget().getTroops()[2] + 1);
-							armies.get(i).remove(j);
-						}		
+							intermediate.removeFromLayer();
+							it.remove();
+						}
+						if (intermediate.getClass() == Herald.class)
+						{
+							intermediate.removeFromLayer();
+							intermediate.getSrc().getOrder().clear();
+							it.remove();
+							armies.remove(i);
+						}
 					}
 					else
 					{
-						if (intermediate.getTarget().getDef() == null)
+						
+						if (intermediate.getClass() == Herald.class)
 						{
-							if (intermediate.getTarget().defend())
-							{
-								intermediate.getTarget().setDuc(intermediate.getSrc().getDuc());
-								return;
-							}
+							intermediate.getTarget().clearDefense();
+							intermediate.removeFromLayer();
+							armies.get(i).clear();
+							intermediate.getSrc().getOrder().clear();
+							return;
 						}
-						if (dammage(intermediate.getDammages(), intermediate.getTarget()))//ligne de défense vide
+						else
 						{
-							if (intermediate.getTarget().defend())
+							if (intermediate.getTarget().getDef().isEmpty())
 							{
-								intermediate.getTarget().setDuc(intermediate.getSrc().getDuc());
-								return;
+								if (intermediate.getTarget().defend())
+								{
+									seizeCastle(intermediate.getSrc(), intermediate.getTarget());
+									return;
+								}
 							}
+							if (dammage(intermediate.getDammages(), intermediate.getTarget()))//ligne de défense vide
+							{
+								if (intermediate.getTarget().defend())
+								{
+									seizeCastle(intermediate.getSrc(), intermediate.getTarget());
+									return;
+								}
+							}
+							intermediate.removeFromLayer();
+							it.remove();
 						}
+						
 					}
 				}
 			}
 		}
 	}
 	
+	/*
+	 * 
+	 */
 	private boolean dammage(int dammages, Castle target)
 	{
 		ArrayList<Troops> def = target.getDef();
@@ -729,19 +911,87 @@ public class Main extends Application {
 		return false;
 	}
 
+	public void seizeCastle(Castle src, Castle target)
+	{
+		if (src.getDuc().equals("Joueur"))
+		{
+			String ennemyName = target.getDuc();
+			for (int i = 0; i < ennemies.size(); i++)
+			{
+				if (ennemies.get(i).getName().equals(ennemyName))
+				{
+					for (int j = 0; j < ennemies.get(i).getListCastle().size(); j++)
+					{
+						if (ennemies.get(i).getListCastle().get(j) == target)
+							ennemies.get(i).getListCastle().remove(j);
+					}
+					if (ennemies.get(i).getListCastle().isEmpty())
+					{
+						ennemies.remove(i);
+					}
+				}
+			}
+			player.getListCastle().add(target);
+			target.setDuc("Joueur");
+		}
+		else
+		{
+			if (target.getDuc().equals("Joueur"))
+			{
+				for (int i = 0; i < player.getListCastle().size(); i++)
+				{
+					if (player.getListCastle().get(i) == target)
+						player.getListCastle().remove(i);
+				}
+				if (player.getListCastle().isEmpty())
+					gameOver();
+				if (target == player.getBase())
+				{
+					player.setBase(player.getListCastle().get(0));
+				}
+			}
+			else
+			{
+				for (int i = 0; i < ennemies.size(); i++)
+				{
+					if (ennemies.get(i).getName().equals(target.getDuc()))
+					{
+						for (int j = 0; j < ennemies.get(i).getListCastle().size(); j++)
+						{
+							if (ennemies.get(i).getListCastle().get(j) == target)
+								ennemies.get(i).getListCastle().remove(j);
+						}
+						if (ennemies.get(i).getListCastle().isEmpty())
+							ennemies.remove(i);
+					}
+					if (ennemies.get(i).getName().equals(src.getDuc()))
+						ennemies.get(i).getListCastle().add(target);
+				}
+				target.setDuc(src.getDuc());
+			}
+			
+		}
+	}
 	//Options 
 	public void options(Castle c)
 	{
-		if (opt1 != null)
-			opt1.removeFromLayer();
-		opt1 = new Options(playfieldLayer, "Attaquer", c.getDx(), c.getDy()  , lastCastle);
-		
-		if (c.getDuc() == "Joueur")
+		if (!arrayOptions.isEmpty())
 		{
-			if (opt2 != null)
-				opt2.removeFromLayer();
-			opt2 = new Options(playfieldLayer, "Produire des unités", c.getDx(), c.getDy() + 41, lastCastle);
-			opt1.setLabel("Envoyer des troupes");
+			for (int i = 0; i < arrayOptions.size(); i++)
+			{
+				arrayOptions.get(i).removeFromLayer();
+			}
+			arrayOptions.clear();
+		}
+		arrayOptions.add(new Options(playfieldLayer, "Attaquer", c.getDx(), c.getDy()  , lastCastle));
+		
+		if (c.getDuc().equals("Joueur"))
+		{
+			arrayOptions.add(new Options(playfieldLayer, "Produire des unités", c.getDx(), c.getDy() + 41, c));
+			if (player.getBase() != c)
+				arrayOptions.add(new Options(playfieldLayer, "Nouvelle base", c.getDx(), c.getDy() -41, c));
+			arrayOptions.add(new Options(playfieldLayer, "Level UP !", c.getDx(), c.getDy() + 82, c));
+			arrayOptions.get(0).setLabel("Envoyer des troupes");
 		}
 	}
 	
@@ -751,45 +1001,172 @@ public class Main extends Application {
 		{
 			if (lastCastle.getDx() > Settings.SCENE_WIDTH - 550) //The castle is near the edge. to get more visibility, the options shall be displayed on the left side of the castle
 			{
-				arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 90 , opt.getC().getDy() -41, opt.getC(), 150, 40));
-				arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 75, opt.getC().getDy(), opt.getC(), 150, 40));
-				arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + player.getListCastle().get(0).getTroops()[1], opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 227, opt.getC().getDy(), opt.getC(), 150, 40));
-				arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + player.getListCastle().get(0).getTroops()[2], opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 379, opt.getC().getDy(), opt.getC(), 150, 40));
-				arrayOptions.add(new Options(playfieldLayer, "Clear", opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 300, opt.getC().getDy() + 82));
-				arrayOptions.add(new Options(playfieldLayer, "Ok", opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 60, opt.getDy() + 82));
+				arrayOptions2.add(new Options(playfieldLayer, "Vos troupes", opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 90 , opt.getC().getDy() -41, opt.getC(), 150, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Piquiers : " + player.getBase().getTroops()[0], opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 75, opt.getC().getDy(), opt.getC(), 150, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Chevaliers  : " + player.getBase().getTroops()[1], opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 227, opt.getC().getDy(), opt.getC(), 150, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Onagres  : " + player.getBase().getTroops()[2], opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 379, opt.getC().getDy(), opt.getC(), 150, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Clear", opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 300, opt.getC().getDy() + 82));
+				arrayOptions2.add(new Options(playfieldLayer, "Ok", opt.getC().getDx() - opt.getC().getWidth_Image()/2 - 60, opt.getDy() + 82));
 			}
 			else
 			{
-				arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getC().getDx() + opt.getC().getWidth_Image() + 75, opt.getC().getDy() -41, lastCastle, 150, 40));
-				arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 75, opt.getC().getDy(), opt.getC(), 150, 40));
-				arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + player.getListCastle().get(0).getTroops()[1], opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 227, opt.getDy(), opt.getC(), 150, 40));
-				arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + player.getListCastle().get(0).getTroops()[2], opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 379, opt.getDy(), opt.getC(), 150, 40));
-				arrayOptions.add(new Options(playfieldLayer, "Clear", opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 300, opt.getC().getDy() + 82));
-				arrayOptions.add(new Options(playfieldLayer, "Ok", opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 60, opt.getC().getDy() + 82));
+				arrayOptions2.add(new Options(playfieldLayer, "Vos troupes", opt.getC().getDx() + opt.getC().getWidth_Image() + 75, opt.getC().getDy() -41, lastCastle, 150, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Piquiers : " + player.getBase().getTroops()[0], opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 75, opt.getC().getDy(), opt.getC(), 150, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Chevaliers  : " + player.getBase().getTroops()[1], opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 227, opt.getDy(), opt.getC(), 150, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Onagres  : " + player.getBase().getTroops()[2], opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 379, opt.getDy(), opt.getC(), 150, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Clear", opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 300, opt.getC().getDy() + 82));
+				arrayOptions2.add(new Options(playfieldLayer, "Ok", opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 60, opt.getC().getDy() + 82));
 			}
 			z = new ZoneText(playfieldLayer, opt.getC(), opt.getC().getDx(), opt.getC().getDy());
 		}
-		/*if (opt.getLabel().equals("Envoyer des troupes"))
-		{
-			arrayOptions.add(new Options(playfieldLayer, "Vos troupes", opt.getDx() + 15, opt.getDy() -40, opt.getC(), 150, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Piquiers : " + player.getListCastle().get(0).getTroops()[0], opt.getDx(), opt.getDy(), opt.getC(), 160, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Chevaliers  : " + opt.getC().getTroops()[1], opt.getDx() + 160, opt.getDy(), opt.getC(), 170, 40));
-			arrayOptions.add(new Options(playfieldLayer, "Onagres  : " + opt.getC().getTroops()[2], opt.getDx() + 330, opt.getDy(), opt.getC(), 160, 40));
-			z = new ZoneText(playfieldLayer, lastCastle, player.getListCastle().get(0), opt.getDx(), opt.getDy());
-		}*/
 		if (opt.getLabel().equals("Produire des unités"))
 		{
-			arrayOptions.add(new Options(playfieldLayer, "Vous souhaitez produire ", opt.getDx() + 15, opt.getDy() - 40, opt.getC(), 200, 40));
+			if (lastCastle.getDx() > Settings.SCENE_WIDTH - 570)
+			{
+				arrayOptions2.add(new Options(playfieldLayer, "Piquiers : Coût : " + Settings.COST_PRODUCTION_PIKEMAN + " | Temps de prod : " + Settings.TIME_COST_PIKEMAN + 
+						" | Sante : " + Settings.HEALTH_PIKEMAN + " | Dommages : " + Settings.DAMMAGES_PIKEMAN + " | Vitesse : " + Settings.SPEED_PIKEMAN, opt.getC().getDx() - opt.getC().getWidth_Image() - 185, 
+						opt.getC().getDy() - 41, opt.getC(), 570, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Chevaliers : Coût : " + Settings.COST_PRODUCTION_KNIGHT + " | Temps de prod : " + Settings.TIME_COST_KNIGHT + 
+						" | Sante : " + Settings.HEALTH_KNIGHT + " | Dommages : " + Settings.DAMMAGES_KNIGHT + " | Vitesse : " + Settings.SPEED_KNIGHT, opt.getC().getDx() - opt.getC().getWidth_Image() - 185, 
+						opt.getC().getDy(), opt.getC(), 570, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Onagres : Coût : " + Settings.COST_PRODUCTION_ONAGER + " | Temps de prod : " + Settings.TIME_COST_ONAGER + 
+						" | Sante : " + Settings.HEALTH_ONAGER + " | Dommages : " + Settings.DAMMAGES_ONAGER + " | Vitesse : " + Settings.SPEED_ONAGER, opt.getC().getDx() -opt.getC().getWidth_Image() - 185, 
+						opt.getC().getDy() + 41, opt.getC(), 570, 40));
+				createButtons();	
+				
+			}
+			else
+			{
+				arrayOptions2.add(new Options(playfieldLayer, "Piquiers : Coût : " + Settings.COST_PRODUCTION_PIKEMAN + " | Temps de prod : " + Settings.TIME_COST_PIKEMAN + 
+						" | Sante : " + Settings.HEALTH_PIKEMAN + " | Dommages : " + Settings.DAMMAGES_PIKEMAN + " | Vitesse : " + Settings.SPEED_PIKEMAN, opt.getC().getDx()+ opt.getC().getWidth_Image()/2 + 290, 
+						opt.getC().getDy() - 41, opt.getC(), 570, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Chevaliers : Coût : " + Settings.COST_PRODUCTION_KNIGHT + " | Temps de prod : " + Settings.TIME_COST_KNIGHT + 
+						" | Sante : " + Settings.HEALTH_KNIGHT + " | Dommages : " + Settings.DAMMAGES_KNIGHT + " | Vitesse : " + Settings.SPEED_KNIGHT, opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 290, 
+						opt.getC().getDy(), opt.getC(), 570, 40));
+				arrayOptions2.add(new Options(playfieldLayer, "Onagres : Coût : " + Settings.COST_PRODUCTION_ONAGER + " | Temps de prod : " + Settings.TIME_COST_ONAGER + 
+						" | Sante : " + Settings.HEALTH_ONAGER + " | Dommages : " + Settings.DAMMAGES_ONAGER + " | Vitesse : " + Settings.SPEED_ONAGER, opt.getC().getDx() + opt.getC().getWidth_Image()/2 + 290, 
+						opt.getC().getDy() + 41, opt.getC(), 570, 40));
+				createButtons();
+				
+			}
+			
+		}		
+		if (opt.getLabel().equals("Nouvelle base"))
+		{
+			
 		}
-		if (opt1 != null)
-			opt1.removeFromLayer();
-		if (opt2 != null)
-			opt2.removeFromLayer();
-		opt1 = null;
-		opt2 = null;
+		for (int i = 0; i < arrayOptions.size(); i++)
+		{
+			arrayOptions.get(i).removeFromLayer();
+		}
+		arrayOptions.clear();
 		option2 = true;
 	}
 
+	public void createButtons()
+	{
+		arrayButtons.add(new Button("Piquier"));
+		arrayButtons.add(new Button("Chevalier"));
+		arrayButtons.add(new Button("Onagre"));
+		
+		for (int i = 0; i < 3; i ++)
+		{
+			arrayButtons.get(i).relocate(arrayOptions2.get(0).getDx() + 10 + 101*i, lastCastle.getDy() + 62);
+			arrayButtons.get(i).setPrefWidth(90);
+			arrayButtons.get(i).setPrefHeight(50);
+			arrayButtons.get(i).setFont(new Font(15));
+			playfieldLayer.getChildren().add(arrayButtons.get(i));
+		}
+		arrayButtons.get(0).setOnAction(e -> {
+			if (!lastCastle.product("Piquier", Settings.TIME_COST_PIKEMAN))
+			{
+				arrayOptions2.add(new Options(playfieldLayer, "Vous ne pouvez produire cette unité pour le moment", 
+						lastCastle.getDx() + lastCastle.getWidth_Image()/2, lastCastle.getDy() - lastCastle.getHeigth_Image()/2 - 10, lastCastle, 400, 40));
+			}
+			else
+			{
+				for (int i = 0; i < arrayButtons.size(); i++)
+				{
+					playfieldLayer.getChildren().remove(arrayButtons.get(i));
+				}
+				for (int i = 0; i < arrayOptions2.size(); i++)
+				{
+					arrayOptions2.get(i).removeFromLayer();
+				}
+				arrayButtons.clear();
+				arrayOptions2.clear();
+				option2 = false;
+			}
+		});
+		arrayButtons.get(1).setOnAction(e -> {
+			if (!lastCastle.product("Chevalier", Settings.TIME_COST_KNIGHT))
+			{
+				arrayOptions2.add(new Options(playfieldLayer, "Vous ne pouvez produire cette unité pour le moment", 
+						lastCastle.getDx() + lastCastle.getWidth_Image()/2, lastCastle.getDy() - lastCastle.getHeigth_Image()/2 - 10, lastCastle, 400, 40));
+			}
+			else
+			{
+				for (int i = 0; i < arrayButtons.size(); i++)
+				{
+					playfieldLayer.getChildren().remove(arrayButtons.get(i));
+				}
+				for (int i = 0; i < arrayOptions2.size(); i++)
+				{
+					arrayOptions2.get(i).removeFromLayer();
+				}
+				arrayButtons.clear();
+				arrayOptions2.clear();
+				option2 = false;
+			}
+		});
+		arrayButtons.get(2).setOnAction(e -> {
+			if (!lastCastle.product("Onagre", Settings.TIME_COST_ONAGER))
+			{
+				arrayOptions2.add(new Options(playfieldLayer, "Vous ne pouvez produire cette unité pour le moment", 
+						lastCastle.getDx() + lastCastle.getWidth_Image()/2, lastCastle.getDy() - lastCastle.getHeigth_Image()/2 - 10, lastCastle, 400, 40));
+			}
+			else
+			{
+				for (int i = 0; i < arrayButtons.size(); i++)
+				{
+					playfieldLayer.getChildren().remove(arrayButtons.get(i));
+				}
+				for (int i = 0; i < arrayOptions2.size(); i++)
+				{
+					arrayOptions2.get(i).removeFromLayer();
+				}
+				arrayButtons.clear();
+				arrayOptions2.clear();
+				option2 = false;
+			}
+		});
+	}
+	
+	public void updateProductions()
+	{
+		for (int i = 0; i < world.size(); i++)
+		{
+			if (!world.get(i).getProduction().getProducts().equals("rien"))
+			{
+				if (world.get(i).getProduction().getTimeLeft() == 0)
+				{
+					if (world.get(i).getProduction().getProducts().equals("Piquier"))
+						world.get(i).setTroops0(1);
+					if (world.get(i).getProduction().getProducts().equals("Chevalier"))
+						world.get(i).setTroops1(1);
+					if (world.get(i).getProduction().getProducts().equals("Onagre"))
+						world.get(i).setTroops2(1);
+					if (world.get(i).getProduction().getProducts().equals("level"))
+						world.get(i).setLevel(world.get(i).getLevel() + 1);
+					world.get(i).getProduction().setProducts("rien");
+				}
+				else
+				{
+					world.get(i).getProduction().setTimeLeft(world.get(i).getProduction().getTimeLeft() - 1);
+				}
+			}
+		}
+	}
 	public static void main(String[] args) {
 		launch(args);
 	}

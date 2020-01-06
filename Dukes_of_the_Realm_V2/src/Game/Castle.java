@@ -1,5 +1,6 @@
 package Game;
 
+import java.io.Serializable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -17,6 +18,13 @@ public class Castle extends Sprites{
 	private ArrayList<Troops> def = new ArrayList<Troops>();
 
 	//Constructors
+	/*
+	 * Castle constructor for every castle
+	 * @param img is the image that shall be exposed
+	 * @param layer is the layer that is exposed on the image
+	 * 
+	 * return a
+	 */
 	public Castle(Image img, Pane layer, ArrayList<Castle> world)
 	{
 		super(layer, img, world);
@@ -45,7 +53,7 @@ public class Castle extends Sprites{
         this.gate = Settings.GATES[r.nextInt(4)];
         //army
         this.troops = new int[3];
-        this.troops[0] = 1000; this.troops[1] = 1000; this.troops[2] = 100;
+        this.troops[0] = Settings.NB_KNI_DUC; this.troops[1] = Settings.NB_KNI_DUC; this.troops[2] = Settings.NB_ONA_DUC;
         this.treasure = 0;
         this.level = 1;
         this.duc = duc;
@@ -53,14 +61,7 @@ public class Castle extends Sprites{
         this.production = new Production("rien", 0);
 	}
 
-    public int genSoldat () {
-    	Random alea = new Random();
-    	int soldat = alea.nextInt(100);
-    	System.out.println(soldat);
-		return soldat;
-    	
-    }
-    
+
 	//Mutators
 	public ImageView getImgView() {
 		return imgView;
@@ -153,13 +154,17 @@ public class Castle extends Sprites{
 	public void setGate(String gate) {
 		this.gate = gate;
 	}
+	public int totalTroops()
+	{
+		return troops[0] + troops[1] + troops[2];
+	}
 	public ArrayList<Troops> instanceTroops(Castle target)
 	{
 		ArrayList<Troops> army = new ArrayList<Troops>();
 		for (int i = 0; i < this.order.getNbOna(); i++)
 		{
 			army.add(new Onager(layer, this, target));
-			army.get(i).getRectangle().setX(this.getDx());
+			army.get(i).getRectangle().setX(this.getDx() - 4);
 			army.get(i).getRectangle().setY(this.getDy());
 		}
 		int size = army.size();
@@ -173,18 +178,22 @@ public class Castle extends Sprites{
 		for (int i = 0; i < this.order.getNbPyk(); i++)
 		{
 			army.add(new Pikeman(layer, this, target));
-			army.get(i + size).getRectangle().setX(this.getDx() + 2);
-			army.get(i + size).getRectangle().setY(this.getDy() + 6);
+			army.get(i + size).getRectangle().setX(this.getDx());
+			army.get(i + size).getRectangle().setY(this.getDy() + 4);
 		}
 		
 		this.troops[0] = this.troops[0] - getOrder().getNbPyk();
 		this.troops[1] = this.troops[1] - getOrder().getNbKni();
 		this.troops[2] = this.troops[2] - getOrder().getNbOna();
-
+		
+		army.add(new Herald(layer, this, target, army.get(0).getSpeed()));
+		army.get(army.size() - 1).getRectangle().setX(this.getDx());
+		army.get(army.size() - 1).getRectangle().setY(this.getDy() - 4);
+		
 		return army;
 		
 	}
-	public boolean defend() // Mise en place de l'unitï¿½ de dï¿½fense : 6/3/2
+	public boolean defend() // Mise en place de l'unité de défense : 6/3/2
 	{
 		for (int i = 0; i < troops[0] && i < 6; i++)
 		{
@@ -196,7 +205,7 @@ public class Castle extends Sprites{
 			def.add(new Knights());
 			this.troops[1]--;
 		}
-		for (int i = 0; i < troops[2] && i < 1; i++)
+		if (troops[2] > 0)
 		{
 			def.add(new Onager());
 			this.troops[2]--;
@@ -242,5 +251,54 @@ public class Castle extends Sprites{
 			this.order.setNbOna(nbOna);
 			this.order.setTarget(target);
 		}
+	}
+	public void clearDefense()
+	{
+		for (int i = 0; i < def.size(); i ++)
+		{
+			if (def.get(i).getClass() == Pikeman.class)
+				troops[0]++;
+			if (def.get(i).getClass() == Knights.class)
+				troops[1]++;
+			if (def.get(i).getClass() == Onager.class)
+				troops[2]++;
+		}
+		def.clear();
+	}
+	public boolean product(String unit, int timeLeft)
+	{
+		if (production.getProducts().equals("rien"))
+		{
+			switch (unit)
+			{
+			case "Piquier" :
+					if (treasure < Settings.COST_PRODUCTION_PIKEMAN)
+						return false;
+					treasure = treasure - Settings.COST_PRODUCTION_PIKEMAN;
+					break;
+			case "Chevalier" :
+					if (treasure < Settings.COST_PRODUCTION_KNIGHT)
+						return false;
+					treasure = treasure - Settings.COST_PRODUCTION_KNIGHT;
+					break;
+			case "Onagre" :
+					if (treasure < Settings.COST_PRODUCTION_ONAGER)
+						return false;
+					treasure = treasure - Settings.COST_PRODUCTION_ONAGER;
+					break;
+			case "level" :
+					if (treasure < (getLevel() + 1) * 1000)
+						return false;
+					treasure = treasure - (getLevel() + 1)*1000;
+					break;
+			default :
+				return false;
+			}
+			getProduction().setProducts(unit);
+			getProduction().setTimeLeft(timeLeft);
+			return true;	
+		}
+		else
+			return false;
 	}
 }

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.BitSet;
 
 import javafx.event.EventHandler;
@@ -19,6 +20,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 public class Input {
+	
+	//private Castle castle;
 
 	/**
 	 * Bitset which registers if any {@link KeyCode} keeps being pressed or if it is
@@ -75,9 +78,20 @@ public class Input {
 	// direction isn't handled.
 	// -------------------------------------------------
 
+	//private ArrayList<Castle> chateau = new ArrayList<Castle>();
+	
+	/*
+	 * This function save in file the game, for this we used file with .txt
+	 * we declared a fileOutputStream for open the "file.txt" 
+	 * An ObjectOutputStram class is used to store the primitive data type
+	 * and graph of Java object to an output stream, whereas an 
+	 * Serializable interface are written to stream.
+	 */
+	
 	public void sauvegardeGame() throws Exception{
 		
 		File fichierGame = new File("saveGameFile.txt");
+		
 		if (fichierGame == null){
 			System.out.println("The file was Exist or Empty");
 		}
@@ -93,6 +107,11 @@ public class Input {
 			fileOutputStream = new FileOutputStream(fichierGame);
 			outputStream = new ObjectOutputStream(fileOutputStream);
 			
+			/*
+			 * Castle chatPLay = new Castle(castle.getImage(), castle.getLayer(), "Joueur");
+			 * //Castle c = new Castle(castle.getImgView(), castle.getLayer(), "Joueur");
+			 * Player player = new Player(chatPLay); chateau.add(chatPLay);
+			 */
 			outputStream.writeUTF(str);
 			outputStream.close();
 			//byte[] strToBytes = str.getBytes();
@@ -114,22 +133,24 @@ public class Input {
 					}
 			}
 			catch (IOException e) {
-				//plus tard utiliser Game_Exception pour géré les putains d'exceptions
 				e.printStackTrace();
 			}
 		}
 	}
 	
+	/*
+	 * Open the file save for generate a new game, 
+	 * if file not exist, you have window with message warning.
+	 */
+	
 	public void ouvrirGame(File file) throws Exception {
 		
 		if ((file == null) || (file.length() == 0) || !(file.exists())) {
-				//throw new Game_Exception("The file was Exist or Empty");
-				//System.out.println("The file was Exist or Empty");
-				//Afficher une fenetre pour le message
+			//Show window with message for warning
 			Alert dialogW = new Alert(AlertType.WARNING);
 			dialogW.setTitle("Upload Game");
-			dialogW.setHeaderText(null); // No header
-			dialogW.setContentText("The file was Exist or Empty !");
+			dialogW.setHeaderText(null);
+			dialogW.setContentText("The file was Exist or Empty, please go try a new game!");
 			dialogW.showAndWait();
 		}
 		
@@ -140,7 +161,8 @@ public class Input {
 			fileInputStream = new FileInputStream(file);
 			objectInputStream = new ObjectInputStream(fileInputStream);
 			
-			//lire
+			//lire ce qui est ecrit dans le fichier passer en paramêtre,
+			//genere grace à la sauvergarde
 			Object chene = objectInputStream.readObject();
 			System.out.println(chene);
 			
@@ -148,7 +170,7 @@ public class Input {
 			
 		}catch (IOException e) {
 			e.printStackTrace();
-			// TODO: handle exception
+			
 		}finally {
 			try {
 				if (fileInputStream != null) {
