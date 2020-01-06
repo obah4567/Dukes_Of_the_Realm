@@ -72,6 +72,6 @@ public class Input {
 	}
 	public boolean isPause()
 	{
-		return is(P);
+		return is(SPACE);
 	}
 }

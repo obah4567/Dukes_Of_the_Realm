@@ -16,13 +16,16 @@ public class Ennemy extends Player{
 			strong = true;
 		else
 			strong = false;
+		setBase(null);
 	}
 	
 	public void think()
 	{
-		if (this.strategie < 15)
+		if (strategie < 15)
 		{
-			this.strategie++;
+			strategie++;
+			if (strategie == 15)
+				strategie = strategie + r.nextInt(12);
 		}
 		else
 		{
@@ -34,7 +37,7 @@ public class Ennemy extends Player{
 				}
 				else
 				{
-					if (focus.getDuc().equals(this.getListCastle().get(0).getDuc()))
+					if (focus.getDuc().equals(this.getName()))
 					{
 						strategie = 10;
 						focus = null;
@@ -45,10 +48,10 @@ public class Ennemy extends Player{
 			}
 			else
 			{
-				if (this.strong)
-					this.strategie = r.nextInt(23) + 8;
+				if (strong)
+					strategie = r.nextInt(23) + 8;
 				else
-					this.strategie = r.nextInt(31);
+					strategie = r.nextInt(31);
 			}
 		}
 	}
@@ -70,11 +73,11 @@ public class Ennemy extends Player{
 				focus(world, armies);
 			}
 		}
-		if (strategie > 14 && strategie < 22)
+		if (strategie > 14 && strategie < 21)
 		{
 			recruit();
 		}
-		if (strategie > 21 && strategie < 27)
+		if (strategie > 20 && strategie < 27)
 		{
 			randomAttack(world, armies);
 		}
@@ -98,17 +101,14 @@ public class Ennemy extends Player{
 		}
 		else
 		{
-			if (!focus.getDuc().equals(this.getBase().getDuc()))
+			if (!focus.getDuc().equals(this.getName()))
 			{
-				if (this.totalTroops() < 250)
+				if (this.totalTroops() < 60)
 					recruit();
 				else
 				{
 					for (int i = 0; i < getListCastle().size(); i++)
-					{
-						Castle intermediate = getListCastle().get(i);
-						attack(intermediate, focus, 1, armies);
-					}
+						attack(getListCastle().get(i), focus, 1, armies);
 				}
 			}
 		}
@@ -132,56 +132,31 @@ public class Ennemy extends Player{
 		
 	public void recruit()
 	{
+		double ratio = 0;
 		for (int i = 0; i < getListCastle().size(); i++)
 		{
 			Castle intermediate = getListCastle().get(i);
 			if (intermediate.totalTroops() == 0)
 			{
-				if (intermediate.getTreasure() > Settings.COST_PRODUCTION_PIKEMAN)
-				{
-					if (intermediate.getProduction().getProducts().equals("rien"))
-					{
-						intermediate.setTreasure(intermediate.getTreasure() - Settings.COST_PRODUCTION_PIKEMAN);
-						intermediate.product("Piquier", Settings.TIME_COST_PIKEMAN);
-					}
-				}
+				intermediate.product("Piquier", Settings.TIME_COST_PIKEMAN);
 				return;
 			}
-			if (intermediate.getTroops()[0] / intermediate.totalTroops() > 0.4)
+			ratio = (double) intermediate.getTroops()[0] / (double) intermediate.totalTroops();
+			if (ratio > 0.4)
 			{
-				if (intermediate.getTroops()[1] / intermediate.totalTroops() > 0.4)
+				ratio = (double) intermediate.getTroops()[1] / (double) intermediate.totalTroops();
+				if (ratio > 0.4)
 				{
-					if (intermediate.getTreasure() > Settings.COST_PRODUCTION_ONAGER)
-					{
-						if (intermediate.getProduction().getProducts().equals("rien"))
-						{
-							intermediate.setTreasure(intermediate.getTreasure() - Settings.COST_PRODUCTION_ONAGER);
-							intermediate.product("Onagre", Settings.TIME_COST_ONAGER);
-						}
-					}
+					intermediate.product("Onagre", Settings.TIME_COST_ONAGER);
 				}
 				else
 				{
-					if (intermediate.getTreasure() > Settings.COST_PRODUCTION_KNIGHT)
-					{
-						if (intermediate.getProduction().getProducts().equals("rien"))
-						{
-							intermediate.setTreasure(intermediate.getTreasure() - Settings.COST_PRODUCTION_KNIGHT);
-							intermediate.product("Chevalier", Settings.TIME_COST_KNIGHT);
-						}
-					}
+					intermediate.product("Chevalier", Settings.TIME_COST_KNIGHT);
 				}
 			}
 			else
 			{
-				if (intermediate.getTreasure() > Settings.COST_PRODUCTION_PIKEMAN)
-				{
-					if (intermediate.getProduction().getProducts().equals("rien"))
-					{
-						intermediate.setTreasure(intermediate.getTreasure() - Settings.COST_PRODUCTION_PIKEMAN);
-						intermediate.product("Piquier", Settings.TIME_COST_PIKEMAN);
-					}
-				}
+				intermediate.product("Piquier", Settings.TIME_COST_PIKEMAN);
 			}
 		}
 	}
@@ -190,12 +165,8 @@ public class Ennemy extends Player{
 		for (int i = 0; i < getListCastle().size(); i++)
 		{
 			Castle intermediate = getListCastle().get(i);
-			if (intermediate.getTreasure() > 1000 * (intermediate.getLevel() + 1))
-			{
-				intermediate.setLevel(intermediate.getLevel() + 1);
-				intermediate.setTreasure(intermediate.getTreasure() - intermediate.getLevel()*1000);
+			if (intermediate.product("level", intermediate.getLevel()*10))
 				strategie = 10;
-			}
 		}
 		
 	}
@@ -203,13 +174,25 @@ public class Ennemy extends Player{
 	{
 		if (mode == 1)
 		{
-			src.sendOrder(target, src.getTroops()[0] * 3 / 4, src.getTroops()[1] * 3 / 4, src.getTroops()[2] * 3 / 4);
-			armies.add(src.instanceTroops(target));
+			if (src.getOrder().getTarget() == null)
+			{
+				src.sendOrder(target, src.getTroops()[0] * 3 / 4, src.getTroops()[1] * 3 / 4, src.getTroops()[2] * 3 / 4);
+				if (src.getOrder().getTarget() != null)
+				{
+					armies.add(src.instanceTroops(target));
+				}
+			}
 		}
 		if (mode == 0)
 		{
-			src.sendOrder(target, src.getTroops()[0] / 4, src.getTroops()[1] / 4, src.getTroops()[2] / 4);
-			armies.add(src.instanceTroops(target));
+			if (src.getOrder().getTarget() == null)
+			{
+				src.sendOrder(target, src.getTroops()[0] / 4, src.getTroops()[1] / 4, src.getTroops()[2] / 4);
+				if (src.getOrder().getNbPyk() != 0 || src.getOrder().getNbKni() != 0 || src.getOrder().getNbOna() != 0 )
+				{
+					armies.add(src.instanceTroops(target));
+				}
+			}
 		}
 	}
 

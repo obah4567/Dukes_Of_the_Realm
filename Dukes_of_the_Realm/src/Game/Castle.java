@@ -17,6 +17,13 @@ public class Castle extends Sprites{
 	private ArrayList<Troops> def = new ArrayList<Troops>();
 
 	//Constructors
+	/*
+	 * Castle constructor for every castle
+	 * @param img is the image that shall be exposed
+	 * @param layer is the layer that is exposed on the image
+	 * 
+	 * return a
+	 */
 	public Castle(Image img, Pane layer, ArrayList<Castle> world)
 	{
 		super(layer, img, world);
@@ -45,7 +52,7 @@ public class Castle extends Sprites{
         this.gate = Settings.GATES[r.nextInt(4)];
         //army
         this.troops = new int[3];
-        this.troops[0] = 50; this.troops[1] = 100; this.troops[2] = 15;
+        this.troops[0] = Settings.NB_KNI_DUC; this.troops[1] = Settings.NB_KNI_DUC; this.troops[2] = Settings.NB_ONA_DUC;
         this.treasure = 0;
         this.level = 1;
         this.duc = duc;
@@ -277,6 +284,11 @@ public class Castle extends Sprites{
 					if (treasure < Settings.COST_PRODUCTION_ONAGER)
 						return false;
 					treasure = treasure - Settings.COST_PRODUCTION_ONAGER;
+					break;
+			case "level" :
+					if (treasure < (getLevel() + 1) * 1000)
+						return false;
+					treasure = treasure - (getLevel() + 1)*1000;
 					break;
 			default :
 				return false;

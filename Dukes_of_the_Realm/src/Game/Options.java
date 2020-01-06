@@ -19,7 +19,7 @@ public class Options {
     private Rectangle background;
     private Text labelOption;
     
-    //Constructor for buttons Attack and send ressources
+    //Constructor for buttons Attack and produce units
     public Options(Pane layer, String l, double x, double y, Castle c){
         this.layer = layer;
         this.c = c;

@@ -23,14 +23,14 @@ public class Settings {
 	public static final int DAMMAGES_KNIGHT = 5;
 	public static final int DAMMAGES_ONAGER = 10;
 	
-	public static final int NB_PIK_DUC = 100;
-	public static final int NB_KNI_DUC = 30;
+	public static final int NB_PIK_DUC = 30;
+	public static final int NB_KNI_DUC = 20;
 	public static final int NB_ONA_DUC = 5;
 	public static final int NB_PIK_NEUT = 10;
 	public static final int NB_KNI_NEUT = 20;
 	public static final int NB_ONA_NEUT = 2;
 
-	public static final int SIZEGATE = 5;
+	public static final int SIZEGATE = 4;
 
 	// WINDOW
 	public static final int SCENE_WIDTH = 1800;
